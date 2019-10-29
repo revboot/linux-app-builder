@@ -111,7 +111,7 @@ openssl_build_arg_cypher_idea="yes";
 openssl_build_arg_cypher_weak="no";
 # - gd2 (version 1.11.6 - 2.2.x)
 gd2_apt_flag="yes";
-gd2_apt_pkgs="libgd2-noxpm-dev libgd2-noxpm zlib1g-dev libpng12-dev libjpeg-dev libwebp-dev libtiff4-dev libfreetype6-dev libfontconfig1-dev"; #libxpm-dev
+gd2_apt_pkgs="libgd2-xpm-dev libgd2-xpm zlib1g-dev libpng12-dev libjpeg-dev libwebp-dev libtiff4-dev libfreetype6-dev libfontconfig1-dev"; #libgd2-noxpm-dev,libgd2-noxpm for gd alternative without xpm support
 gd2_build_flag="yes";
 gd2_build_cleanup="no";
 gd2_build_make="yes";
@@ -123,13 +123,13 @@ gd2_build_tar="${global_build_usrprefix}/src/libgd-${gd2_build_version}.tar.gz";
 gd2_build_path="${global_build_usrprefix}/src/libgd-${gd2_build_version}";
 gd2_build_arg_arch="linux-x86_64";
 gd2_build_arg_usrprefix="${global_build_usrprefix}";
-#gd2_build_arg_libraries="--with-zlib=${zlib_build_path} --with-png --with-jpeg --with-webp --with-tiff --with-freetype --with-fontconfig"; #--with-xpm --with-liq
+#gd2_build_arg_libraries="--with-zlib=${zlib_build_path} --with-png --with-jpeg --with-webp --with-tiff --with-xpm --with-freetype --with-fontconfig"; #--with-liq
 gd2_build_arg_libraries_zlib="custom"; #system,custom,no
 gd2_build_arg_libraries_png="system"; #system,custom,no
 gd2_build_arg_libraries_jpeg="system"; #system,custom,no
 gd2_build_arg_libraries_webp="system"; #system,custom,no
 gd2_build_arg_libraries_tiff="system"; #system,custom,no
-gd2_build_arg_libraries_xpm="no"; #system,custom,no
+gd2_build_arg_libraries_xpm="system"; #system,custom,no
 gd2_build_arg_libraries_liq="no"; #system,custom,no
 gd2_build_arg_libraries_freetype="system"; #system,custom,no
 gd2_build_arg_libraries_fontconfig="system"; #system,custom,no
