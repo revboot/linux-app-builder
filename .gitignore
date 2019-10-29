@@ -1,0 +1,2 @@
+# ignore local configuration
+config/config.local*.inc
