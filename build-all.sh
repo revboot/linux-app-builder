@@ -441,13 +441,13 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${zlib_build_cmd_full}";
-      $zlib_build_cmd_full && make;
+      sudo $zlib_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$zlib_build_install" == "yes" ] && [ -f "${zlib_build_path}/libz.so" ]; then
-      make uninstall; make install;
+      sudo make uninstall; sudo make install;
       echo "system library: $(whereis libz.so)";
       echo "built library: ${global_build_usrprefix}/lib/libz.so";
       zlib_ldconfig_test_cmd="ldconfig -p | grep libz.so; ldconfig -v | grep libz.so";
@@ -540,13 +540,13 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${pcre_build_cmd_full}";
-      $pcre_build_cmd_full && make;
+      sudo $pcre_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$pcre_build_install" == "yes" ] && [ -f "${pcre_build_path}/.libs/libpcre.so" ]; then
-      make uninstall; make install;
+      sudo make uninstall; sudo make install;
       echo "system library: ${pcre_link_cmd}$(whereis libpcre.so)";
       echo "built library: ${global_build_usrprefix}/lib/libpcre.so";
       pcre_ldconfig_test_cmd="ldconfig -p | grep libpcre.so; ldconfig -v | grep libpcre.so";
@@ -678,13 +678,13 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${openssl_build_cmd_full}";
-      $openssl_build_cmd_full && make;
+      sudo $openssl_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$openssl_build_install" == "yes" ] && [ -f "${openssl_build_path}/libssl.so" ]; then
-      make uninstall; make install;
+      sudo make uninstall; sudo make install;
       echo "system library: $(whereis libssl.so)";
       echo "built library: ${global_build_usrprefix}/lib/libssl.so";
       openssl_ldconfig_test_cmd="ldconfig -p | grep libssl.so; ldconfig -v | grep libssl.so";
@@ -800,13 +800,13 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${gd2_build_cmd_full}";
-      $gd2_build_cmd_full && make;
+      sudo $gd2_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$gd2_build_install" == "yes" ] && [ -f "${gd2_build_path}/src/.libs/libgd.so" ]; then
-      make uninstall; make install;
+      sudo make uninstall; sudo make install;
       echo "system library: $(whereis libgd.so)";
       echo "built library: ${global_build_usrprefix}/lib/libgd.so";
       gd2_ldconfig_test_cmd="ldconfig -p | grep libgd.so; ldconfig -v | grep libgd.so";
@@ -1034,13 +1034,13 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${xml2_build_cmd_full}";
-      libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && $xml2_build_cmd_full && make;
+      sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xml2_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$xml2_build_install" == "yes" ] && [ -f "${xml2_build_path}/.libs/libxml2.so" ]; then
-      make uninstall; make install;
+      sudo make uninstall; sudo make install;
       echo "system library: $(whereis libxml2.so)";
       echo "built library: ${global_build_usrprefix}/lib/libxml2.so";
       xml2_ldconfig_test_cmd="ldconfig -p | grep libxml2.so; ldconfig -v | grep libxml2.so";
@@ -1117,18 +1117,18 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${xslt_build_cmd_full}";
-      wget -P $xslt_build_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
-      wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
-      libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && $xslt_build_cmd_full && make;
+      sudo wget -P $xslt_build_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
+      sudo wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
+      sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xslt_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$xslt_build_install" == "yes" ] && [ -f "${xslt_build_path}/libxslt/.libs/libxslt.so" ]; then
-      make uninstall; make install;
-      cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
-      cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
-      chmod +x "${global_build_usrprefix}/bin/xslt-config";
+      sudo make uninstall; sudo make install;
+      sudo cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
+      sudo cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
+      sudo chmod +x "${global_build_usrprefix}/bin/xslt-config";
       echo "system library: $(whereis libxslt.so)";
       echo "built library: ${global_build_usrprefix}/lib/libxslt.so";
       xslt_ldconfig_test_cmd="ldconfig -p | grep libxslt.so; ldconfig -v | grep libxslt.so";
@@ -1187,13 +1187,13 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${geoip_build_cmd_full}";
-      $geoip_build_cmd_full && make;
+      sudo $geoip_build_cmd_full && sudo make;
     fi;
     # install binaries
     if [ "$geoip_build_install" == "yes" ] && [ -f "${geoip_build_path}/libGeoIP/.libs/libGeoIP.so" ]; then
-      make uninstall; make install;
+      sudo make uninstall; sudo make install;
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
@@ -1233,12 +1233,12 @@ if [ "$global_build_flag" == "yes" ]; then
 
         # command - add compiler: cc
         if [ -n "$nginx_build_arg_compiler_cc" ]; then
-          nginx_build_cmd_full="${nginx_build_cmd_full} --with-cc-opt=\"${nginx_build_arg_compiler_cc}\"";
+          nginx_build_cmd_full="${nginx_build_cmd_full} --with-cc-opt=\'${nginx_build_arg_compiler_cc}\'";
         fi;
 
         # command - add compiler: ld
         if [ -n "$nginx_build_arg_compiler_ld" ]; then
-          nginx_build_cmd_full="${nginx_build_cmd_full} --with-ld-opt=\"${nginx_build_arg_compiler_ld}\"";
+          nginx_build_cmd_full="${nginx_build_cmd_full} --with-ld-opt=\'${nginx_build_arg_compiler_ld}\'";
         fi;
       fi;
 
@@ -1840,10 +1840,9 @@ if [ "$global_build_flag" == "yes" ]; then
       fi;
 
       # clean, configure and make
-      make clean;
+      sudo make clean;
       echo "${nginx_build_cmd_full}";
-      eval $nginx_build_cmd_full && make -j1;
-      #eval $(printf "./configure %s %s ${nginx_build_cmd_full}" '--with-cc-opt="${nginx_build_arg_compiler_cc}"' '--with-ld-opt="${nginx_build_arg_compiler_ld}"');
+      sudo bash -c "eval $nginx_build_cmd_full" && sudo make -j1;
       echo "system library: ldd /usr/sbin/nginx"; ldd /usr/sbin/nginx;
       echo "system library: ldd ${nginx_build_path}/objs/nginx"; ldd ${nginx_build_path}/objs/nginx;
       echo "env LD_DEBUG=statistics /usr/sbin/nginx -v"; env LD_DEBUG=statistics /usr/sbin/nginx -v;
@@ -1851,28 +1850,28 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$nginx_build_install" == "yes" ] && [ -f "${nginx_build_path}/objs/nginx" ]; then
-      make uninstall; make install;
-      mkdir -p "${global_build_varprefix}/lib/nginx";
+      sudo make uninstall; sudo make install;
+      sudo mkdir -p "${global_build_varprefix}/lib/nginx";
       echo "system binary: $(whereis nginx)";
       echo "built binary: ${global_build_usrprefix}/sbin/nginx";
     fi;
     # install config
     if [ "$nginx_build_install_etc" == "system" ]; then
       if [ -d "${global_build_varprefix}/etc/nginx" ]; then
-        rm -Rf "${global_build_varprefix}/etc/nginx";
+        sudo rm -Rf "${global_build_varprefix}/etc/nginx";
       elif [ -L "${global_build_varprefix}/etc/nginx" ]; then
-        rm -f "${global_build_varprefix}/etc/nginx";
+        sudo rm -f "${global_build_varprefix}/etc/nginx";
       fi;
-      ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
-      rm -f "${global_build_varprefix}/etc/nginx/*.default";
+      sudo ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
+      sudo rm -f "${global_build_varprefix}/etc/nginx/*.default";
     elif [ "$nginx_build_install_etc" == "build" ]; then
-      cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
+      sudo cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
     fi;
     # test binaries
     if [ "$nginx_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
       nginx_test_cmd="nginx -v -V -t";
-      echo "test system binary: /usr/sbin/${nginx_test_cmd}"; /usr/sbin/${nginx_test_cmd};
-      echo "test built binary: ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; ${global_build_usrprefix}/sbin/${nginx_test_cmd};
+      echo "test system binary: sudo /usr/sbin/${nginx_test_cmd}"; sudo /usr/sbin/${nginx_test_cmd};
+      echo "test built binary: sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd};
     fi;
   fi;
 
