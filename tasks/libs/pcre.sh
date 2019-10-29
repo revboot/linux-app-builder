@@ -7,9 +7,15 @@ function task_lib_pcre() {
 
   # build subtask
   if [ "$pcre_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:pcre:build";
+
     # cleanup code and tar
     if [ "$pcre_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:pcre:build:cleanup";
       sudo rm -Rf ${pcre_build_path}*;
+      notify "stopRoutine" "lib:pcre:build:cleanup";
+    else
+      notify "skipRoutine" "lib:pcre:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_pcre() {
 
     # compile binaries
     if [ "$pcre_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:pcre:build:make";
       # command - add configuration tool
       pcre_build_cmd_full="./configure";
 
@@ -96,23 +103,38 @@ function task_lib_pcre() {
       sudo make clean;
       echo "${pcre_build_cmd_full}";
       sudo $pcre_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:pcre:build:make";
+    else
+      notify "skipRoutine" "lib:pcre:build:make";
     fi;
 
     # install binaries
     if [ "$pcre_build_install" == "yes" ] && [ -f "${pcre_build_path}/.libs/libpcre.so" ]; then
+      notify "startRoutine" "lib:pcre:build:install";
       sudo make uninstall; sudo make install;
       echo "system library: ${pcre_link_cmd}$(whereis libpcre.so)";
       echo "built library: ${global_build_usrprefix}/lib/libpcre.so";
       pcre_ldconfig_test_cmd="ldconfig -p | grep libpcre.so; ldconfig -v | grep libpcre.so";
       echo "list libraries: ${pcre_ldconfig_test_cmd}"; ${pcre_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:pcre:build:install";
+    else
+      notify "skipRoutine" "lib:pcre:build:install";
     fi;
 
     # test binaries
     if [ "$pcre_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/pcre-config" ]; then
+      notify "startRoutine" "lib:pcre:build:test";
       pcre_binary_test_cmd="pcre-config --version --libs --cflags";
       echo "test system binary: /usr/bin/${pcre_binary_test_cmd}"; /usr/bin/$pcre_binary_test_cmd;
       echo "test built binary: ${global_build_usrprefix}/bin/${pcre_binary_test_cmd}"; ${global_build_usrprefix}/bin/${pcre_binary_test_cmd};
+      notify "stopRoutine" "lib:pcre:build:test";
+    else
+      notify "skipRoutine" "lib:pcre:build:test";
     fi;
+
+    notify "stopSubTask" "lib:pcre:build";
+  else
+    notify "skipSubTask" "lib:pcre:build";
   fi;
 
 }

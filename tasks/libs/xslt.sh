@@ -7,9 +7,15 @@ function task_lib_xslt() {
 
   # build subtask
   if [ "$xslt_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:xslt:build";
+
     # cleanup code and tar
     if [ "$xslt_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:xslt:build:cleanup";
       sudo rm -Rf ${xslt_build_path}*;
+      notify "stopRoutine" "lib:xslt:build:cleanup";
+    else
+      notify "skipRoutine" "lib:xslt:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_xslt() {
 
     # compile binaries
     if [ "$xslt_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:xslt:build:make";
       # command - add configuration tool
       xslt_build_cmd_full="./configure";
 
@@ -76,10 +83,14 @@ function task_lib_xslt() {
       sudo wget -P $xslt_build_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
       sudo wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
       sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xslt_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:xslt:build:make";
+    else
+      notify "skipRoutine" "lib:xslt:build:make";
     fi;
 
     # install binaries
     if [ "$xslt_build_install" == "yes" ] && [ -f "${xslt_build_path}/libxslt/.libs/libxslt.so" ]; then
+      notify "startRoutine" "lib:xslt:build:install";
       sudo make uninstall; sudo make install;
       sudo cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
       sudo cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
@@ -88,10 +99,14 @@ function task_lib_xslt() {
       echo "built library: ${global_build_usrprefix}/lib/libxslt.so";
       xslt_ldconfig_test_cmd="ldconfig -p | grep libxslt.so; ldconfig -v | grep libxslt.so";
       echo "list libraries: ${xslt_ldconfig_test_cmd}"; ${xslt_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:xslt:build:install";
+    else
+      notify "skipRoutine" "lib:xslt:build:install";
     fi;
 
     # test binaries
     if [ "$xslt_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/xslt-config" ]; then
+      notify "startRoutine" "lib:xslt:build:test";
       xslt_binary_test_cmd1="xslt-config --libs --cflags";
       xslt_binary_test_cmd2="xslt-config --plugins";
       xslt_binary_test_cmd3="xslt-config --version";
@@ -101,7 +116,14 @@ function task_lib_xslt() {
       echo "test built binary #1: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1};
       echo "test built binary #2: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2};
       echo "test built binary #3: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3};
+      notify "stopRoutine" "lib:xslt:build:test";
+    else
+      notify "skipRoutine" "lib:xslt:build:test";
     fi;
+
+    notify "stopSubTask" "lib:xslt:build";
+  else
+    notify "skipSubTask" "lib:xslt:build";
   fi;
 
 }

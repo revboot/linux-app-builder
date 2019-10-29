@@ -7,9 +7,15 @@ function task_lib_gd2() {
 
   # build subtask
   if [ "$gd2_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:gd2:build";
+
     # cleanup code and tar
     if [ "$gd2_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:gd2:build:cleanup";
       sudo rm -Rf ${gd2_build_path}*;
+      notify "stopRoutine" "lib:gd2:build:cleanup";
+    else
+      notify "skipRoutine" "lib:gd2:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_gd2() {
 
     # compile binaries
     if [ "$gd2_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:gd2:build:make";
       # command - add configuration tool
       gd2_build_cmd_full="./configure";
 
@@ -113,23 +120,38 @@ function task_lib_gd2() {
       sudo make clean;
       echo "${gd2_build_cmd_full}";
       sudo $gd2_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:gd2:build:make";
+    else
+      notify "skipRoutine" "lib:gd2:build:make";
     fi;
 
     # install binaries
     if [ "$gd2_build_install" == "yes" ] && [ -f "${gd2_build_path}/src/.libs/libgd.so" ]; then
+      notify "startRoutine" "lib:gd2:build:install";
       sudo make uninstall; sudo make install;
       echo "system library: $(whereis libgd.so)";
       echo "built library: ${global_build_usrprefix}/lib/libgd.so";
       gd2_ldconfig_test_cmd="ldconfig -p | grep libgd.so; ldconfig -v | grep libgd.so";
       echo "list libraries: ${gd2_ldconfig_test_cmd}"; ${gd2_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:gd2:build:install";
+    else
+      notify "skipRoutine" "lib:gd2:build:install";
     fi;
 
     # test binaries
     if [ "$gd2_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/gdlib-config" ]; then
+      notify "startRoutine" "lib:gd2:build:test";
       gd2_binary_test_cmd="gdlib-config --version --libs --cflags --ldflags --features";
       echo "test system binary: /usr/bin/${gd2_binary_test_cmd}"; /usr/bin/${gd2_binary_test_cmd};
       echo "test built binary: ${global_build_usrprefix}/bin/${gd2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${gd2_binary_test_cmd};
+      notify "stopRoutine" "lib:gd2:build:test";
+    else
+      notify "skipRoutine" "lib:gd2:build:test";
     fi;
+
+    notify "stopSubTask" "lib:gd2:build";
+  else
+    notify "skipSubTask" "lib:gd2:build";
   fi;
 
 }

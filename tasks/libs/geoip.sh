@@ -7,9 +7,15 @@ function task_lib_geoip() {
 
   # build subtask
   if [ "$geoip_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:geoip:build";
+
     # cleanup code and tar
     if [ "$geoip_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:geoip:build:cleanup";
       sudo rm -Rf ${geoip_build_path}*;
+      notify "stopRoutine" "lib:geoip:build:cleanup";
+    else
+      notify "skipRoutine" "lib:geoip:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_geoip() {
 
     # compile binaries
     if [ "$geoip_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:geoip:build:make";
       # command - add configuration tool
       geoip_build_cmd_full="./configure";
 
@@ -50,10 +57,14 @@ function task_lib_geoip() {
       sudo make clean;
       echo "${geoip_build_cmd_full}";
       sudo $geoip_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:geoip:build:make";
+    else
+      notify "skipRoutine" "lib:geoip:build:make";
     fi;
 
     # install binaries
     if [ "$geoip_build_install" == "yes" ] && [ -f "${geoip_build_path}/libGeoIP/.libs/libGeoIP.so" ]; then
+      notify "startRoutine" "lib:geoip:build:install";
       sudo make uninstall; sudo make install;
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
@@ -63,7 +74,14 @@ function task_lib_geoip() {
       echo "built library: ${global_build_usrprefix}/lib/libGeoIP.so";
       geoip_ldconfig_test_cmd="ldconfig -p | grep libGeoIP.so; ldconfig -v | grep libGeoIP.so";
       echo "list libraries: ${geoip_ldconfig_test_cmd}"; ${geoip_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:geoip:build:install";
+    else
+      notify "skipRoutine" "lib:geoip:build:install";
     fi;
+
+    notify "stopSubTask" "lib:geoip:build";
+  else
+    notify "skipSubTask" "lib:geoip:build";
   fi;
 
 }

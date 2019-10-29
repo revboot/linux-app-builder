@@ -7,9 +7,15 @@ function task_lib_zlib() {
 
   # build subtask
   if [ "$zlib_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:zlib:build";
+
     # cleanup code and tar
     if [ "$zlib_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:build:cleanup";
       sudo rm -Rf ${zlib_build_path}*;
+      notify "stopRoutine" "lib:zlib:build:cleanup";
+    else
+      notify "skipRoutine" "lib:zlib:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_zlib() {
 
     # compile binaries
     if [ "$zlib_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:build:make";
       # command - add configuration tool
       zlib_build_cmd_full="./configure";
 
@@ -50,16 +57,27 @@ function task_lib_zlib() {
       sudo make clean;
       echo "${zlib_build_cmd_full}";
       sudo $zlib_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:zlib:build:make";
+    else
+      notify "skipRoutine" "lib:zlib:build:make";
     fi;
 
     # install binaries
     if [ "$zlib_build_install" == "yes" ] && [ -f "${zlib_build_path}/libz.so" ]; then
+      notify "startRoutine" "lib:zlib:build:install";
       sudo make uninstall; sudo make install;
       echo "system library: $(whereis libz.so)";
       echo "built library: ${global_build_usrprefix}/lib/libz.so";
       zlib_ldconfig_test_cmd="ldconfig -p | grep libz.so; ldconfig -v | grep libz.so";
       echo "list libraries: ${zlib_ldconfig_test_cmd}"; ${zlib_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:zlib:build:install";
+    else
+      notify "skipRoutine" "lib:zlib:build:install";
     fi;
+
+    notify "stopSubTask" "lib:zlib:build";
+  else
+    notify "skipSubTask" "lib:zlib:build";
   fi;
 
 }

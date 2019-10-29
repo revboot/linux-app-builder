@@ -7,9 +7,15 @@ function task_app_nginx() {
 
   # build subtask
   if [ "$nginx_build_flag" == "yes" ]; then
+    notify "startSubTask" "app:nginx:build";
+
     # cleanup code and tar
     if [ "$nginx_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "app:nginx:build:cleanup";
       sudo rm -Rf ${nginx_build_path}*;
+      notify "stopRoutine" "app:nginx:build:cleanup";
+    else
+      notify "skipRoutine" "app:nginx:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_app_nginx() {
 
     # compile binaries
     if [ "$nginx_build_make" == "yes" ]; then
+      notify "startRoutine" "app:nginx:build:make";
       # command - add configuration tool
       nginx_build_cmd_full="./configure";
 
@@ -650,35 +657,56 @@ function task_app_nginx() {
       echo "system library: ldd ${nginx_build_path}/objs/nginx"; ldd ${nginx_build_path}/objs/nginx;
       echo "env LD_DEBUG=statistics /usr/sbin/nginx -v"; env LD_DEBUG=statistics /usr/sbin/nginx -v;
       echo "env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v"; env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v;
+      notify "stopRoutine" "app:nginx:build:make";
+    else
+      notify "skipRoutine" "app:nginx:build:make";
     fi;
 
     # install binaries
     if [ "$nginx_build_install" == "yes" ] && [ -f "${nginx_build_path}/objs/nginx" ]; then
+      notify "stopRoutine" "app:nginx:build:install";
       sudo make uninstall; sudo make install;
       sudo mkdir -p "${global_build_varprefix}/lib/nginx";
       echo "system binary: $(whereis nginx)";
       echo "built binary: ${global_build_usrprefix}/sbin/nginx";
+      notify "stopRoutine" "app:nginx:build:install";
+    else
+      notify "skipRoutine" "app:nginx:build:install";
     fi;
 
     # install config
-    if [ "$nginx_build_install_etc" == "system" ]; then
-      if [ -d "${global_build_varprefix}/etc/nginx" ]; then
-        sudo rm -Rf "${global_build_varprefix}/etc/nginx";
-      elif [ -L "${global_build_varprefix}/etc/nginx" ]; then
-        sudo rm -f "${global_build_varprefix}/etc/nginx";
+    if [ ! "$nginx_build_install_etc" == "no" ]; then
+      notify "startRoutine" "app:nginx:build:install_etc";
+      if [ "$nginx_build_install_etc" == "system" ]; then
+        if [ -d "${global_build_varprefix}/etc/nginx" ]; then
+          sudo rm -Rf "${global_build_varprefix}/etc/nginx";
+        elif [ -L "${global_build_varprefix}/etc/nginx" ]; then
+          sudo rm -f "${global_build_varprefix}/etc/nginx";
+        fi;
+        sudo ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
+        sudo rm -f "${global_build_varprefix}/etc/nginx/*.default";
+      elif [ "$nginx_build_install_etc" == "build" ]; then
+        sudo cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
       fi;
-      sudo ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
-      sudo rm -f "${global_build_varprefix}/etc/nginx/*.default";
-    elif [ "$nginx_build_install_etc" == "build" ]; then
-      sudo cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
+      notify "stopRoutine" "app:nginx:build:install_etc";
+    else
+      notify "skipRoutine" "app:nginx:build:install_etc";
     fi;
 
     # test binaries
     if [ "$nginx_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
+      notify "startRoutine" "app:nginx:build:test";
       nginx_test_cmd="nginx -v -V -t";
       echo "test system binary: sudo /usr/sbin/${nginx_test_cmd}"; sudo /usr/sbin/${nginx_test_cmd};
       echo "test built binary: sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd};
+      notify "stopRoutine" "app:nginx:build:test";
+    else
+      notify "skipRoutine" "app:nginx:build:test";
     fi;
+
+    notify "stopSubTask" "app:nginx:build";
+  else
+    notify "skipSubTask" "app:nginx:build";
   fi;
 
 }

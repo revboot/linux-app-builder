@@ -46,6 +46,29 @@ warn() {
   echo "$SCRIPT_NAME($1):" "warning: $2" >&2;
 }
 
+# Prints message
+notify() {
+  if [ $1 == "startTask" ]; then
+    printf "\nStarting task:$2\n";
+  elif [ $1 == "stopTask" ]; then
+    printf "\nFinishing task:$2\n\n";
+  elif [ $1 == "skipTask" ]; then
+    printf "\nSkipping task:$2\n\n";
+  elif [ $1 == "startSubTask" ]; then
+    printf "\n- Starting task:$2\n";
+  elif [ $1 == "stopSubTask" ]; then
+    printf "\n- Finishing task:$2\n";
+  elif [ $1 == "skipSubTask" ]; then
+    printf "\n- Skipping task:$2\n";
+  elif [ $1 == "startRoutine" ]; then
+    printf "\n-- Starting task:$2\n\n";
+  elif [ $1 == "stopRoutine" ]; then
+    printf "\n-- Finishing task:$2\n";
+  elif [ $1 == "skipRoutine" ]; then
+    printf "\n-- Skipping task:$2\n";
+  fi;
+}
+
 # Loads source file
 loadSource() {
   if [ -f "$SCRIPT_DIR/$1" ]; then
@@ -150,45 +173,78 @@ if [ "$global_build_flag" == "yes" ]; then
 
   # task: library: zlib
   if [ "$zlib_task" == "yes" ]; then
+    notify "startTask" "lib:zlib";
     task_lib_zlib;
+    notify "stopTask" "lib:zlib";
+  else
+    notify "skipTask" "lib:zlib";
   fi;
 
   # task: library: pcre
   if [ "$pcre_task" == "yes" ]; then
+    notify "startTask" "lib:pcre";
     task_lib_pcre;
+    notify "stopTask" "lib:pcre";
+  else
+    notify "skipTask" "lib:pcre";
   fi;
 
   # task: library: openssl
   if [ "$openssl_task" == "yes" ]; then
+    notify "startTask" "lib:openssl";
     task_lib_openssl;
+    notify "stopTask" "lib:openssl";
+  else
+    notify "skipTask" "lib:openssl";
   fi;
 
   # task: library: gd2
   if [ "$gd2_task" == "yes" ]; then
+    notify "startTask" "lib:gd2";
     task_lib_gd2;
+    notify "stopTask" "lib:gd2";
+  else
+    notify "skipTask" "lib:gd2";
   fi;
 
   # task: library: xml2
   if [ "$xml2_task" == "yes" ]; then
+    notify "startTask" "lib:xml2";
     task_lib_xml2;
+    notify "stopTask" "lib:xml2";
+  else
+    notify "skipTask" "lib:xml2";
   fi;
 
   # task: library: xslt
   if [ "$xslt_task" == "yes" ]; then
+    notify "startTask" "lib:xslt";
     task_lib_xslt;
+    notify "stopTask" "lib:xslt";
+  else
+    notify "skipTask" "lib:xslt";
   fi;
 
   # task: library: geoip
   if [ "$geoip_task" == "yes" ]; then
+    notify "startTask" "lib:geoip";
     task_lib_geoip;
+    notify "stopTask" "lib:geoip";
+  else
+    notify "skipTask" "lib:geoip";
   fi;
 
   # task: application: nginx
   if [ "$nginx_task" == "yes" ]; then
+    notify "startTask" "app:nginx";
     task_app_nginx;
+    notify "stopTask" "app:nginx";
+  else
+    notify "skipTask" "app:nginx";
   fi;
 
 fi;
 
 # Terminate script
+notify "Terminating...";
 die 0;

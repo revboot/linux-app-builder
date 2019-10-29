@@ -7,9 +7,15 @@ function task_lib_openssl() {
 
   # build subtask
   if [ "$openssl_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:openssl:build";
+
     # cleanup code and tar
     if [ "$openssl_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:openssl:build:cleanup";
       sudo rm -Rf ${openssl_build_path}*;
+      notify "stopRoutine" "lib:openssl:build:cleanup";
+    else
+      notify "skipRoutine" "lib:openssl:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_openssl() {
 
     # compile binaries
     if [ "$openssl_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:openssl:build:make";
       # command - add configuration tool
       openssl_build_cmd_full="./Configure";
 
@@ -129,23 +136,38 @@ function task_lib_openssl() {
       sudo make clean;
       echo "${openssl_build_cmd_full}";
       sudo $openssl_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:openssl:build:make";
+    else
+      notify "skipRoutine" "lib:openssl:build:make";
     fi;
 
     # install binaries
     if [ "$openssl_build_install" == "yes" ] && [ -f "${openssl_build_path}/libssl.so" ]; then
+      notify "startRoutine" "lib:openssl:build:install";
       sudo make uninstall; sudo make install;
       echo "system library: $(whereis libssl.so)";
       echo "built library: ${global_build_usrprefix}/lib/libssl.so";
       openssl_ldconfig_test_cmd="ldconfig -p | grep libssl.so; ldconfig -v | grep libssl.so";
       echo "list libraries: ${openssl_ldconfig_test_cmd}"; ${openssl_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:openssl:build:install";
+    else
+      notify "skipRoutine" "lib:openssl:build:install";
     fi;
 
     # test binaries
     if [ "$openssl_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/openssl" ]; then
+      notify "startRoutine" "lib:openssl:build:test";
       openssl_binary_test_cmd="openssl version -f";
       echo "test system binary: /usr/bin/${openssl_binary_test_cmd}"; /usr/bin/$openssl_binary_test_cmd;
       echo "test built binary: ${global_build_usrprefix}/bin/${openssl_binary_test_cmd}"; ${global_build_usrprefix}/bin/${openssl_binary_test_cmd};
+      notify "stopRoutine" "lib:openssl:build:test";
+    else
+      notify "skipRoutine" "lib:openssl:build:test";
     fi;
+
+    notify "stopSubTask" "lib:openssl:build";
+  else
+    notify "skipSubTask" "lib:openssl:build";
   fi;
 
 }

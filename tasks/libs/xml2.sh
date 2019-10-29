@@ -7,9 +7,15 @@ function task_lib_xml2() {
 
   # build subtask
   if [ "$xml2_build_flag" == "yes" ]; then
+    notify "startSubTask" "lib:xml2:build";
+
     # cleanup code and tar
     if [ "$xml2_build_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:xml2:build:cleanup";
       sudo rm -Rf ${xml2_build_path}*;
+      notify "stopRoutine" "lib:xml2:build:cleanup";
+    else
+      notify "skipRoutine" "lib:xml2:build:cleanup";
     fi;
 
     # extract code from tar
@@ -23,6 +29,7 @@ function task_lib_xml2() {
 
     # compile binaries
     if [ "$xml2_build_make" == "yes" ]; then
+      notify "startRoutine" "lib:xml2:build:make";
       # command - add configuration tool
       xml2_build_cmd_full="./configure";
 
@@ -225,23 +232,38 @@ function task_lib_xml2() {
       sudo make clean;
       echo "${xml2_build_cmd_full}";
       sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xml2_build_cmd_full && sudo make;
+      notify "stopRoutine" "lib:xml2:build:make";
+    else
+      notify "skipRoutine" "lib:xml2:build:make";
     fi;
 
     # install binaries
     if [ "$xml2_build_install" == "yes" ] && [ -f "${xml2_build_path}/.libs/libxml2.so" ]; then
+      notify "startRoutine" "lib:xml2:build:install";
       sudo make uninstall; sudo make install;
       echo "system library: $(whereis libxml2.so)";
       echo "built library: ${global_build_usrprefix}/lib/libxml2.so";
       xml2_ldconfig_test_cmd="ldconfig -p | grep libxml2.so; ldconfig -v | grep libxml2.so";
       echo "list libraries: ${xml2_ldconfig_test_cmd}"; ${xml2_ldconfig_test_cmd};
+      notify "stopRoutine" "lib:xml2:build:install";
+    else
+      notify "skipRoutine" "lib:xml2:build:install";
     fi;
 
     # test binaries
     if [ "$xml2_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/xml2-config" ]; then
+      notify "startRoutine" "lib:xml2:build:test";
       xml2_binary_test_cmd="xml2-config --libs --cflags --modules --version";
       echo "test system binary: /usr/bin/${xml2_binary_test_cmd}"; /usr/bin/${xml2_binary_test_cmd};
       echo "test built binary: ${global_build_usrprefix}/bin/${xml2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${xml2_binary_test_cmd};
+      notify "stopRoutine" "lib:xml2:build:test";
+    else
+      notify "skipRoutine" "lib:xml2:build:test";
     fi;
+
+    notify "stopSubTask" "lib:xml2:build";
+  else
+    notify "skipSubTask" "lib:xml2:build";
   fi;
 
 }
