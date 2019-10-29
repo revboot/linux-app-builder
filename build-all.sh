@@ -224,6 +224,7 @@ nginx_build_flag="yes";
 nginx_build_cleanup="no";
 nginx_build_make="yes";
 nginx_build_install="yes";
+nginx_build_install_etc="system"; #system,build,no
 nginx_build_test="yes";
 nginx_build_version="1.16.1";
 nginx_build_url="https://nginx.org/download/nginx-${nginx_build_version}.tar.gz";
@@ -1854,6 +1855,18 @@ if [ "$global_build_flag" == "yes" ]; then
       mkdir -p "${global_build_varprefix}/lib/nginx";
       echo "system binary: $(whereis nginx)";
       echo "built binary: ${global_build_usrprefix}/sbin/nginx";
+    fi;
+    # install config
+    if [ "$nginx_build_install_etc" == "system" ]; then
+      if [ -d "${global_build_varprefix}/etc/nginx" ]; then
+        rm -Rf "${global_build_varprefix}/etc/nginx";
+      elif [ -L "${global_build_varprefix}/etc/nginx" ]; then
+        rm -f "${global_build_varprefix}/etc/nginx";
+      fi;
+      ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
+      rm -f "${global_build_varprefix}/etc/nginx/*.default";
+    elif [ "$nginx_build_install_etc" == "build" ]; then
+      cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
     fi;
     # test binaries
     if [ "$nginx_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
