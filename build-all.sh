@@ -446,11 +446,11 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$zlib_build_install" == "yes" ] && [ -f "${zlib_build_path}/libz.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       echo "system library: $(whereis libz.so)";
       echo "built library: ${global_build_usrprefix}/lib/libz.so";
       zlib_ldconfig_test_cmd="ldconfig -p | grep libz.so; ldconfig -v | grep libz.so";
-      echo "list libraries: ${zlib_ldconfig_test_cmd}" && ${zlib_ldconfig_test_cmd};
+      echo "list libraries: ${zlib_ldconfig_test_cmd}"; ${zlib_ldconfig_test_cmd};
     fi;
   fi;
 
@@ -545,17 +545,17 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$pcre_build_install" == "yes" ] && [ -f "${pcre_build_path}/.libs/libpcre.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       echo "system library: ${pcre_link_cmd}$(whereis libpcre.so)";
       echo "built library: ${global_build_usrprefix}/lib/libpcre.so";
       pcre_ldconfig_test_cmd="ldconfig -p | grep libpcre.so; ldconfig -v | grep libpcre.so";
-      echo "list libraries: ${pcre_ldconfig_test_cmd}" && ${pcre_ldconfig_test_cmd};
+      echo "list libraries: ${pcre_ldconfig_test_cmd}"; ${pcre_ldconfig_test_cmd};
     fi;
     # test binaries
     if [ "$pcre_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/pcre-config" ]; then
       pcre_binary_test_cmd="pcre-config --version --libs --cflags";
-      echo "test system binary: /usr/bin/${pcre_binary_test_cmd}" && /usr/bin/$pcre_binary_test_cmd;
-      echo "test built binary: ${global_build_usrprefix}/bin/${pcre_binary_test_cmd}" && ${global_build_usrprefix}/bin/${pcre_binary_test_cmd};
+      echo "test system binary: /usr/bin/${pcre_binary_test_cmd}"; /usr/bin/$pcre_binary_test_cmd;
+      echo "test built binary: ${global_build_usrprefix}/bin/${pcre_binary_test_cmd}"; ${global_build_usrprefix}/bin/${pcre_binary_test_cmd};
     fi;
   fi;
 
@@ -683,17 +683,17 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$openssl_build_install" == "yes" ] && [ -f "${openssl_build_path}/libssl.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       echo "system library: $(whereis libssl.so)";
       echo "built library: ${global_build_usrprefix}/lib/libssl.so";
       openssl_ldconfig_test_cmd="ldconfig -p | grep libssl.so; ldconfig -v | grep libssl.so";
-      echo "list libraries: ${openssl_ldconfig_test_cmd}" && ${openssl_ldconfig_test_cmd};
+      echo "list libraries: ${openssl_ldconfig_test_cmd}"; ${openssl_ldconfig_test_cmd};
     fi;
     # test binaries
     if [ "$openssl_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/openssl" ]; then
       openssl_binary_test_cmd="openssl version -f";
-      echo "test system binary: /usr/bin/${openssl_binary_test_cmd}" && /usr/bin/$openssl_binary_test_cmd;
-      echo "test built binary: ${global_build_usrprefix}/bin/${openssl_binary_test_cmd}" && ${global_build_usrprefix}/bin/${openssl_binary_test_cmd};
+      echo "test system binary: /usr/bin/${openssl_binary_test_cmd}"; /usr/bin/$openssl_binary_test_cmd;
+      echo "test built binary: ${global_build_usrprefix}/bin/${openssl_binary_test_cmd}"; ${global_build_usrprefix}/bin/${openssl_binary_test_cmd};
     fi;
   fi;
 
@@ -805,17 +805,17 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$gd2_build_install" == "yes" ] && [ -f "${gd2_build_path}/src/.libs/libgd.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       echo "system library: $(whereis libgd.so)";
       echo "built library: ${global_build_usrprefix}/lib/libgd.so";
       gd2_ldconfig_test_cmd="ldconfig -p | grep libgd.so; ldconfig -v | grep libgd.so";
-      echo "list libraries: ${gd2_ldconfig_test_cmd}" && ${gd2_ldconfig_test_cmd};
+      echo "list libraries: ${gd2_ldconfig_test_cmd}"; ${gd2_ldconfig_test_cmd};
     fi;
     # test binaries
     if [ "$gd2_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/gdlib-config" ]; then
       gd2_binary_test_cmd="gdlib-config --version --libs --cflags --ldflags --features";
-      echo "test system binary: /usr/bin/${gd2_binary_test_cmd}" && /usr/bin/${gd2_binary_test_cmd};
-      echo "test built binary: ${global_build_usrprefix}/bin/${gd2_binary_test_cmd}" && ${global_build_usrprefix}/bin/${gd2_binary_test_cmd};
+      echo "test system binary: /usr/bin/${gd2_binary_test_cmd}"; /usr/bin/${gd2_binary_test_cmd};
+      echo "test built binary: ${global_build_usrprefix}/bin/${gd2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${gd2_binary_test_cmd};
     fi;
   fi;
 
@@ -1039,17 +1039,17 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$xml2_build_install" == "yes" ] && [ -f "${xml2_build_path}/.libs/libxml2.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       echo "system library: $(whereis libxml2.so)";
       echo "built library: ${global_build_usrprefix}/lib/libxml2.so";
       xml2_ldconfig_test_cmd="ldconfig -p | grep libxml2.so; ldconfig -v | grep libxml2.so";
-      echo "list libraries: ${xml2_ldconfig_test_cmd}" && ${xml2_ldconfig_test_cmd};
+      echo "list libraries: ${xml2_ldconfig_test_cmd}"; ${xml2_ldconfig_test_cmd};
     fi;
     # test binaries
     if [ "$xml2_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/xml2-config" ]; then
       xml2_binary_test_cmd="xml2-config --libs --cflags --modules --version";
-      echo "test system binary: /usr/bin/${xml2_binary_test_cmd}" && /usr/bin/${xml2_binary_test_cmd};
-      echo "test built binary: ${global_build_usrprefix}/bin/${xml2_binary_test_cmd}" && ${global_build_usrprefix}/bin/${xml2_binary_test_cmd};
+      echo "test system binary: /usr/bin/${xml2_binary_test_cmd}"; /usr/bin/${xml2_binary_test_cmd};
+      echo "test built binary: ${global_build_usrprefix}/bin/${xml2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${xml2_binary_test_cmd};
     fi;
   fi;
 
@@ -1124,14 +1124,14 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$xslt_build_install" == "yes" ] && [ -f "${xslt_build_path}/libxslt/.libs/libxslt.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
       cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
       chmod +x "${global_build_usrprefix}/bin/xslt-config";
       echo "system library: $(whereis libxslt.so)";
       echo "built library: ${global_build_usrprefix}/lib/libxslt.so";
       xslt_ldconfig_test_cmd="ldconfig -p | grep libxslt.so; ldconfig -v | grep libxslt.so";
-      echo "list libraries: ${xslt_ldconfig_test_cmd}" && ${xslt_ldconfig_test_cmd};
+      echo "list libraries: ${xslt_ldconfig_test_cmd}"; ${xslt_ldconfig_test_cmd};
     fi;
     # test binaries
     if [ "$xslt_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/xslt-config" ]; then
@@ -1192,7 +1192,7 @@ if [ "$global_build_flag" == "yes" ]; then
     fi;
     # install binaries
     if [ "$geoip_build_install" == "yes" ] && [ -f "${geoip_build_path}/libGeoIP/.libs/libGeoIP.so" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
       sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
@@ -1200,7 +1200,7 @@ if [ "$global_build_flag" == "yes" ]; then
       echo "system library: $(whereis libGeoIP.so)";
       echo "built library: ${global_build_usrprefix}/lib/libGeoIP.so";
       geoip_ldconfig_test_cmd="ldconfig -p | grep libGeoIP.so; ldconfig -v | grep libGeoIP.so";
-      echo "list libraries: ${geoip_ldconfig_test_cmd}" && ${geoip_ldconfig_test_cmd};
+      echo "list libraries: ${geoip_ldconfig_test_cmd}"; ${geoip_ldconfig_test_cmd};
     fi;
   fi;
 
@@ -1843,14 +1843,14 @@ if [ "$global_build_flag" == "yes" ]; then
       echo "${nginx_build_cmd_full}";
       eval $nginx_build_cmd_full && make -j1;
       #eval $(printf "./configure %s %s ${nginx_build_cmd_full}" '--with-cc-opt="${nginx_build_arg_compiler_cc}"' '--with-ld-opt="${nginx_build_arg_compiler_ld}"');
-      echo "system library: ldd /usr/sbin/nginx" && ldd /usr/sbin/nginx;
-      echo "system library: ldd ${nginx_build_path}/objs/nginx" && ldd ${nginx_build_path}/objs/nginx;
-      echo "env LD_DEBUG=statistics /usr/sbin/nginx -v" && env LD_DEBUG=statistics /usr/sbin/nginx -v;
-      echo "env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v" && env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v;
+      echo "system library: ldd /usr/sbin/nginx"; ldd /usr/sbin/nginx;
+      echo "system library: ldd ${nginx_build_path}/objs/nginx"; ldd ${nginx_build_path}/objs/nginx;
+      echo "env LD_DEBUG=statistics /usr/sbin/nginx -v"; env LD_DEBUG=statistics /usr/sbin/nginx -v;
+      echo "env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v"; env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v;
     fi;
     # install binaries
     if [ "$nginx_build_install" == "yes" ] && [ -f "${nginx_build_path}/objs/nginx" ]; then
-      make uninstall && make install;
+      make uninstall; make install;
       mkdir -p "${global_build_varprefix}/lib/nginx";
       echo "system binary: $(whereis nginx)";
       echo "built binary: ${global_build_usrprefix}/sbin/nginx";
@@ -1858,8 +1858,8 @@ if [ "$global_build_flag" == "yes" ]; then
     # test binaries
     if [ "$nginx_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
       nginx_test_cmd="nginx -v -V -t";
-      echo "test system binary: /usr/sbin/${nginx_test_cmd}" && /usr/sbin/${nginx_test_cmd};
-      echo "test built binary: ${global_build_usrprefix}/sbin/${nginx_test_cmd}" && ${global_build_usrprefix}/sbin/${nginx_test_cmd};
+      echo "test system binary: /usr/sbin/${nginx_test_cmd}"; /usr/sbin/${nginx_test_cmd};
+      echo "test built binary: ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; ${global_build_usrprefix}/sbin/${nginx_test_cmd};
     fi;
   fi;
 
