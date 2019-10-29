@@ -14,6 +14,7 @@ global_build_varprefix="/var/local";
 dev_apt_flag="yes";
 
 # - zlib (version 1.1.3 — 1.2.x)
+zlib_task="yes";
 zlib_apt_flag="yes";
 zlib_build_flag="yes";
 zlib_build_cleanup="no";
@@ -26,6 +27,7 @@ zlib_build_arg_arch="";
 zlib_build_arg_options="";
 
 # - pcre (version 4.4 — 8.x)
+pcre_task="yes";
 pcre_apt_flag="yes";
 pcre_build_flag="yes";
 pcre_build_cleanup="no";
@@ -45,6 +47,7 @@ pcre_build_arg_tool_pcregreplib="libz";
 pcre_build_arg_tool_pcretestlib="libreadline";
 
 # - openssl (version 1.0.2 - 1.1.x)
+openssl_task="yes";
 openssl_apt_flag="yes";
 openssl_build_flag="yes";
 openssl_build_cleanup="no";
@@ -71,6 +74,7 @@ openssl_build_arg_cypher_idea="yes";
 openssl_build_arg_cypher_weak="no";
 
 # - gd2 (version 1.11.6 - 2.2.x)
+gd2_task="yes";
 gd2_apt_flag="yes";
 gd2_build_flag="yes";
 gd2_build_cleanup="no";
@@ -91,6 +95,7 @@ gd2_build_arg_libraries_fontconfig="system"; #system,custom,no
 gd2_build_arg_options="";
 
 # - xml2 (version 2.6.27 - 2.9.x)
+xml2_task="yes";
 xml2_apt_flag="yes";
 xml2_build_flag="yes";
 xml2_build_cleanup="no";
@@ -135,6 +140,7 @@ xml2_build_arg_proto_http="yes";
 xml2_build_arg_tool_history="yes";
 
 # - xslt (version 1.0.0 - 1.1.x)
+xslt_task="yes";
 xslt_apt_flag="yes";
 xslt_build_flag="yes";
 xslt_build_cleanup="no";
@@ -150,6 +156,7 @@ xslt_build_arg_main_crypto="yes";
 xslt_build_arg_main_plugins="yes";
 
 # - geoip (version 1.0.0 - 1.6.x)
+geoip_task="yes";
 geoip_apt_flag="yes";
 geoip_build_flag="yes";
 geoip_build_cleanup="no";
@@ -161,6 +168,7 @@ geoip_build_arg_arch="linux-x86_64";
 geoip_build_arg_options="";
 
 # - nginx (version 1.4.7, 1.6.3, 1.8.1, 1.10.3, 1.12.2, 1.14.2, 1.16.1 (stable), 1.17.4)
+nginx_task="yes";
 nginx_build_flag="yes";
 nginx_build_cleanup="no";
 nginx_build_make="yes";
