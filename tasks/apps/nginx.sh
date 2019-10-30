@@ -3,16 +3,28 @@
 # Task: Application: nginx
 #
 
+# task:app:nginx:build:cleanup
+function task_app_nginx_build_cleanup() {
+  # remove source files
+  if [ -d "$nginx_build_path" ]; then
+    sudo rm -Rf "${nginx_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$nginx_build_tar" ]; then
+    sudo rm -f "${nginx_build_tar}"*;
+  fi;
+}
+
 function task_app_nginx() {
 
   # build subtask
   if [ "$nginx_build_flag" == "yes" ]; then
     notify "startSubTask" "app:nginx:build";
 
-    # cleanup code and tar
+    # run task:app:nginx:build:cleanup
     if [ "$nginx_build_cleanup" == "yes" ]; then
       notify "startRoutine" "app:nginx:build:cleanup";
-      sudo rm -Rf ${nginx_build_path}*;
+      task_app_nginx_build_cleanup;
       notify "stopRoutine" "app:nginx:build:cleanup";
     else
       notify "skipRoutine" "app:nginx:build:cleanup";

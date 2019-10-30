@@ -3,16 +3,28 @@
 # Task: Library: zlib
 #
 
+# task:lib:zlib:build:cleanup
+function task_lib_zlib_build_cleanup() {
+  # remove source files
+  if [ -d "$zlib_build_path" ]; then
+    sudo rm -Rf "${zlib_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$zlib_build_tar" ]; then
+    sudo rm -f "${zlib_build_tar}"*;
+  fi;
+}
+
 function task_lib_zlib() {
 
   # build subtask
   if [ "$zlib_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:zlib:build";
 
-    # cleanup code and tar
+    # run task:lib:zlib:build:cleanup
     if [ "$zlib_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:zlib:build:cleanup";
-      sudo rm -Rf ${zlib_build_path}*;
+      task_lib_zlib_build_cleanup;
       notify "stopRoutine" "lib:zlib:build:cleanup";
     else
       notify "skipRoutine" "lib:zlib:build:cleanup";

@@ -3,16 +3,28 @@
 # Task: Library: xml2
 #
 
+# task:lib:xml2:build:cleanup
+function task_lib_xml2_build_cleanup() {
+  # remove source files
+  if [ -d "$xml2_build_path" ]; then
+    sudo rm -Rf "${xml2_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$xml2_build_tar" ]; then
+    sudo rm -f "${xml2_build_tar}"*;
+  fi;
+}
+
 function task_lib_xml2() {
 
   # build subtask
   if [ "$xml2_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:xml2:build";
 
-    # cleanup code and tar
+    # run task:lib:xml2:build:cleanup
     if [ "$xml2_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:xml2:build:cleanup";
-      sudo rm -Rf ${xml2_build_path}*;
+      task_lib_xml2_build_cleanup;
       notify "stopRoutine" "lib:xml2:build:cleanup";
     else
       notify "skipRoutine" "lib:xml2:build:cleanup";

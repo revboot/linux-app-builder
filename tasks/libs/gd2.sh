@@ -3,16 +3,28 @@
 # Task: Library: gd2
 #
 
+# task:lib:gd2:build:cleanup
+function task_lib_gd2_build_cleanup() {
+  # remove source files
+  if [ -d "$gd2_build_path" ]; then
+    sudo rm -Rf "${gd2_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$gd2_build_tar" ]; then
+    sudo rm -f "${gd2_build_tar}"*;
+  fi;
+}
+
 function task_lib_gd2() {
 
   # build subtask
   if [ "$gd2_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:gd2:build";
 
-    # cleanup code and tar
+    # run task:lib:gd2:build:cleanup
     if [ "$gd2_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:gd2:build:cleanup";
-      sudo rm -Rf ${gd2_build_path}*;
+      task_lib_gd2_build_cleanup;
       notify "stopRoutine" "lib:gd2:build:cleanup";
     else
       notify "skipRoutine" "lib:gd2:build:cleanup";

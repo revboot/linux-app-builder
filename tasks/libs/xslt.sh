@@ -3,16 +3,28 @@
 # Task: Library: xslt
 #
 
+# task:lib:xslt:build:cleanup
+function task_lib_xslt_build_cleanup() {
+  # remove source files
+  if [ -d "$xslt_build_path" ]; then
+    sudo rm -Rf "${xslt_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$xslt_build_tar" ]; then
+    sudo rm -f "${xslt_build_tar}"*;
+  fi;
+}
+
 function task_lib_xslt() {
 
   # build subtask
   if [ "$xslt_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:xslt:build";
 
-    # cleanup code and tar
+    # run task:lib:xslt:build:cleanup
     if [ "$xslt_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:xslt:build:cleanup";
-      sudo rm -Rf ${xslt_build_path}*;
+      task_lib_xslt_build_cleanup;
       notify "stopRoutine" "lib:xslt:build:cleanup";
     else
       notify "skipRoutine" "lib:xslt:build:cleanup";

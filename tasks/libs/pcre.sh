@@ -3,16 +3,28 @@
 # Task: Library: pcre
 #
 
+# task:lib:pcre:build:cleanup
+function task_lib_pcre_build_cleanup() {
+  # remove source files
+  if [ -d "$pcre_build_path" ]; then
+    sudo rm -Rf "${pcre_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$pcre_build_tar" ]; then
+    sudo rm -f "${pcre_build_tar}"*;
+  fi;
+}
+
 function task_lib_pcre() {
 
   # build subtask
   if [ "$pcre_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:pcre:build";
 
-    # cleanup code and tar
+    # run task:lib:pcre:build:cleanup
     if [ "$pcre_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:pcre:build:cleanup";
-      sudo rm -Rf ${pcre_build_path}*;
+      task_lib_pcre_build_cleanup;
       notify "stopRoutine" "lib:pcre:build:cleanup";
     else
       notify "skipRoutine" "lib:pcre:build:cleanup";

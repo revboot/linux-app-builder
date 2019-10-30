@@ -3,16 +3,28 @@
 # Task: Library: openssl
 #
 
+# task:lib:openssl:build:cleanup
+function task_lib_openssl_build_cleanup() {
+  # remove source files
+  if [ -d "$openssl_build_path" ]; then
+    sudo rm -Rf "${openssl_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$openssl_build_tar" ]; then
+    sudo rm -f "${openssl_build_tar}"*;
+  fi;
+}
+
 function task_lib_openssl() {
 
   # build subtask
   if [ "$openssl_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:openssl:build";
 
-    # cleanup code and tar
+    # run task:lib:openssl:build:cleanup
     if [ "$openssl_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:openssl:build:cleanup";
-      sudo rm -Rf ${openssl_build_path}*;
+      task_lib_openssl_build_cleanup;
       notify "stopRoutine" "lib:openssl:build:cleanup";
     else
       notify "skipRoutine" "lib:openssl:build:cleanup";

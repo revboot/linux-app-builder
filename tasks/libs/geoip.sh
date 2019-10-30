@@ -3,16 +3,28 @@
 # Task: Library: geoip
 #
 
+# task:lib:geoip:build:cleanup
+function task_lib_geoip_build_cleanup() {
+  # remove source files
+  if [ -d "$geoip_build_path" ]; then
+    sudo rm -Rf "${geoip_build_path}"*;
+  fi;
+  # remove source tar
+  if [ -f "$geoip_build_tar" ]; then
+    sudo rm -f "${geoip_build_tar}"*;
+  fi;
+}
+
 function task_lib_geoip() {
 
   # build subtask
   if [ "$geoip_build_flag" == "yes" ]; then
     notify "startSubTask" "lib:geoip:build";
 
-    # cleanup code and tar
+    # run task:lib:geoip:build:cleanup
     if [ "$geoip_build_cleanup" == "yes" ]; then
       notify "startRoutine" "lib:geoip:build:cleanup";
-      sudo rm -Rf ${geoip_build_path}*;
+      task_lib_geoip_build_cleanup;
       notify "stopRoutine" "lib:geoip:build:cleanup";
     else
       notify "skipRoutine" "lib:geoip:build:cleanup";
