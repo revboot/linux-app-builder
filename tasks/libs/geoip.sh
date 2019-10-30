@@ -15,6 +15,19 @@ function task_lib_geoip_build_cleanup() {
   fi;
 }
 
+# task:lib:geoip:build:download
+function task_lib_geoip_build_download() {
+  if [ ! -d "$geoip_build_path" ]; then
+    # download and extract source files from tar
+    if [ ! -f "$geoip_build_tar" ]; then
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${geoip_build_url}\" && tar xzf \"${geoip_build_tar}\"";
+    # extract source files from tar
+    else
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${geoip_build_tar}\"";
+    fi;
+  fi;
+}
+
 function task_lib_geoip() {
 
   # build subtask
@@ -30,14 +43,10 @@ function task_lib_geoip() {
       notify "skipRoutine" "lib:geoip:build:cleanup";
     fi;
 
-    # extract code from tar
+    # run task:lib:geoip:build:download
     if [ ! -d "$geoip_build_path" ]; then
       notify "startRoutine" "lib:geoip:build:download";
-      if [ ! -f "${geoip_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${geoip_build_url} && tar xzf ${geoip_build_tar}";
-      else
-        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${geoip_build_tar}";
-      fi;
+      task_lib_geoip_build_download;
       notify "stopRoutine" "lib:geoip:build:download";
     else
       notify "skipRoutine" "lib:geoip:build:download";

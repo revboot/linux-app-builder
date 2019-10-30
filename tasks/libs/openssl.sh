@@ -15,6 +15,19 @@ function task_lib_openssl_build_cleanup() {
   fi;
 }
 
+# task:lib:openssl:build:download
+function task_lib_openssl_build_download() {
+  if [ ! -d "$openssl_build_path" ]; then
+    # download and extract source files from tar
+    if [ ! -f "$openssl_build_tar" ]; then
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${openssl_build_url}\" && tar xzf \"${openssl_build_tar}\"";
+    # extract source files from tar
+    else
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${openssl_build_tar}\"";
+    fi;
+  fi;
+}
+
 function task_lib_openssl() {
 
   # build subtask
@@ -30,14 +43,10 @@ function task_lib_openssl() {
       notify "skipRoutine" "lib:openssl:build:cleanup";
     fi;
 
-    # extract code from tar
+    # run task:lib:openssl:build:download
     if [ ! -d "$openssl_build_path" ]; then
       notify "startRoutine" "lib:openssl:build:download";
-      if [ ! -f "${openssl_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${openssl_build_url} && tar xzf ${openssl_build_tar}";
-      else
-        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${openssl_build_tar}";
-      fi;
+      task_lib_openssl_build_download;
       notify "stopRoutine" "lib:openssl:build:download";
     else
       notify "skipRoutine" "lib:openssl:build:download";

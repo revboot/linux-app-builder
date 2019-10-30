@@ -15,6 +15,19 @@ function task_app_nginx_build_cleanup() {
   fi;
 }
 
+# task:app:nginx:build:download
+function task_app_nginx_build_download() {
+  if [ ! -d "$nginx_build_path" ]; then
+    # download and extract source files from tar
+    if [ ! -f "$nginx_build_tar" ]; then
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${nginx_build_url}\" && tar xzf \"${nginx_build_tar}\"";
+    # extract source files from tar
+    else
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${nginx_build_tar}\"";
+    fi;
+  fi;
+}
+
 function task_app_nginx() {
 
   # build subtask
@@ -30,14 +43,10 @@ function task_app_nginx() {
       notify "skipRoutine" "app:nginx:build:cleanup";
     fi;
 
-    # extract code from tar
+    # run task:app:nginx:build:download
     if [ ! -d "$nginx_build_path" ]; then
       notify "startRoutine" "app:nginx:build:download";
-      if [ ! -f "${nginx_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${nginx_build_url} && tar xzf ${nginx_build_tar}";
-      else
-        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${nginx_build_tar}";
-      fi;
+      task_app_nginx_build_download;
       notify "stopRoutine" "app:nginx:build:download";
     else
       notify "skipRoutine" "app:nginx:build:download";

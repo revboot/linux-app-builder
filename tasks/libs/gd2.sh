@@ -15,6 +15,19 @@ function task_lib_gd2_build_cleanup() {
   fi;
 }
 
+# task:lib:gd2:build:download
+function task_lib_gd2_build_download() {
+  if [ ! -d "$gd2_build_path" ]; then
+    # download and extract source files from tar
+    if [ ! -f "$gd2_build_tar" ]; then
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${gd2_build_url}\" && tar xzf \"${gd2_build_tar}\"";
+    # extract source files from tar
+    else
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${gd2_build_tar}\"";
+    fi;
+  fi;
+}
+
 function task_lib_gd2() {
 
   # build subtask
@@ -30,14 +43,10 @@ function task_lib_gd2() {
       notify "skipRoutine" "lib:gd2:build:cleanup";
     fi;
 
-    # extract code from tar
+    # run task:lib:gd2:build:download
     if [ ! -d "$gd2_build_path" ]; then
       notify "startRoutine" "lib:gd2:build:download";
-      if [ ! -f "${gd2_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${gd2_build_url} && tar xzf ${gd2_build_tar}";
-      else
-        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${gd2_build_tar}";
-      fi;
+      task_lib_gd2_build_download;
       notify "stopRoutine" "lib:gd2:build:download";
     else
       notify "skipRoutine" "lib:gd2:build:download";

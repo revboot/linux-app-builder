@@ -15,6 +15,19 @@ function task_lib_xml2_build_cleanup() {
   fi;
 }
 
+# task:lib:xml2:build:download
+function task_lib_xml2_build_download() {
+  if [ ! -d "$xml2_build_path" ]; then
+    # download and extract source files from tar
+    if [ ! -f "$xml2_build_tar" ]; then
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${xml2_build_url}\" && tar xzf \"${xml2_build_tar}\"";
+    # extract source files from tar
+    else
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${xml2_build_tar}\"";
+    fi;
+  fi;
+}
+
 function task_lib_xml2() {
 
   # build subtask
@@ -30,14 +43,10 @@ function task_lib_xml2() {
       notify "skipRoutine" "lib:xml2:build:cleanup";
     fi;
 
-    # extract code from tar
+    # run task:lib:xml2:build:download
     if [ ! -d "$xml2_build_path" ]; then
       notify "startRoutine" "lib:xml2:build:download";
-      if [ ! -f "${xml2_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${xml2_build_url} && tar xzf ${xml2_build_tar}";
-      else
-        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${xml2_build_tar}";
-      fi;
+      task_lib_xml2_build_download;
       notify "stopRoutine" "lib:xml2:build:download";
     else
       notify "skipRoutine" "lib:xml2:build:download";

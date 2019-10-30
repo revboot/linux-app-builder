@@ -15,6 +15,19 @@ function task_lib_zlib_build_cleanup() {
   fi;
 }
 
+# task:lib:zlib:build:download
+function task_lib_zlib_build_download() {
+  if [ ! -d "$zlib_build_path" ]; then
+    # download and extract source files from tar
+    if [ ! -f "$zlib_build_tar" ]; then
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${zlib_build_url}\" && tar xzf \"${zlib_build_tar}\"";
+    # extract source files from tar
+    else
+      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${zlib_build_tar}\"";
+    fi;
+  fi;
+}
+
 function task_lib_zlib() {
 
   # build subtask
@@ -30,14 +43,10 @@ function task_lib_zlib() {
       notify "skipRoutine" "lib:zlib:build:cleanup";
     fi;
 
-    # extract code from tar
+    # run task:lib:zlib:build:download
     if [ ! -d "$zlib_build_path" ]; then
       notify "startRoutine" "lib:zlib:build:download";
-      if [ ! -f "${zlib_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${zlib_build_url} && tar xzf ${zlib_build_tar}";
-      else
-        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${zlib_build_tar}";
-      fi;
+      task_lib_zlib_build_download;
       notify "stopRoutine" "lib:zlib:build:download";
     else
       notify "skipRoutine" "lib:zlib:build:download";
