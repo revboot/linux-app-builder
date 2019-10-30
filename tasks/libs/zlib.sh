@@ -20,9 +20,15 @@ function task_lib_zlib() {
 
     # extract code from tar
     if [ ! -d "$zlib_build_path" ]; then
+      notify "startRoutine" "lib:zlib:build:download";
       if [ ! -f "${zlib_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${zlib_build_url} && tar xzf ${zlib_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${zlib_build_url} && tar xzf ${zlib_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${zlib_build_tar}";
       fi;
+      notify "stopRoutine" "lib:zlib:build:download";
+    else
+      notify "skipRoutine" "lib:zlib:build:download";
     fi;
 
     cd $zlib_build_path;

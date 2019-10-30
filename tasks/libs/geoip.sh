@@ -20,9 +20,15 @@ function task_lib_geoip() {
 
     # extract code from tar
     if [ ! -d "$geoip_build_path" ]; then
+      notify "startRoutine" "lib:geoip:build:download";
       if [ ! -f "${geoip_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${geoip_build_url} && tar xzf ${geoip_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${geoip_build_url} && tar xzf ${geoip_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${geoip_build_tar}";
       fi;
+      notify "stopRoutine" "lib:geoip:build:download";
+    else
+      notify "skipRoutine" "lib:geoip:build:download";
     fi;
 
     cd $geoip_build_path;

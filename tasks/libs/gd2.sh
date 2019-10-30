@@ -20,9 +20,15 @@ function task_lib_gd2() {
 
     # extract code from tar
     if [ ! -d "$gd2_build_path" ]; then
+      notify "startRoutine" "lib:gd2:build:download";
       if [ ! -f "${gd2_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${gd2_build_url} && tar xzf ${gd2_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${gd2_build_url} && tar xzf ${gd2_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${gd2_build_tar}";
       fi;
+      notify "stopRoutine" "lib:gd2:build:download";
+    else
+      notify "skipRoutine" "lib:gd2:build:download";
     fi;
 
     cd $gd2_build_path;

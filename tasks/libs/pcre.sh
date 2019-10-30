@@ -20,9 +20,15 @@ function task_lib_pcre() {
 
     # extract code from tar
     if [ ! -d "$pcre_build_path" ]; then
+      notify "startRoutine" "lib:pcre:build:download";
       if [ ! -f "${pcre_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${pcre_build_url} && tar xzf ${pcre_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${pcre_build_url} && tar xzf ${pcre_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${pcre_build_tar}";
       fi;
+      notify "stopRoutine" "lib:pcre:build:download";
+    else
+      notify "skipRoutine" "lib:pcre:build:download";
     fi;
 
     cd $pcre_build_path;

@@ -20,9 +20,15 @@ function task_app_nginx() {
 
     # extract code from tar
     if [ ! -d "$nginx_build_path" ]; then
+      notify "startRoutine" "app:nginx:build:download";
       if [ ! -f "${nginx_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${nginx_build_url} && tar xzf ${nginx_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${nginx_build_url} && tar xzf ${nginx_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${nginx_build_tar}";
       fi;
+      notify "stopRoutine" "app:nginx:build:download";
+    else
+      notify "skipRoutine" "app:nginx:build:download";
     fi;
 
     cd $nginx_build_path;

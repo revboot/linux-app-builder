@@ -20,9 +20,15 @@ function task_lib_xml2() {
 
     # extract code from tar
     if [ ! -d "$xml2_build_path" ]; then
+      notify "startRoutine" "lib:xml2:build:download";
       if [ ! -f "${xml2_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${xml2_build_url} && tar xzf ${xml2_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${xml2_build_url} && tar xzf ${xml2_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${xml2_build_tar}";
       fi;
+      notify "stopRoutine" "lib:xml2:build:download";
+    else
+      notify "skipRoutine" "lib:xml2:build:download";
     fi;
 
     cd $xml2_build_path;

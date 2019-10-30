@@ -20,9 +20,15 @@ function task_lib_xslt() {
 
     # extract code from tar
     if [ ! -d "$xslt_build_path" ]; then
+      notify "startRoutine" "lib:xslt:build:download";
       if [ ! -f "${xslt_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${xslt_build_url} && tar xzf ${xslt_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${xslt_build_url} && tar xzf ${xslt_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${xslt_build_tar}";
       fi;
+      notify "stopRoutine" "lib:xslt:build:download";
+    else
+      notify "skipRoutine" "lib:xslt:build:download";
     fi;
 
     cd $xslt_build_path;

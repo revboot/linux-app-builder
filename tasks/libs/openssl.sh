@@ -20,9 +20,15 @@ function task_lib_openssl() {
 
     # extract code from tar
     if [ ! -d "$openssl_build_path" ]; then
+      notify "startRoutine" "lib:openssl:build:download";
       if [ ! -f "${openssl_build_tar}" ]; then
-        sudo bash -c "cd ${global_build_usrprefix}/src; wget ${openssl_build_url} && tar xzf ${openssl_build_tar}";
+        sudo bash -c "cd ${global_build_usrprefix}/src && wget ${openssl_build_url} && tar xzf ${openssl_build_tar}";
+      else
+        sudo bash -c "cd ${global_build_usrprefix}/src && tar xzf ${openssl_build_tar}";
       fi;
+      notify "stopRoutine" "lib:openssl:build:download";
+    else
+      notify "skipRoutine" "lib:openssl:build:download";
     fi;
 
     cd $openssl_build_path;
