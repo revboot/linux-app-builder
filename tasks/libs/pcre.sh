@@ -104,7 +104,24 @@ function task_lib_pcre_build_make() {
     cd $pcre_build_path;
     sudo make clean;
     echo "${pcre_build_cmd_full}";
-    sudo $pcre_build_cmd_full && sudo make;
+    sudo $pcre_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:pcre:build:install
+function task_lib_pcre_build_install() {
+  if [ -f "$pcre_build_path/.libs/libpcre.so" ]; then
+    # uninstall and install
+    cd $pcre_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # find binary
+    echo "system library: ${pcre_link_cmd}$(whereis libpcre.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libpcre.so";
+    # check ldconfig
+    pcre_ldconfig_test_cmd="ldconfig -p | grep libpcre.so; ldconfig -v | grep libpcre.so";
+    echo "list libraries: ${pcre_ldconfig_test_cmd}"; ${pcre_ldconfig_test_cmd};
   fi;
 }
 
@@ -132,8 +149,6 @@ function task_lib_pcre() {
       notify "skipRoutine" "lib:pcre:build:download";
     fi;
 
-    cd $pcre_build_path;
-
     # run task:lib:pcre:build:make
     if [ "$pcre_build_make" == "yes" ]; then
       notify "startRoutine" "lib:pcre:build:make";
@@ -143,14 +158,10 @@ function task_lib_pcre() {
       notify "skipRoutine" "lib:pcre:build:make";
     fi;
 
-    # install binaries
-    if [ "$pcre_build_install" == "yes" ] && [ -f "${pcre_build_path}/.libs/libpcre.so" ]; then
+    # run task:lib:pcre:build:install
+    if [ "$pcre_build_install" == "yes" ]; then
       notify "startRoutine" "lib:pcre:build:install";
-      sudo make uninstall; sudo make install;
-      echo "system library: ${pcre_link_cmd}$(whereis libpcre.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libpcre.so";
-      pcre_ldconfig_test_cmd="ldconfig -p | grep libpcre.so; ldconfig -v | grep libpcre.so";
-      echo "list libraries: ${pcre_ldconfig_test_cmd}"; ${pcre_ldconfig_test_cmd};
+      task_lib_pcre_build_install;
       notify "stopRoutine" "lib:pcre:build:install";
     else
       notify "skipRoutine" "lib:pcre:build:install";

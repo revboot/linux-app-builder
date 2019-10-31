@@ -58,7 +58,24 @@ function task_lib_zlib_build_make() {
     cd $zlib_build_path;
     sudo make clean;
     echo "${zlib_build_cmd_full}";
-    sudo $zlib_build_cmd_full && sudo make;
+    sudo $zlib_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:zlib:build:install
+function task_lib_zlib_build_install() {
+  if [ -f "$zlib_build_path/libz.so" ]; then
+    # uninstall and install
+    cd $zlib_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # find binary
+    echo "system library: $(whereis libz.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libz.so";
+    # check ldconfig
+    zlib_ldconfig_test_cmd="ldconfig -p | grep libz.so; ldconfig -v | grep libz.so";
+    echo "list libraries: ${zlib_ldconfig_test_cmd}"; ${zlib_ldconfig_test_cmd};
   fi;
 }
 
@@ -86,8 +103,6 @@ function task_lib_zlib() {
       notify "skipRoutine" "lib:zlib:build:download";
     fi;
 
-    cd $zlib_build_path;
-
     # run task:lib:zlib:build:make
     if [ "$zlib_build_make" == "yes" ]; then
       notify "startRoutine" "lib:zlib:build:make";
@@ -97,14 +112,10 @@ function task_lib_zlib() {
       notify "skipRoutine" "lib:zlib:build:make";
     fi;
 
-    # install binaries
-    if [ "$zlib_build_install" == "yes" ] && [ -f "${zlib_build_path}/libz.so" ]; then
+    # run task:lib:zlib:build:install
+    if [ "$zlib_build_install" == "yes" ]; then
       notify "startRoutine" "lib:zlib:build:install";
-      sudo make uninstall; sudo make install;
-      echo "system library: $(whereis libz.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libz.so";
-      zlib_ldconfig_test_cmd="ldconfig -p | grep libz.so; ldconfig -v | grep libz.so";
-      echo "list libraries: ${zlib_ldconfig_test_cmd}"; ${zlib_ldconfig_test_cmd};
+      task_lib_zlib_build_install;
       notify "stopRoutine" "lib:zlib:build:install";
     else
       notify "skipRoutine" "lib:zlib:build:install";

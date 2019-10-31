@@ -121,7 +121,24 @@ function task_lib_gd2_build_make() {
     cd $gd2_build_path;
     sudo make clean;
     echo "${gd2_build_cmd_full}";
-    sudo $gd2_build_cmd_full && sudo make;
+    sudo $gd2_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:gd2:build:install
+function task_lib_gd2_build_install() {
+  if [ -f "$gd2_build_path/src/.libs/libgd.so" ]; then
+    # uninstall and install
+    cd $gd2_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # find binary
+    echo "system library: $(whereis libgd.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libgd.so";
+    # check ldconfig
+    gd2_ldconfig_test_cmd="ldconfig -p | grep libgd.so; ldconfig -v | grep libgd.so";
+    echo "list libraries: ${gd2_ldconfig_test_cmd}"; ${gd2_ldconfig_test_cmd};
   fi;
 }
 
@@ -149,8 +166,6 @@ function task_lib_gd2() {
       notify "skipRoutine" "lib:gd2:build:download";
     fi;
 
-    cd $gd2_build_path;
-
     # run task:lib:gd2:build:make
     if [ "$gd2_build_make" == "yes" ]; then
       notify "startRoutine" "lib:gd2:build:make";
@@ -160,14 +175,10 @@ function task_lib_gd2() {
       notify "skipRoutine" "lib:gd2:build:make";
     fi;
 
-    # install binaries
-    if [ "$gd2_build_install" == "yes" ] && [ -f "${gd2_build_path}/src/.libs/libgd.so" ]; then
+    # run task:lib:gd2:build:install
+    if [ "$gd2_build_install" == "yes" ]; then
       notify "startRoutine" "lib:gd2:build:install";
-      sudo make uninstall; sudo make install;
-      echo "system library: $(whereis libgd.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libgd.so";
-      gd2_ldconfig_test_cmd="ldconfig -p | grep libgd.so; ldconfig -v | grep libgd.so";
-      echo "list libraries: ${gd2_ldconfig_test_cmd}"; ${gd2_ldconfig_test_cmd};
+      task_lib_gd2_build_install;
       notify "stopRoutine" "lib:gd2:build:install";
     else
       notify "skipRoutine" "lib:gd2:build:install";

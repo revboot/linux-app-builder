@@ -137,7 +137,24 @@ function task_lib_openssl_build_make() {
     cd $openssl_build_path;
     sudo make clean;
     echo "${openssl_build_cmd_full}";
-    sudo $openssl_build_cmd_full && sudo make;
+    sudo $openssl_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:openssl:build:install
+function task_lib_openssl_build_install() {
+  if [ -f "$openssl_build_path/libssl.so" ]; then
+    # uninstall and install
+    cd $openssl_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # find binary
+    echo "system library: $(whereis libssl.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libssl.so";
+    # check ldconfig
+    openssl_ldconfig_test_cmd="ldconfig -p | grep libssl.so; ldconfig -v | grep libssl.so";
+    echo "list libraries: ${openssl_ldconfig_test_cmd}"; ${openssl_ldconfig_test_cmd};
   fi;
 }
 
@@ -165,8 +182,6 @@ function task_lib_openssl() {
       notify "skipRoutine" "lib:openssl:build:download";
     fi;
 
-    cd $openssl_build_path;
-
     # run task:lib:openssl:build:make
     if [ "$openssl_build_make" == "yes" ]; then
       notify "startRoutine" "lib:openssl:build:make";
@@ -176,14 +191,10 @@ function task_lib_openssl() {
       notify "skipRoutine" "lib:openssl:build:make";
     fi;
 
-    # install binaries
-    if [ "$openssl_build_install" == "yes" ] && [ -f "${openssl_build_path}/libssl.so" ]; then
+    # run task:lib:openssl:build:install
+    if [ "$openssl_build_install" == "yes" ]; then
       notify "startRoutine" "lib:openssl:build:install";
-      sudo make uninstall; sudo make install;
-      echo "system library: $(whereis libssl.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libssl.so";
-      openssl_ldconfig_test_cmd="ldconfig -p | grep libssl.so; ldconfig -v | grep libssl.so";
-      echo "list libraries: ${openssl_ldconfig_test_cmd}"; ${openssl_ldconfig_test_cmd};
+      task_lib_openssl_build_install;
       notify "stopRoutine" "lib:openssl:build:install";
     else
       notify "skipRoutine" "lib:openssl:build:install";

@@ -233,7 +233,25 @@ function task_lib_xml2_build_make() {
     cd $xml2_build_path;
     sudo make clean;
     echo "${xml2_build_cmd_full}";
-    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xml2_build_cmd_full && sudo make;
+    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && \
+    sudo $xml2_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:xml2:build:install
+function task_lib_xml2_build_install() {
+  if [ -f "$xml2_build_path/.libs/libxml2.so" ]; then
+    # uninstall and install
+    cd $xml2_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # find binary
+    echo "system library: $(whereis libxml2.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libxml2.so";
+    # check ldconfig
+    xml2_ldconfig_test_cmd="ldconfig -p | grep libxml2.so; ldconfig -v | grep libxml2.so";
+    echo "list libraries: ${xml2_ldconfig_test_cmd}"; ${xml2_ldconfig_test_cmd};
   fi;
 }
 
@@ -261,8 +279,6 @@ function task_lib_xml2() {
       notify "skipRoutine" "lib:xml2:build:download";
     fi;
 
-    cd $xml2_build_path;
-
     # run task:lib:xml2:build:make
     if [ "$xml2_build_make" == "yes" ]; then
       notify "startRoutine" "lib:xml2:build:make";
@@ -272,14 +288,10 @@ function task_lib_xml2() {
       notify "skipRoutine" "lib:xml2:build:make";
     fi;
 
-    # install binaries
-    if [ "$xml2_build_install" == "yes" ] && [ -f "${xml2_build_path}/.libs/libxml2.so" ]; then
+    # run task:lib:xml2:build:install
+    if [ "$xml2_build_install" == "yes" ]; then
       notify "startRoutine" "lib:xml2:build:install";
-      sudo make uninstall; sudo make install;
-      echo "system library: $(whereis libxml2.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libxml2.so";
-      xml2_ldconfig_test_cmd="ldconfig -p | grep libxml2.so; ldconfig -v | grep libxml2.so";
-      echo "list libraries: ${xml2_ldconfig_test_cmd}"; ${xml2_ldconfig_test_cmd};
+      task_lib_xml2_build_install;
       notify "stopRoutine" "lib:xml2:build:install";
     else
       notify "skipRoutine" "lib:xml2:build:install";

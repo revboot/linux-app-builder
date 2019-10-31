@@ -653,12 +653,49 @@ function task_app_nginx_build_make() {
     cd $nginx_build_path;
     sudo make clean;
     echo "${nginx_build_cmd_full}";
-    sudo bash -c "eval $nginx_build_cmd_full" && sudo make -j1;
+    sudo bash -c "eval $nginx_build_cmd_full" && \
+    sudo make -j1;
     # check ldd and ld debug statistics
     echo "system library: ldd /usr/sbin/nginx"; ldd /usr/sbin/nginx;
     echo "system library: ldd ${nginx_build_path}/objs/nginx"; ldd ${nginx_build_path}/objs/nginx;
     echo "env LD_DEBUG=statistics /usr/sbin/nginx -v"; env LD_DEBUG=statistics /usr/sbin/nginx -v;
     echo "env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v"; env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v;
+  fi;
+}
+
+# task:app:nginx:build:install
+function task_app_nginx_build_install() {
+  if [ -f "$nginx_build_path/objs/nginx" ]; then
+    # uninstall and install
+    cd $nginx_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # create missing directory
+    sudo mkdir -p "${global_build_varprefix}/lib/nginx";
+    # find binary
+    echo "system binary: $(whereis nginx)";
+    echo "built binary: ${global_build_usrprefix}/sbin/nginx";
+  fi;
+}
+
+# task:app:nginx:build:install_etc
+function task_app_nginx_build_install_etc() {
+  # use configuration from system
+  if [ "$nginx_build_install_etc" == "system" ]; then
+    # remove build etc directory
+    if [ -d "${global_build_varprefix}/etc/nginx" ]; then
+      sudo rm -Rf "${global_build_varprefix}/etc/nginx";
+    # remove build etc symlink
+    elif [ -L "${global_build_varprefix}/etc/nginx" ]; then
+      sudo rm -f "${global_build_varprefix}/etc/nginx";
+    fi;
+    # symlink directory and remove backups
+    sudo ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
+    sudo rm -f "${global_build_varprefix}/etc/nginx/*.default";
+  # use configuration from build
+  elif [ "$nginx_build_install_etc" == "build" ]; then
+    # copy configuration from build etc to system etc
+    sudo cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
   fi;
 }
 
@@ -686,8 +723,6 @@ function task_app_nginx() {
       notify "skipRoutine" "app:nginx:build:download";
     fi;
 
-    cd $nginx_build_path;
-
     # run task:app:nginx:build:make
     if [ "$nginx_build_make" == "yes" ]; then
       notify "startRoutine" "app:nginx:build:make";
@@ -697,32 +732,19 @@ function task_app_nginx() {
       notify "skipRoutine" "app:nginx:build:make";
     fi;
 
-    # install binaries
-    if [ "$nginx_build_install" == "yes" ] && [ -f "${nginx_build_path}/objs/nginx" ]; then
+    # run task:app:nginx:build:install
+    if [ "$nginx_build_install" == "yes" ]; then
       notify "stopRoutine" "app:nginx:build:install";
-      sudo make uninstall; sudo make install;
-      sudo mkdir -p "${global_build_varprefix}/lib/nginx";
-      echo "system binary: $(whereis nginx)";
-      echo "built binary: ${global_build_usrprefix}/sbin/nginx";
+      task_app_nginx_build_install;
       notify "stopRoutine" "app:nginx:build:install";
     else
       notify "skipRoutine" "app:nginx:build:install";
     fi;
 
-    # install config
-    if [ ! "$nginx_build_install_etc" == "no" ]; then
+    # run task:app:nginx:build:install_etc
+    if [ "$nginx_build_install_etc" == "system" ] || [ "$nginx_build_install_etc" == "build" ]; then
       notify "startRoutine" "app:nginx:build:install_etc";
-      if [ "$nginx_build_install_etc" == "system" ]; then
-        if [ -d "${global_build_varprefix}/etc/nginx" ]; then
-          sudo rm -Rf "${global_build_varprefix}/etc/nginx";
-        elif [ -L "${global_build_varprefix}/etc/nginx" ]; then
-          sudo rm -f "${global_build_varprefix}/etc/nginx";
-        fi;
-        sudo ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
-        sudo rm -f "${global_build_varprefix}/etc/nginx/*.default";
-      elif [ "$nginx_build_install_etc" == "build" ]; then
-        sudo cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
-      fi;
+      task_app_nginx_build_install_etc;
       notify "stopRoutine" "app:nginx:build:install_etc";
     else
       notify "skipRoutine" "app:nginx:build:install_etc";

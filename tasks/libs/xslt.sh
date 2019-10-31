@@ -86,7 +86,29 @@ function task_lib_xslt_build_make() {
     sudo wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
     # configure (workaround) and make
     echo "${xslt_build_cmd_full}";
-    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xslt_build_cmd_full && sudo make;
+    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && \
+    sudo $xslt_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:xslt:build:install
+function task_lib_xslt_build_install() {
+  if [ -f "$xslt_build_path/libxslt/.libs/libxslt.so" ]; then
+    # uninstall and install
+    cd $xslt_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # copy missing binaries to system
+    sudo cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
+    sudo cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
+    sudo chmod +x "${global_build_usrprefix}/bin/xslt-config";
+    # find binary
+    echo "system library: $(whereis libxslt.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libxslt.so";
+    # check ldconfig
+    xslt_ldconfig_test_cmd="ldconfig -p | grep libxslt.so; ldconfig -v | grep libxslt.so";
+    echo "list libraries: ${xslt_ldconfig_test_cmd}"; ${xslt_ldconfig_test_cmd};
   fi;
 }
 
@@ -114,8 +136,6 @@ function task_lib_xslt() {
       notify "skipRoutine" "lib:xslt:build:download";
     fi;
 
-    cd $xslt_build_path;
-
     # run task:lib:xslt:build:make
     if [ "$xslt_build_make" == "yes" ]; then
       notify "startRoutine" "lib:xslt:build:make";
@@ -125,17 +145,10 @@ function task_lib_xslt() {
       notify "skipRoutine" "lib:xslt:build:make";
     fi;
 
-    # install binaries
-    if [ "$xslt_build_install" == "yes" ] && [ -f "${xslt_build_path}/libxslt/.libs/libxslt.so" ]; then
+    # run task:lib:xslt:build:install
+    if [ "$xslt_build_install" == "yes" ]; then
       notify "startRoutine" "lib:xslt:build:install";
-      sudo make uninstall; sudo make install;
-      sudo cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
-      sudo cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
-      sudo chmod +x "${global_build_usrprefix}/bin/xslt-config";
-      echo "system library: $(whereis libxslt.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libxslt.so";
-      xslt_ldconfig_test_cmd="ldconfig -p | grep libxslt.so; ldconfig -v | grep libxslt.so";
-      echo "list libraries: ${xslt_ldconfig_test_cmd}"; ${xslt_ldconfig_test_cmd};
+      task_lib_xslt_build_install;
       notify "stopRoutine" "lib:xslt:build:install";
     else
       notify "skipRoutine" "lib:xslt:build:install";

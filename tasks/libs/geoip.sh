@@ -58,7 +58,29 @@ function task_lib_geoip_build_make() {
     cd $geoip_build_path;
     sudo make clean;
     echo "${geoip_build_cmd_full}";
-    sudo $geoip_build_cmd_full && sudo make;
+    sudo $geoip_build_cmd_full && \
+    sudo make;
+  fi;
+}
+
+# task:lib:geoip:build:install
+function task_lib_geoip_build_install() {
+  if [ -f "$geoip_build_path/libGeoIP/.libs/libGeoIP.so" ]; then
+    # uninstall and install
+    cd $geoip_build_path;
+    sudo make uninstall;
+    sudo make install;
+    # download databases
+    sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
+    sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
+    sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
+    sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCityv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz\" && rm -f GeoLiteCityv6.dat && gunzip GeoLiteCityv6.dat.gz";
+    # find binary
+    echo "system library: $(whereis libGeoIP.so)";
+    echo "built library: ${global_build_usrprefix}/lib/libGeoIP.so";
+    # check ldconfig
+    geoip_ldconfig_test_cmd="ldconfig -p | grep libGeoIP.so; ldconfig -v | grep libGeoIP.so";
+    echo "list libraries: ${geoip_ldconfig_test_cmd}"; ${geoip_ldconfig_test_cmd};
   fi;
 }
 
@@ -86,8 +108,6 @@ function task_lib_geoip() {
       notify "skipRoutine" "lib:geoip:build:download";
     fi;
 
-    cd $geoip_build_path;
-
     # run task:lib:geoip:build:make
     if [ "$geoip_build_make" == "yes" ]; then
       notify "startRoutine" "lib:geoip:build:make";
@@ -97,18 +117,10 @@ function task_lib_geoip() {
       notify "skipRoutine" "lib:geoip:build:make";
     fi;
 
-    # install binaries
-    if [ "$geoip_build_install" == "yes" ] && [ -f "${geoip_build_path}/libGeoIP/.libs/libGeoIP.so" ]; then
+    # run task:lib:geoip:build:install
+    if [ "$geoip_build_install" == "yes" ]; then
       notify "startRoutine" "lib:geoip:build:install";
-      sudo make uninstall; sudo make install;
-      sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
-      sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
-      sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
-      sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCityv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz\" && rm -f GeoLiteCityv6.dat && gunzip GeoLiteCityv6.dat.gz";
-      echo "system library: $(whereis libGeoIP.so)";
-      echo "built library: ${global_build_usrprefix}/lib/libGeoIP.so";
-      geoip_ldconfig_test_cmd="ldconfig -p | grep libGeoIP.so; ldconfig -v | grep libGeoIP.so";
-      echo "list libraries: ${geoip_ldconfig_test_cmd}"; ${geoip_ldconfig_test_cmd};
+      task_lib_geoip_build_install;
       notify "stopRoutine" "lib:geoip:build:install";
     else
       notify "skipRoutine" "lib:geoip:build:install";
