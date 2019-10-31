@@ -255,6 +255,16 @@ function task_lib_xml2_build_install() {
   fi;
 }
 
+# task:lib:xml2:build:test
+function task_lib_xml2_build_test() {
+  if [ -f "${global_build_usrprefix}/bin/xml2-config" ]; then
+    # test binary
+    xml2_binary_test_cmd="xml2-config --libs --cflags --modules --version";
+    echo "test system binary: /usr/bin/${xml2_binary_test_cmd}"; /usr/bin/${xml2_binary_test_cmd};
+    echo "test built binary: ${global_build_usrprefix}/bin/${xml2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${xml2_binary_test_cmd};
+  fi;
+}
+
 function task_lib_xml2() {
 
   # build subtask
@@ -297,12 +307,10 @@ function task_lib_xml2() {
       notify "skipRoutine" "lib:xml2:build:install";
     fi;
 
-    # test binaries
-    if [ "$xml2_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/xml2-config" ]; then
+    # run task:lib:xml2:build:test
+    if [ "$xml2_build_test" == "yes" ]; then
       notify "startRoutine" "lib:xml2:build:test";
-      xml2_binary_test_cmd="xml2-config --libs --cflags --modules --version";
-      echo "test system binary: /usr/bin/${xml2_binary_test_cmd}"; /usr/bin/${xml2_binary_test_cmd};
-      echo "test built binary: ${global_build_usrprefix}/bin/${xml2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${xml2_binary_test_cmd};
+      task_lib_xml2_build_test;
       notify "stopRoutine" "lib:xml2:build:test";
     else
       notify "skipRoutine" "lib:xml2:build:test";

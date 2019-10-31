@@ -79,6 +79,12 @@ function task_lib_zlib_build_install() {
   fi;
 }
 
+# task:lib:zlib:build:test
+function task_lib_zlib_build_test() {
+  # do nothing
+  echo "nothing to do";
+}
+
 function task_lib_zlib() {
 
   # build subtask
@@ -119,6 +125,15 @@ function task_lib_zlib() {
       notify "stopRoutine" "lib:zlib:build:install";
     else
       notify "skipRoutine" "lib:zlib:build:install";
+    fi;
+
+    # run task:lib:zlib:build:test
+    if [ "$zlib_build_test" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:build:test";
+      task_lib_zlib_build_test;
+      notify "stopRoutine" "lib:zlib:build:test";
+    else
+      notify "skipRoutine" "lib:zlib:build:test";
     fi;
 
     notify "stopSubTask" "lib:zlib:build";

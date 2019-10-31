@@ -125,6 +125,16 @@ function task_lib_pcre_build_install() {
   fi;
 }
 
+# task:lib:pcre:build:test
+function task_lib_pcre_build_test() {
+  if [ -f "${global_build_usrprefix}/bin/pcre-config" ]; then
+    # test binary
+    pcre_binary_test_cmd="pcre-config --version --libs --cflags";
+    echo "test system binary: /usr/bin/${pcre_binary_test_cmd}"; /usr/bin/$pcre_binary_test_cmd;
+    echo "test built binary: ${global_build_usrprefix}/bin/${pcre_binary_test_cmd}"; ${global_build_usrprefix}/bin/${pcre_binary_test_cmd};
+  fi;
+}
+
 function task_lib_pcre() {
 
   # build subtask
@@ -167,12 +177,10 @@ function task_lib_pcre() {
       notify "skipRoutine" "lib:pcre:build:install";
     fi;
 
-    # test binaries
-    if [ "$pcre_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/pcre-config" ]; then
+    # run task:lib:pcre:build:test
+    if [ "$pcre_build_test" == "yes" ]; then
       notify "startRoutine" "lib:pcre:build:test";
-      pcre_binary_test_cmd="pcre-config --version --libs --cflags";
-      echo "test system binary: /usr/bin/${pcre_binary_test_cmd}"; /usr/bin/$pcre_binary_test_cmd;
-      echo "test built binary: ${global_build_usrprefix}/bin/${pcre_binary_test_cmd}"; ${global_build_usrprefix}/bin/${pcre_binary_test_cmd};
+      task_lib_pcre_build_test;
       notify "stopRoutine" "lib:pcre:build:test";
     else
       notify "skipRoutine" "lib:pcre:build:test";

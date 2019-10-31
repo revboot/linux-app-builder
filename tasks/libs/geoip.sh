@@ -84,6 +84,12 @@ function task_lib_geoip_build_install() {
   fi;
 }
 
+# task:lib:geoip:build:test
+function task_lib_geoip_build_test() {
+  # do nothing
+  echo "nothing to do";
+}
+
 function task_lib_geoip() {
 
   # build subtask
@@ -124,6 +130,15 @@ function task_lib_geoip() {
       notify "stopRoutine" "lib:geoip:build:install";
     else
       notify "skipRoutine" "lib:geoip:build:install";
+    fi;
+
+    # run task:lib:geoip:build:test
+    if [ "$geoip_build_test" == "yes" ]; then
+      notify "startRoutine" "lib:geoip:build:test";
+      task_lib_geoip_build_test;
+      notify "stopRoutine" "lib:geoip:build:test";
+    else
+      notify "skipRoutine" "lib:geoip:build:test";
     fi;
 
     notify "stopSubTask" "lib:geoip:build";

@@ -142,6 +142,16 @@ function task_lib_gd2_build_install() {
   fi;
 }
 
+# task:lib:gd2:build:test
+function task_lib_gd2_build_test() {
+  if [ -f "${global_build_usrprefix}/bin/gdlib-config" ]; then
+    # test binary
+    gd2_binary_test_cmd="gdlib-config --version --libs --cflags --ldflags --features";
+    echo "test system binary: /usr/bin/${gd2_binary_test_cmd}"; /usr/bin/${gd2_binary_test_cmd};
+    echo "test built binary: ${global_build_usrprefix}/bin/${gd2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${gd2_binary_test_cmd};
+  fi;
+}
+
 function task_lib_gd2() {
 
   # build subtask
@@ -184,12 +194,10 @@ function task_lib_gd2() {
       notify "skipRoutine" "lib:gd2:build:install";
     fi;
 
-    # test binaries
-    if [ "$gd2_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/gdlib-config" ]; then
+    # run task:lib:gd2:build:test
+    if [ "$gd2_build_test" == "yes" ]; then
       notify "startRoutine" "lib:gd2:build:test";
-      gd2_binary_test_cmd="gdlib-config --version --libs --cflags --ldflags --features";
-      echo "test system binary: /usr/bin/${gd2_binary_test_cmd}"; /usr/bin/${gd2_binary_test_cmd};
-      echo "test built binary: ${global_build_usrprefix}/bin/${gd2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${gd2_binary_test_cmd};
+      task_lib_gd2_build_test;
       notify "stopRoutine" "lib:gd2:build:test";
     else
       notify "skipRoutine" "lib:gd2:build:test";

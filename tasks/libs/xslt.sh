@@ -112,6 +112,22 @@ function task_lib_xslt_build_install() {
   fi;
 }
 
+# task:lib:xslt:build:test
+function task_lib_xslt_build_test() {
+  if [ -f "${global_build_usrprefix}/bin/xslt-config" ]; then
+    # test binary
+    xslt_binary_test_cmd1="xslt-config --libs --cflags";
+    xslt_binary_test_cmd2="xslt-config --plugins";
+    xslt_binary_test_cmd3="xslt-config --version";
+    echo "test system binary #1: /usr/bin/${xslt_binary_test_cmd1}" && /usr/bin/${xslt_binary_test_cmd1};
+    echo "test system binary #2: /usr/bin/${xslt_binary_test_cmd2}" && /usr/bin/${xslt_binary_test_cmd2};
+    echo "test system binary #3: /usr/bin/${xslt_binary_test_cmd3}" && /usr/bin/${xslt_binary_test_cmd3};
+    echo "test built binary #1: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1};
+    echo "test built binary #2: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2};
+    echo "test built binary #3: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3};
+  fi;
+}
+
 function task_lib_xslt() {
 
   # build subtask
@@ -154,18 +170,10 @@ function task_lib_xslt() {
       notify "skipRoutine" "lib:xslt:build:install";
     fi;
 
-    # test binaries
-    if [ "$xslt_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/xslt-config" ]; then
+    # run task:lib:xslt:build:test
+    if [ "$xslt_build_test" == "yes" ]; then
       notify "startRoutine" "lib:xslt:build:test";
-      xslt_binary_test_cmd1="xslt-config --libs --cflags";
-      xslt_binary_test_cmd2="xslt-config --plugins";
-      xslt_binary_test_cmd3="xslt-config --version";
-      echo "test system binary #1: /usr/bin/${xslt_binary_test_cmd1}" && /usr/bin/${xslt_binary_test_cmd1};
-      echo "test system binary #2: /usr/bin/${xslt_binary_test_cmd2}" && /usr/bin/${xslt_binary_test_cmd2};
-      echo "test system binary #3: /usr/bin/${xslt_binary_test_cmd3}" && /usr/bin/${xslt_binary_test_cmd3};
-      echo "test built binary #1: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1};
-      echo "test built binary #2: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2};
-      echo "test built binary #3: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3};
+      task_lib_xslt_build_test;
       notify "stopRoutine" "lib:xslt:build:test";
     else
       notify "skipRoutine" "lib:xslt:build:test";

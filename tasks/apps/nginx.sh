@@ -699,6 +699,16 @@ function task_app_nginx_build_install_etc() {
   fi;
 }
 
+# task:app:nginx:build:test
+function task_app_nginx_build_test() {
+  if [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
+    # test binary
+    nginx_test_cmd="nginx -v -V -t";
+    echo "test system binary: sudo /usr/sbin/${nginx_test_cmd}"; sudo /usr/sbin/${nginx_test_cmd};
+    echo "test built binary: sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd};
+  fi;
+}
+
 function task_app_nginx() {
 
   # build subtask
@@ -750,12 +760,10 @@ function task_app_nginx() {
       notify "skipRoutine" "app:nginx:build:install_etc";
     fi;
 
-    # test binaries
-    if [ "$nginx_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
+    # run task:app:nginx:build:test
+    if [ "$nginx_build_test" == "yes" ]; then
       notify "startRoutine" "app:nginx:build:test";
-      nginx_test_cmd="nginx -v -V -t";
-      echo "test system binary: sudo /usr/sbin/${nginx_test_cmd}"; sudo /usr/sbin/${nginx_test_cmd};
-      echo "test built binary: sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd};
+      task_app_nginx_build_test;
       notify "stopRoutine" "app:nginx:build:test";
     else
       notify "skipRoutine" "app:nginx:build:test";

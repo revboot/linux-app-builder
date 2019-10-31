@@ -158,6 +158,16 @@ function task_lib_openssl_build_install() {
   fi;
 }
 
+# task:lib:openssl:build:test
+function task_lib_openssl_build_test() {
+  if [ -f "${global_build_usrprefix}/bin/openssl" ]; then
+    # test binary
+    openssl_binary_test_cmd="openssl version -f";
+    echo "test system binary: /usr/bin/${openssl_binary_test_cmd}"; /usr/bin/$openssl_binary_test_cmd;
+    echo "test built binary: ${global_build_usrprefix}/bin/${openssl_binary_test_cmd}"; ${global_build_usrprefix}/bin/${openssl_binary_test_cmd};
+  fi;
+}
+
 function task_lib_openssl() {
 
   # build subtask
@@ -200,12 +210,10 @@ function task_lib_openssl() {
       notify "skipRoutine" "lib:openssl:build:install";
     fi;
 
-    # test binaries
-    if [ "$openssl_build_test" == "yes" ] && [ -f "${global_build_usrprefix}/bin/openssl" ]; then
+    # run task:lib:openssl:build:test
+    if [ "$openssl_build_test" == "yes" ]; then
       notify "startRoutine" "lib:openssl:build:test";
-      openssl_binary_test_cmd="openssl version -f";
-      echo "test system binary: /usr/bin/${openssl_binary_test_cmd}"; /usr/bin/$openssl_binary_test_cmd;
-      echo "test built binary: ${global_build_usrprefix}/bin/${openssl_binary_test_cmd}"; ${global_build_usrprefix}/bin/${openssl_binary_test_cmd};
+      task_lib_openssl_build_test;
       notify "stopRoutine" "lib:openssl:build:test";
     else
       notify "skipRoutine" "lib:openssl:build:test";
