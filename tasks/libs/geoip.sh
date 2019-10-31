@@ -28,6 +28,40 @@ function task_lib_geoip_build_download() {
   fi;
 }
 
+# task:lib:geoip:build:make
+function task_lib_geoip_build_make() {
+  if [ -d "$geoip_build_path" ]; then
+    # command - add configuration tool
+    geoip_build_cmd_full="./configure";
+
+    # command - add arch
+    if [ -n "$geoip_build_arg_arch" ]; then
+      geoip_build_cmd_full="${geoip_build_cmd_full} --target=${geoip_build_arg_arch}";
+    fi;
+
+    # command - add prefix (usr)
+    if [ -n "$geoip_build_arg_usrprefix" ]; then
+      geoip_build_cmd_full="${geoip_build_cmd_full} --prefix=${geoip_build_arg_usrprefix}";
+    fi;
+
+    ## command - add libraries
+    #if [ -n "$geoip_build_arg_libraries" ]; then
+    #  geoip_build_cmd_full="${geoip_build_cmd_full} ${geoip_build_arg_libraries}";
+    #fi;
+
+    # command - add options
+    if [ -n "$geoip_build_arg_options" ]; then
+      geoip_build_cmd_full="${geoip_build_cmd_full} ${geoip_build_arg_options}";
+    fi;
+
+    # clean, configure and make
+    cd $geoip_build_path;
+    sudo make clean;
+    echo "${geoip_build_cmd_full}";
+    sudo $geoip_build_cmd_full && sudo make;
+  fi;
+}
+
 function task_lib_geoip() {
 
   # build subtask
@@ -54,36 +88,10 @@ function task_lib_geoip() {
 
     cd $geoip_build_path;
 
-    # compile binaries
+    # run task:lib:geoip:build:make
     if [ "$geoip_build_make" == "yes" ]; then
       notify "startRoutine" "lib:geoip:build:make";
-      # command - add configuration tool
-      geoip_build_cmd_full="./configure";
-
-      # command - add arch
-      if [ -n "$geoip_build_arg_arch" ]; then
-        geoip_build_cmd_full="${geoip_build_cmd_full} --target=${geoip_build_arg_arch}";
-      fi;
-
-      # command - add prefix (usr)
-      if [ -n "$geoip_build_arg_usrprefix" ]; then
-        geoip_build_cmd_full="${geoip_build_cmd_full} --prefix=${geoip_build_arg_usrprefix}";
-      fi;
-
-      ## command - add libraries
-      #if [ -n "$geoip_build_arg_libraries" ]; then
-      #  geoip_build_cmd_full="${geoip_build_cmd_full} ${geoip_build_arg_libraries}";
-      #fi;
-
-      # command - add options
-      if [ -n "$geoip_build_arg_options" ]; then
-        geoip_build_cmd_full="${geoip_build_cmd_full} ${geoip_build_arg_options}";
-      fi;
-
-      # clean, configure and make
-      sudo make clean;
-      echo "${geoip_build_cmd_full}";
-      sudo $geoip_build_cmd_full && sudo make;
+      task_lib_geoip_build_make;
       notify "stopRoutine" "lib:geoip:build:make";
     else
       notify "skipRoutine" "lib:geoip:build:make";

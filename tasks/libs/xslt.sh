@@ -28,6 +28,68 @@ function task_lib_xslt_build_download() {
   fi;
 }
 
+# task:lib:xslt:build:make
+function task_lib_xslt_build_make() {
+  if [ -d "$xslt_build_path" ]; then
+    # command - add configuration tool
+    xslt_build_cmd_full="./configure";
+
+    # command - add arch
+    if [ -n "$xslt_build_arg_arch" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --target=${xslt_build_arg_arch}";
+    fi;
+
+    # command - add prefix (usr)
+    if [ -n "$xslt_build_arg_usrprefix" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --prefix=${xslt_build_arg_usrprefix}";
+    fi;
+
+    ## command - add libraries
+    #if [ -n "$xslt_build_arg_libraries" ]; then
+    #  xslt_build_cmd_full="${xslt_build_cmd_full} ${xslt_build_arg_libraries}";
+    #fi;
+
+    # command - add libraries: xml2
+    if [ "$xslt_build_arg_libraries_xml2" == "system" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --with-libxml-prefix";
+    elif [ "$xslt_build_arg_libraries_xml2" == "custom" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --with-libxml-prefix=${global_build_usrprefix}";
+    fi;
+
+    # command - add libraries: python
+    if [ "$xslt_build_arg_libraries_python" == "system" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --with-python";
+    elif [ "$xslt_build_arg_libraries_python" == "custom" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --with-python=${python_build_path}";
+    fi;
+
+    # command - add options
+    if [ -n "$xslt_build_arg_options" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} ${xslt_build_arg_options}";
+    fi;
+
+    # command - add main: crypto
+    if [ "$xslt_build_arg_main_crypto" == "yes" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --with-crypto";
+    fi;
+
+    # command - add main: plugins
+    if [ "$xslt_build_arg_main_plugins" == "yes" ]; then
+      xslt_build_cmd_full="${xslt_build_cmd_full} --with-plugins";
+    fi;
+
+    # clean
+    cd $xslt_build_path;
+    sudo make clean;
+    # download docbook (workaround)
+    sudo wget -P $xslt_build_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
+    sudo wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
+    # configure (workaround) and make
+    echo "${xslt_build_cmd_full}";
+    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xslt_build_cmd_full && sudo make;
+  fi;
+}
+
 function task_lib_xslt() {
 
   # build subtask
@@ -54,62 +116,10 @@ function task_lib_xslt() {
 
     cd $xslt_build_path;
 
-    # compile binaries
+    # run task:lib:xslt:build:make
     if [ "$xslt_build_make" == "yes" ]; then
       notify "startRoutine" "lib:xslt:build:make";
-      # command - add configuration tool
-      xslt_build_cmd_full="./configure";
-
-      # command - add arch
-      if [ -n "$xslt_build_arg_arch" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --target=${xslt_build_arg_arch}";
-      fi;
-
-      # command - add prefix (usr)
-      if [ -n "$xslt_build_arg_usrprefix" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --prefix=${xslt_build_arg_usrprefix}";
-      fi;
-
-      ## command - add libraries
-      #if [ -n "$xslt_build_arg_libraries" ]; then
-      #  xslt_build_cmd_full="${xslt_build_cmd_full} ${xslt_build_arg_libraries}";
-      #fi;
-
-      # command - add libraries: xml2
-      if [ "$xslt_build_arg_libraries_xml2" == "system" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --with-libxml-prefix";
-      elif [ "$xslt_build_arg_libraries_xml2" == "custom" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --with-libxml-prefix=${global_build_usrprefix}";
-      fi;
-
-      # command - add libraries: python
-      if [ "$xslt_build_arg_libraries_python" == "system" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --with-python";
-      elif [ "$xslt_build_arg_libraries_python" == "custom" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --with-python=${python_build_path}";
-      fi;
-
-      # command - add options
-      if [ -n "$xslt_build_arg_options" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} ${xslt_build_arg_options}";
-      fi;
-
-      # command - add main: crypto
-      if [ "$xslt_build_arg_main_crypto" == "yes" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --with-crypto";
-      fi;
-
-      # command - add main: plugins
-      if [ "$xslt_build_arg_main_plugins" == "yes" ]; then
-        xslt_build_cmd_full="${xslt_build_cmd_full} --with-plugins";
-      fi;
-
-      # clean, configure and make
-      sudo make clean;
-      echo "${xslt_build_cmd_full}";
-      sudo wget -P $xslt_build_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
-      sudo wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
-      sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && sudo $xslt_build_cmd_full && sudo make;
+      task_lib_xslt_build_make;
       notify "stopRoutine" "lib:xslt:build:make";
     else
       notify "skipRoutine" "lib:xslt:build:make";

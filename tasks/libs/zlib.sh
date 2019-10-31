@@ -28,6 +28,40 @@ function task_lib_zlib_build_download() {
   fi;
 }
 
+# task:lib:zlib:build:make
+function task_lib_zlib_build_make() {
+  if [ -d "$zlib_build_path" ]; then
+    # command - add configuration tool
+    zlib_build_cmd_full="./configure";
+
+    # command - add arch
+    if [ -n "$zlib_build_arg_arch" ]; then
+      zlib_build_cmd_full="${zlib_build_cmd_full} --archs=\"${zlib_build_arg_arch}\"";
+    fi;
+
+    # command - add prefix (usr)
+    if [ -n "$zlib_build_arg_usrprefix" ]; then
+      zlib_build_cmd_full="${zlib_build_cmd_full} --prefix=${zlib_build_arg_usrprefix}";
+    fi;
+
+    ## command - add libraries
+    #if [ -n "$zlib_build_arg_libraries" ]; then
+    #  zlib_build_cmd_full="${zlib_build_cmd_full} --libraries=${zlib_build_arg_libraries}";
+    #fi;
+
+    # command - add options
+    if [ -n "$zlib_build_arg_options" ]; then
+      zlib_build_cmd_full="${zlib_build_cmd_full} ${zlib_build_arg_options}";
+    fi;
+
+    # clean, configure and make
+    cd $zlib_build_path;
+    sudo make clean;
+    echo "${zlib_build_cmd_full}";
+    sudo $zlib_build_cmd_full && sudo make;
+  fi;
+}
+
 function task_lib_zlib() {
 
   # build subtask
@@ -54,36 +88,10 @@ function task_lib_zlib() {
 
     cd $zlib_build_path;
 
-    # compile binaries
+    # run task:lib:zlib:build:make
     if [ "$zlib_build_make" == "yes" ]; then
       notify "startRoutine" "lib:zlib:build:make";
-      # command - add configuration tool
-      zlib_build_cmd_full="./configure";
-
-      # command - add arch
-      if [ -n "$zlib_build_arg_arch" ]; then
-        zlib_build_cmd_full="${zlib_build_cmd_full} --archs=\"${zlib_build_arg_arch}\"";
-      fi;
-
-      # command - add prefix (usr)
-      if [ -n "$zlib_build_arg_usrprefix" ]; then
-        zlib_build_cmd_full="${zlib_build_cmd_full} --prefix=${zlib_build_arg_usrprefix}";
-      fi;
-
-      ## command - add libraries
-      #if [ -n "$zlib_build_arg_libraries" ]; then
-      #  zlib_build_cmd_full="${zlib_build_cmd_full} --libraries=${zlib_build_arg_libraries}";
-      #fi;
-
-      # command - add options
-      if [ -n "$zlib_build_arg_options" ]; then
-        zlib_build_cmd_full="${zlib_build_cmd_full} ${zlib_build_arg_options}";
-      fi;
-
-      # clean, configure and make
-      sudo make clean;
-      echo "${zlib_build_cmd_full}";
-      sudo $zlib_build_cmd_full && sudo make;
+      task_lib_zlib_build_make;
       notify "stopRoutine" "lib:zlib:build:make";
     else
       notify "skipRoutine" "lib:zlib:build:make";
