@@ -137,34 +137,6 @@ if [ "$global_apt_flag" == "yes" ]; then
   if [ "$dev_apt_flag" == "yes" ]; then
     global_apt_pkgs="${global_apt_pkgs} ${dev_apt_pkgs}";
   fi;
-  # - zlib
-  if [ "$zlib_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${zlib_apt_pkgs}";
-  fi;
-  # - pcre
-  if [ "$pcre_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${pcre_apt_pkgs}";
-  fi;
-  # - openssl
-  if [ "$openssl_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${openssl_apt_pkgs}";
-  fi;
-  # - gd2
-  if [ "$gd2_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${gd2_apt_pkgs}";
-  fi;
-  # - xml2
-  if [ "$xml2_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${xml2_apt_pkgs}";
-  fi;
-  # - xslt
-  if [ "$xslt_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${xslt_apt_pkgs}";
-  fi;
-  # - geoip
-  if [ "$geoip_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${geoip_apt_pkgs}";
-  fi;
   sudo apt-get install -y $global_apt_pkgs;
 fi;
 

@@ -3,6 +3,12 @@
 # Task: Library: geoip
 #
 
+# task:lib:geoip:apt:install
+function task_lib_geoip_apt_install() {
+  # install packages
+  sudo apt-get install -y $geoip_apt_pkgs;
+}
+
 # task:lib:geoip:build:cleanup
 function task_lib_geoip_build_cleanup() {
   # remove source files
@@ -91,6 +97,24 @@ function task_lib_geoip_build_test() {
 }
 
 function task_lib_geoip() {
+
+  # apt subtask
+  if [ "$geoip_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:geoip:apt";
+
+    # run task:lib:geoip:apt:install
+    if [ "$geoip_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:geoip:apt:install";
+      task_lib_geoip_apt_install;
+      notify "stopRoutine" "lib:geoip:apt:install";
+    else
+      notify "skipRoutine" "lib:geoip:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:geoip:apt";
+  else
+    notify "skipSubTask" "lib:geoip:apt";
+  fi;
 
   # build subtask
   if [ "$geoip_build_flag" == "yes" ]; then

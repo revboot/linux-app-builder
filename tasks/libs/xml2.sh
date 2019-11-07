@@ -3,6 +3,12 @@
 # Task: Library: xml2
 #
 
+# task:lib:xml2:apt:install
+function task_lib_xml2_apt_install() {
+  # install packages
+  sudo apt-get install -y $xml2_apt_pkgs;
+}
+
 # task:lib:xml2:build:cleanup
 function task_lib_xml2_build_cleanup() {
   # remove source files
@@ -266,6 +272,24 @@ function task_lib_xml2_build_test() {
 }
 
 function task_lib_xml2() {
+
+  # apt subtask
+  if [ "$xml2_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:xml2:apt";
+
+    # run task:lib:xml2:apt:install
+    if [ "$xml2_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:xml2:apt:install";
+      task_lib_xml2_apt_install;
+      notify "stopRoutine" "lib:xml2:apt:install";
+    else
+      notify "skipRoutine" "lib:xml2:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:xml2:apt";
+  else
+    notify "skipSubTask" "lib:xml2:apt";
+  fi;
 
   # build subtask
   if [ "$xml2_build_flag" == "yes" ]; then

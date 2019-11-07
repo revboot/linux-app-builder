@@ -3,6 +3,12 @@
 # Task: Library: openssl
 #
 
+# task:lib:openssl:apt:install
+function task_lib_openssl_apt_install() {
+  # install packages
+  sudo apt-get install -y $openssl_apt_pkgs;
+}
+
 # task:lib:openssl:build:cleanup
 function task_lib_openssl_build_cleanup() {
   # remove source files
@@ -169,6 +175,24 @@ function task_lib_openssl_build_test() {
 }
 
 function task_lib_openssl() {
+
+  # apt subtask
+  if [ "$openssl_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:openssl:apt";
+
+    # run task:lib:openssl:apt:install
+    if [ "$openssl_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:openssl:apt:install";
+      task_lib_openssl_apt_install;
+      notify "stopRoutine" "lib:openssl:apt:install";
+    else
+      notify "skipRoutine" "lib:openssl:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:openssl:apt";
+  else
+    notify "skipSubTask" "lib:openssl:apt";
+  fi;
 
   # build subtask
   if [ "$openssl_build_flag" == "yes" ]; then

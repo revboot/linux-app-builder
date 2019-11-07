@@ -3,6 +3,12 @@
 # Task: Library: xslt
 #
 
+# task:lib:xslt:apt:install
+function task_lib_xslt_apt_install() {
+  # install packages
+  sudo apt-get install -y $xslt_apt_pkgs;
+}
+
 # task:lib:xslt:build:cleanup
 function task_lib_xslt_build_cleanup() {
   # remove source files
@@ -129,6 +135,24 @@ function task_lib_xslt_build_test() {
 }
 
 function task_lib_xslt() {
+
+  # apt subtask
+  if [ "$xslt_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:xslt:apt";
+
+    # run task:lib:xslt:apt:install
+    if [ "$xslt_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:xslt:apt:install";
+      task_lib_xslt_apt_install;
+      notify "stopRoutine" "lib:xslt:apt:install";
+    else
+      notify "skipRoutine" "lib:xslt:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:xslt:apt";
+  else
+    notify "skipSubTask" "lib:xslt:apt";
+  fi;
 
   # build subtask
   if [ "$xslt_build_flag" == "yes" ]; then

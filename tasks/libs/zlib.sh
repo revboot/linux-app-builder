@@ -3,6 +3,12 @@
 # Task: Library: zlib
 #
 
+# task:lib:zlib:apt:install
+function task_lib_zlib_apt_install() {
+  # install packages
+  sudo apt-get install -y $zlib_apt_pkgs;
+}
+
 # task:lib:zlib:build:cleanup
 function task_lib_zlib_build_cleanup() {
   # remove source files
@@ -86,6 +92,24 @@ function task_lib_zlib_build_test() {
 }
 
 function task_lib_zlib() {
+
+  # apt subtask
+  if [ "$zlib_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:zlib:apt";
+
+    # run task:lib:zlib:apt:install
+    if [ "$zlib_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:apt:install";
+      task_lib_zlib_apt_install;
+      notify "stopRoutine" "lib:zlib:apt:install";
+    else
+      notify "skipRoutine" "lib:zlib:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:zlib:apt";
+  else
+    notify "skipSubTask" "lib:zlib:apt";
+  fi;
 
   # build subtask
   if [ "$zlib_build_flag" == "yes" ]; then

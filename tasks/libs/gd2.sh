@@ -3,6 +3,12 @@
 # Task: Library: gd2
 #
 
+# task:lib:gd2:apt:install
+function task_lib_gd2_apt_install() {
+  # install packages
+  sudo apt-get install -y $gd2_apt_pkgs;
+}
+
 # task:lib:gd2:build:cleanup
 function task_lib_gd2_build_cleanup() {
   # remove source files
@@ -153,6 +159,24 @@ function task_lib_gd2_build_test() {
 }
 
 function task_lib_gd2() {
+
+  # apt subtask
+  if [ "$gd2_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:gd2:apt";
+
+    # run task:lib:gd2:apt:install
+    if [ "$gd2_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:gd2:apt:install";
+      task_lib_gd2_apt_install;
+      notify "stopRoutine" "lib:gd2:apt:install";
+    else
+      notify "skipRoutine" "lib:gd2:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:gd2:apt";
+  else
+    notify "skipSubTask" "lib:gd2:apt";
+  fi;
 
   # build subtask
   if [ "$gd2_build_flag" == "yes" ]; then

@@ -3,6 +3,12 @@
 # Task: Library: pcre
 #
 
+# task:lib:pcre:apt:install
+function task_lib_pcre_apt_install() {
+  # install packages
+  sudo apt-get install -y $pcre_apt_pkgs;
+}
+
 # task:lib:pcre:build:cleanup
 function task_lib_pcre_build_cleanup() {
   # remove source files
@@ -136,6 +142,24 @@ function task_lib_pcre_build_test() {
 }
 
 function task_lib_pcre() {
+
+  # apt subtask
+  if [ "$pcre_apt_flag" == "yes" ]; then
+    notify "startSubTask" "lib:pcre:apt";
+
+    # run task:lib:pcre:apt:install
+    if [ "$pcre_apt_install" == "yes" ]; then
+      notify "startRoutine" "lib:pcre:apt:install";
+      task_lib_pcre_apt_install;
+      notify "stopRoutine" "lib:pcre:apt:install";
+    else
+      notify "skipRoutine" "lib:pcre:apt:install";
+    fi;
+
+    notify "stopSubTask" "lib:pcre:apt";
+  else
+    notify "skipSubTask" "lib:pcre:apt";
+  fi;
 
   # build subtask
   if [ "$pcre_build_flag" == "yes" ]; then

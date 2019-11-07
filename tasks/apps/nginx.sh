@@ -3,6 +3,12 @@
 # Task: Application: nginx
 #
 
+# task:lib:nginx:apt:install
+function task_lib_nginx_apt_install() {
+  # install packages
+  sudo apt-get install -y $nginx_apt_pkgs;
+}
+
 # task:app:nginx:build:cleanup
 function task_app_nginx_build_cleanup() {
   # remove source files
@@ -710,6 +716,24 @@ function task_app_nginx_build_test() {
 }
 
 function task_app_nginx() {
+
+  # apt subtask
+  if [ "$nginx_apt_flag" == "yes" ]; then
+    notify "startSubTask" "app:nginx:apt";
+
+    # run task:app:nginx:apt:install
+    if [ "$nginx_apt_install" == "yes" ]; then
+      notify "startRoutine" "app:nginx:apt:install";
+      task_app_nginx_apt_install;
+      notify "stopRoutine" "app:nginx:apt:install";
+    else
+      notify "skipRoutine" "app:nginx:apt:install";
+    fi;
+
+    notify "stopSubTask" "app:nginx:apt";
+  else
+    notify "skipSubTask" "app:nginx:apt";
+  fi;
 
   # build subtask
   if [ "$nginx_build_flag" == "yes" ]; then
