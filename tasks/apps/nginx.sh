@@ -698,10 +698,10 @@ function task_app_nginx_build_install() {
   fi;
 }
 
-# task:app:nginx:build:install_etc
-function task_app_nginx_build_install_etc() {
+# task:app:nginx:build:config
+function task_app_nginx_build_config() {
   # use configuration from system
-  if [ "$nginx_build_install_etc" == "system" ]; then
+  if [ "$nginx_build_config" == "system" ]; then
     # remove build etc directory
     if [ -d "${global_build_varprefix}/etc/nginx" ]; then
       sudo rm -Rf "${global_build_varprefix}/etc/nginx";
@@ -713,7 +713,7 @@ function task_app_nginx_build_install_etc() {
     sudo ln -s "/etc/nginx" "${global_build_varprefix}/etc/nginx";
     sudo rm -f "${global_build_varprefix}/etc/nginx/*.default";
   # use configuration from build
-  elif [ "$nginx_build_install_etc" == "build" ]; then
+  elif [ "$nginx_build_config" == "build" ]; then
     # copy configuration from build etc to system etc
     sudo cp "${global_build_varprefix}/etc/nginx/*" "/etc/nginx";
   fi;
@@ -806,13 +806,13 @@ function task_app_nginx() {
       notify "skipRoutine" "app:nginx:build:install";
     fi;
 
-    # run task:app:nginx:build:install_etc
-    if [ "$nginx_build_install_etc" == "system" ] || [ "$nginx_build_install_etc" == "build" ]; then
-      notify "startRoutine" "app:nginx:build:install_etc";
-      task_app_nginx_build_install_etc;
-      notify "stopRoutine" "app:nginx:build:install_etc";
+    # run task:app:nginx:build:config
+    if [ "$nginx_build_config" == "system" ] || [ "$nginx_build_config" == "build" ]; then
+      notify "startRoutine" "app:nginx:build:config";
+      task_app_nginx_build_config;
+      notify "stopRoutine" "app:nginx:build:config";
     else
-      notify "skipRoutine" "app:nginx:build:install_etc";
+      notify "skipRoutine" "app:nginx:build:config";
     fi;
 
     # run task:app:nginx:build:test
