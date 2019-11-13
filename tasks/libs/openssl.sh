@@ -7,6 +7,32 @@
 function task_lib_openssl_apt_install() {
   # install packages
   sudo apt-get install -y $openssl_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libssl.so)";
+}
+
+# task:lib:openssl:apt:test
+function task_lib_openssl_apt_test() {
+  # ldconfig tests
+  openssl_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libssl.so";
+  if [ -f "$openssl_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
+    sudo bash -c "${openssl_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
+    echo "find system libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
+    sudo bash -c "${openssl_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  openssl_binary_test_cmd="/usr/bin/openssl";
+  if [ -f "$openssl_binary_test_cmd" ]; then
+    # test binary
+    openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
+    echo "test system binary: ${openssl_binary_test_cmd}";
+    $openssl_binary_test_cmd;
+  fi;
 }
 
 # task:lib:openssl:build:cleanup
@@ -155,22 +181,32 @@ function task_lib_openssl_build_install() {
     cd $openssl_build_path;
     sudo make uninstall;
     sudo make install;
-    # find binary
-    echo "system library: $(whereis libssl.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libssl.so";
-    # check ldconfig
-    openssl_ldconfig_test_cmd="ldconfig -p | grep libssl.so; ldconfig -v | grep libssl.so";
-    echo "list libraries: ${openssl_ldconfig_test_cmd}"; ${openssl_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libssl.so";
   fi;
 }
 
 # task:lib:openssl:build:test
 function task_lib_openssl_build_test() {
-  if [ -f "${global_build_usrprefix}/bin/openssl" ]; then
+  # ldconfig tests
+  openssl_ldconfig_test_cmd="${global_build_usrprefix}/lib/libssl.so";
+  if [ -f "$openssl_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
+    sudo  bash -c "${openssl_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
+    echo "find built libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
+    sudo bash -c "${openssl_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  openssl_binary_test_cmd="${global_build_usrprefix}/bin/openssl";
+  if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
-    openssl_binary_test_cmd="openssl version -f";
-    echo "test system binary: /usr/bin/${openssl_binary_test_cmd}"; /usr/bin/$openssl_binary_test_cmd;
-    echo "test built binary: ${global_build_usrprefix}/bin/${openssl_binary_test_cmd}"; ${global_build_usrprefix}/bin/${openssl_binary_test_cmd};
+    openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
+    echo "test built binary: ${openssl_binary_test_cmd}";
+    $openssl_binary_test_cmd;
   fi;
 }
 
@@ -187,6 +223,15 @@ function task_lib_openssl() {
       notify "stopRoutine" "lib:openssl:apt:install";
     else
       notify "skipRoutine" "lib:openssl:apt:install";
+    fi;
+
+    # run task:lib:openssl:apt:test
+    if [ "$openssl_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:openssl:apt:test";
+      task_lib_openssl_apt_test;
+      notify "stopRoutine" "lib:openssl:apt:test";
+    else
+      notify "skipRoutine" "lib:openssl:apt:test";
     fi;
 
     notify "stopSubTask" "lib:openssl:apt";

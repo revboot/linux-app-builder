@@ -7,6 +7,24 @@
 function task_lib_geoip_apt_install() {
   # install packages
   sudo apt-get install -y $geoip_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libGeoIP.so)";
+}
+
+# task:lib:geoip:apt:test
+function task_lib_geoip_apt_test() {
+  # ldconfig tests
+  geoip_ldconfig_test_cmd="/usr/lib/libGeoIP.so";
+  if [ -f "$geoip_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    geoip_ldconfig_test_cmd1="ldconfig -p | grep ${geoip_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${geoip_ldconfig_test_cmd1}\"";
+    sudo bash -c "${geoip_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    geoip_ldconfig_test_cmd2="ldconfig -v | grep libGeoIP.so";
+    echo "find system libraries #2: sudo bash -c \"${geoip_ldconfig_test_cmd2}\"";
+    sudo bash -c "${geoip_ldconfig_test_cmd2}";
+  fi;
 }
 
 # task:lib:geoip:build:cleanup
@@ -81,19 +99,25 @@ function task_lib_geoip_build_install() {
     sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
     sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
     sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoLiteCityv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz\" && rm -f GeoLiteCityv6.dat && gunzip GeoLiteCityv6.dat.gz";
-    # find binary
-    echo "system library: $(whereis libGeoIP.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libGeoIP.so";
-    # check ldconfig
-    geoip_ldconfig_test_cmd="ldconfig -p | grep libGeoIP.so; ldconfig -v | grep libGeoIP.so";
-    echo "list libraries: ${geoip_ldconfig_test_cmd}"; ${geoip_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libGeoIP.so";
   fi;
 }
 
 # task:lib:geoip:build:test
 function task_lib_geoip_build_test() {
-  # do nothing
-  echo "nothing to do";
+  # ldconfig tests
+  geoip_ldconfig_test_cmd="${global_build_usrprefix}/lib/libGeoIP.so";
+  if [ -f "$geoip_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    geoip_ldconfig_test_cmd1="ldconfig -p | grep ${geoip_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${geoip_ldconfig_test_cmd1}\"";
+    sudo bash -c "${geoip_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    geoip_ldconfig_test_cmd2="ldconfig -v | grep libGeoIP.so";
+    echo "find built libraries #2: sudo bash -c \"${geoip_ldconfig_test_cmd2}\"";
+    sudo bash -c "${geoip_ldconfig_test_cmd2}";
+  fi;
 }
 
 function task_lib_geoip() {
@@ -109,6 +133,15 @@ function task_lib_geoip() {
       notify "stopRoutine" "lib:geoip:apt:install";
     else
       notify "skipRoutine" "lib:geoip:apt:install";
+    fi;
+
+    # run task:lib:geoip:apt:test
+    if [ "$geoip_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:geoip:apt:test";
+      task_lib_geoip_apt_test;
+      notify "stopRoutine" "lib:geoip:apt:test";
+    else
+      notify "skipRoutine" "lib:geoip:apt:test";
     fi;
 
     notify "stopSubTask" "lib:geoip:apt";

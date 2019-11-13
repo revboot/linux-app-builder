@@ -7,6 +7,32 @@
 function task_lib_pcre_apt_install() {
   # install packages
   sudo apt-get install -y $pcre_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libpcre.so)";
+}
+
+# task:lib:pcre:apt:test
+function task_lib_pcre_apt_test() {
+  # ldconfig tests
+  pcre_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libpcre.so";
+  if [ -f "$pcre_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
+    sudo bash -c "${pcre_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
+    echo "find system libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
+    sudo bash -c "${pcre_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  pcre_binary_test_cmd="/usr/bin/pcre-config";
+  if [ -f "$pcre_binary_test_cmd" ]; then
+    # test binary
+    pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
+    echo "test system binary: ${pcre_binary_test_cmd}";
+    $pcre_binary_test_cmd;
+  fi;
 }
 
 # task:lib:pcre:build:cleanup
@@ -122,22 +148,32 @@ function task_lib_pcre_build_install() {
     cd $pcre_build_path;
     sudo make uninstall;
     sudo make install;
-    # find binary
-    echo "system library: ${pcre_link_cmd}$(whereis libpcre.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libpcre.so";
-    # check ldconfig
-    pcre_ldconfig_test_cmd="ldconfig -p | grep libpcre.so; ldconfig -v | grep libpcre.so";
-    echo "list libraries: ${pcre_ldconfig_test_cmd}"; ${pcre_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libpcre.so";
   fi;
 }
 
 # task:lib:pcre:build:test
 function task_lib_pcre_build_test() {
-  if [ -f "${global_build_usrprefix}/bin/pcre-config" ]; then
+  # ldconfig tests
+  pcre_ldconfig_test_cmd="${global_build_usrprefix}/lib/libpcre.so";
+  if [ -f "$pcre_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
+    sudo bash -c "${pcre_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
+    echo "find built libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
+    sudo bash -c "${pcre_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  pcre_binary_test_cmd="${global_build_usrprefix}/bin/pcre-config";
+  if [ -f "$pcre_binary_test_cmd" ]; then
     # test binary
-    pcre_binary_test_cmd="pcre-config --version --libs --cflags";
-    echo "test system binary: /usr/bin/${pcre_binary_test_cmd}"; /usr/bin/$pcre_binary_test_cmd;
-    echo "test built binary: ${global_build_usrprefix}/bin/${pcre_binary_test_cmd}"; ${global_build_usrprefix}/bin/${pcre_binary_test_cmd};
+    pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
+    echo "test built binary: ${pcre_binary_test_cmd}";
+    $pcre_binary_test_cmd;
   fi;
 }
 
@@ -154,6 +190,15 @@ function task_lib_pcre() {
       notify "stopRoutine" "lib:pcre:apt:install";
     else
       notify "skipRoutine" "lib:pcre:apt:install";
+    fi;
+
+    # run task:lib:pcre:apt:test
+    if [ "$pcre_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:pcre:apt:test";
+      task_lib_pcre_apt_test;
+      notify "stopRoutine" "lib:pcre:apt:test";
+    else
+      notify "skipRoutine" "lib:pcre:apt:test";
     fi;
 
     notify "stopSubTask" "lib:pcre:apt";

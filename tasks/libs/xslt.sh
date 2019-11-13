@@ -7,6 +7,38 @@
 function task_lib_xslt_apt_install() {
   # install packages
   sudo apt-get install -y $xslt_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libxslt.so)";
+}
+
+# task:lib:xslt:apt:test
+function task_lib_xslt_apt_test() {
+  # ldconfig tests
+  xslt_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libxslt.so";
+  if [ -f "$xslt_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    xslt_ldconfig_test_cmd1="ldconfig -p | grep ${xslt_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${xslt_ldconfig_test_cmd1}\"";
+    sudo bash -c "${xslt_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    xslt_ldconfig_test_cmd2="ldconfig -v | grep libxslt.so";
+    echo "find system libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
+    sudo bash -c "${xslt_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  xslt_binary_test_cmd="/usr/bin/xslt-config";
+  if [ -f "$xslt_binary_test_cmd" ]; then
+    # test binary #1,#2,#3
+    xslt_binary_test_cmd1="${xslt_binary_test_cmd} --libs --cflags";
+    echo "test system binary #1: ${xslt_binary_test_cmd1}";
+    $xslt_binary_test_cmd1;
+    xslt_binary_test_cmd2="${xslt_binary_test_cmd} --plugins";
+    echo "test system binary #2: ${xslt_binary_test_cmd2}";
+    $xslt_binary_test_cmd2;
+    xslt_binary_test_cmd3="${xslt_binary_test_cmd} --version";
+    echo "test system binary #3: ${xslt_binary_test_cmd3}";
+    $xslt_binary_test_cmd3;
+  fi;
 }
 
 # task:lib:xslt:build:cleanup
@@ -109,28 +141,38 @@ function task_lib_xslt_build_install() {
     sudo cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
     sudo cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";
     sudo chmod +x "${global_build_usrprefix}/bin/xslt-config";
-    # find binary
-    echo "system library: $(whereis libxslt.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libxslt.so";
-    # check ldconfig
-    xslt_ldconfig_test_cmd="ldconfig -p | grep libxslt.so; ldconfig -v | grep libxslt.so";
-    echo "list libraries: ${xslt_ldconfig_test_cmd}"; ${xslt_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libxslt.so";
   fi;
 }
 
 # task:lib:xslt:build:test
 function task_lib_xslt_build_test() {
-  if [ -f "${global_build_usrprefix}/bin/xslt-config" ]; then
-    # test binary
-    xslt_binary_test_cmd1="xslt-config --libs --cflags";
-    xslt_binary_test_cmd2="xslt-config --plugins";
-    xslt_binary_test_cmd3="xslt-config --version";
-    echo "test system binary #1: /usr/bin/${xslt_binary_test_cmd1}" && /usr/bin/${xslt_binary_test_cmd1};
-    echo "test system binary #2: /usr/bin/${xslt_binary_test_cmd2}" && /usr/bin/${xslt_binary_test_cmd2};
-    echo "test system binary #3: /usr/bin/${xslt_binary_test_cmd3}" && /usr/bin/${xslt_binary_test_cmd3};
-    echo "test built binary #1: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd1};
-    echo "test built binary #2: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd2};
-    echo "test built binary #3: ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3}" && ${global_build_usrprefix}/bin/${xslt_binary_test_cmd3};
+  # ldconfig tests
+  xslt_ldconfig_test_cmd="${global_build_usrprefix}/lib/libxslt.so";
+  if [ -f "$xslt_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    xslt_ldconfig_test_cmd1="ldconfig -p | grep ${xslt_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${xslt_ldconfig_test_cmd1}\"";
+    sudo bash -c "${xslt_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    xslt_ldconfig_test_cmd2="ldconfig -v | grep libxslt.so";
+    echo "find built libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
+    sudo bash -c "${xslt_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  xslt_binary_test_cmd="${global_build_usrprefix}/bin/xslt-config";
+  if [ -f "$xslt_binary_test_cmd" ]; then
+    # test binary #1,#2,#3
+    xslt_binary_test_cmd1="${xslt_binary_test_cmd} --libs --cflags";
+    echo "test built binary #1: ${xslt_binary_test_cmd1}";
+    $xslt_binary_test_cmd1;
+    xslt_binary_test_cmd2="${xslt_binary_test_cmd} --plugins";
+    echo "test built binary #2: ${xslt_binary_test_cmd2}";
+    $xslt_binary_test_cmd2;
+    xslt_binary_test_cmd3="${xslt_binary_test_cmd} --version";
+    echo "test built binary #3: ${xslt_binary_test_cmd3}";
+    $xslt_binary_test_cmd3;
   fi;
 }
 
@@ -147,6 +189,15 @@ function task_lib_xslt() {
       notify "stopRoutine" "lib:xslt:apt:install";
     else
       notify "skipRoutine" "lib:xslt:apt:install";
+    fi;
+
+    # run task:lib:xslt:apt:test
+    if [ "$xslt_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:xslt:apt:test";
+      task_lib_xslt_apt_test;
+      notify "stopRoutine" "lib:xslt:apt:test";
+    else
+      notify "skipRoutine" "lib:xslt:apt:test";
     fi;
 
     notify "stopSubTask" "lib:xslt:apt";

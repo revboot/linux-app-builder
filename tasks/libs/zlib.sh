@@ -7,6 +7,24 @@
 function task_lib_zlib_apt_install() {
   # install packages
   sudo apt-get install -y $zlib_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libz.so)";
+}
+
+# task:lib:zlib:apt:test
+function task_lib_zlib_apt_test() {
+  # ldconfig tests
+  zlib_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libz.so";
+  if [ -f "$zlib_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
+    sudo bash -c "${zlib_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    zlib_ldconfig_test_cmd2="ldconfig -v | grep libz.so";
+    echo "find system libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
+    sudo bash -c "${zlib_ldconfig_test_cmd2}";
+  fi;
 }
 
 # task:lib:zlib:build:cleanup
@@ -76,19 +94,25 @@ function task_lib_zlib_build_install() {
     cd $zlib_build_path;
     sudo make uninstall;
     sudo make install;
-    # find binary
-    echo "system library: $(whereis libz.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libz.so";
-    # check ldconfig
-    zlib_ldconfig_test_cmd="ldconfig -p | grep libz.so; ldconfig -v | grep libz.so";
-    echo "list libraries: ${zlib_ldconfig_test_cmd}"; ${zlib_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libz.so";
   fi;
 }
 
 # task:lib:zlib:build:test
 function task_lib_zlib_build_test() {
-  # do nothing
-  echo "nothing to do";
+  # ldconfig tests
+  zlib_ldconfig_test_cmd="${global_build_usrprefix}/lib/libz.so";
+  if [ -f "$zlib_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
+    sudo bash -c "${zlib_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    zlib_ldconfig_test_cmd2="ldconfig -v | grep libz.so";
+    echo "find built libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
+    sudo bash -c "${zlib_ldconfig_test_cmd2}";
+  fi;
 }
 
 function task_lib_zlib() {
@@ -104,6 +128,15 @@ function task_lib_zlib() {
       notify "stopRoutine" "lib:zlib:apt:install";
     else
       notify "skipRoutine" "lib:zlib:apt:install";
+    fi;
+
+    # run task:lib:zlib:apt:test
+    if [ "$zlib_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:apt:test";
+      task_lib_zlib_apt_test;
+      notify "stopRoutine" "lib:zlib:apt:test";
+    else
+      notify "skipRoutine" "lib:zlib:apt:test";
     fi;
 
     notify "stopSubTask" "lib:zlib:apt";

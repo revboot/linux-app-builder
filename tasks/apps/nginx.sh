@@ -7,6 +7,26 @@
 function task_lib_nginx_apt_install() {
   # install packages
   sudo apt-get install -y $nginx_apt_pkgs;
+  # whereis binary
+  echo "whereis system binary: $(whereis nginx)";
+}
+
+# task:app:nginx:apt:test
+function task_app_nginx_apt_test() {
+  # ldd, ld and binary tests
+  nginx_binary_test_cmd="/usr/sbin/nginx";
+  if [ -f "$nginx_binary_test_cmd" ]; then
+    # print shared library dependencies
+    echo "system library: ldd ${nginx_binary_test_cmd}";
+    ldd $nginx_binary_test_cmd;
+    # print ld debug statistics
+    echo "env LD_DEBUG=statistics ${nginx_binary_test_cmd} -v";
+    env LD_DEBUG=statistics $nginx_binary_test_cmd -v;
+    # test binary
+    nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
+    echo "test system binary: sudo ${nginx_binary_test_cmd}";
+    sudo $nginx_binary_test_cmd;
+  fi;
 }
 
 # task:app:nginx:build:cleanup
@@ -661,11 +681,6 @@ function task_app_nginx_build_make() {
     echo "${nginx_build_cmd_full}";
     sudo bash -c "eval $nginx_build_cmd_full" && \
     sudo make -j1;
-    # check ldd and ld debug statistics
-    echo "system library: ldd /usr/sbin/nginx"; ldd /usr/sbin/nginx;
-    echo "system library: ldd ${nginx_build_path}/objs/nginx"; ldd ${nginx_build_path}/objs/nginx;
-    echo "env LD_DEBUG=statistics /usr/sbin/nginx -v"; env LD_DEBUG=statistics /usr/sbin/nginx -v;
-    echo "env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v"; env LD_DEBUG=statistics ${nginx_build_path}/objs/nginx -v;
   fi;
 }
 
@@ -678,9 +693,8 @@ function task_app_nginx_build_install() {
     sudo make install;
     # create missing directory
     sudo mkdir -p "${global_build_varprefix}/lib/nginx";
-    # find binary
-    echo "system binary: $(whereis nginx)";
-    echo "built binary: ${global_build_usrprefix}/sbin/nginx";
+    # whereis binary
+    echo "whereis built binary: ${global_build_usrprefix}/sbin/nginx";
   fi;
 }
 
@@ -707,11 +721,19 @@ function task_app_nginx_build_install_etc() {
 
 # task:app:nginx:build:test
 function task_app_nginx_build_test() {
-  if [ -f "${global_build_usrprefix}/sbin/nginx" ]; then
+  # ldd, ld and binary tests
+  nginx_binary_test_cmd="${global_build_usrprefix}/sbin/nginx";
+  if [ -f "$nginx_binary_test_cmd" ]; then
+    # print shared library dependencies
+    echo "system library: ldd ${nginx_binary_test_cmd}";
+    ldd $nginx_binary_test_cmd;
+    # print ld debug statistics
+    echo "env LD_DEBUG=statistics ${nginx_binary_test_cmd} -v";
+    env LD_DEBUG=statistics $nginx_binary_test_cmd -v;
     # test binary
-    nginx_test_cmd="nginx -v -V -t";
-    echo "test system binary: sudo /usr/sbin/${nginx_test_cmd}"; sudo /usr/sbin/${nginx_test_cmd};
-    echo "test built binary: sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd}"; sudo ${global_build_usrprefix}/sbin/${nginx_test_cmd};
+    nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
+    echo "test built binary: sudo ${nginx_binary_test_cmd}";
+    sudo $nginx_binary_test_cmd;
   fi;
 }
 
@@ -728,6 +750,15 @@ function task_app_nginx() {
       notify "stopRoutine" "app:nginx:apt:install";
     else
       notify "skipRoutine" "app:nginx:apt:install";
+    fi;
+
+    # run task:app:nginx:apt:test
+    if [ "$nginx_apt_test" == "yes" ]; then
+      notify "startRoutine" "app:nginx:apt:test";
+      task_app_nginx_apt_test;
+      notify "stopRoutine" "app:nginx:apt:test";
+    else
+      notify "skipRoutine" "app:nginx:apt:test";
     fi;
 
     notify "stopSubTask" "app:nginx:apt";

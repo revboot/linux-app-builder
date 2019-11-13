@@ -7,6 +7,32 @@
 function task_lib_gd2_apt_install() {
   # install packages
   sudo apt-get install -y $gd2_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libgd.so)";
+}
+
+# task:lib:gd2:apt:test
+function task_lib_gd2_apt_test() {
+  # ldconfig tests
+  gd2_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libgd.so";
+  if [ -f "$gd2_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
+    sudo bash -c "${gd2_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
+    echo "find system libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
+    sudo bash -c "${gd2_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  gd2_binary_test_cmd="/usr/bin/gdlib-config";
+  if [ -f "$gd2_binary_test_cmd" ]; then
+    # test binary
+    gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
+    echo "test system binary: ${gd2_binary_test_cmd}";
+    $gd2_binary_test_cmd;
+  fi;
 }
 
 # task:lib:gd2:build:cleanup
@@ -139,22 +165,32 @@ function task_lib_gd2_build_install() {
     cd $gd2_build_path;
     sudo make uninstall;
     sudo make install;
-    # find binary
-    echo "system library: $(whereis libgd.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libgd.so";
-    # check ldconfig
-    gd2_ldconfig_test_cmd="ldconfig -p | grep libgd.so; ldconfig -v | grep libgd.so";
-    echo "list libraries: ${gd2_ldconfig_test_cmd}"; ${gd2_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libgd.so";
   fi;
 }
 
 # task:lib:gd2:build:test
 function task_lib_gd2_build_test() {
-  if [ -f "${global_build_usrprefix}/bin/gdlib-config" ]; then
+  # ldconfig tests
+  gd2_ldconfig_test_cmd="${global_build_usrprefix}/lib/libgd.so";
+  if [ -f "$gd2_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
+    sudo bash -c "${gd2_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
+    echo "find built libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
+    sudo bash -c "${gd2_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  gd2_binary_test_cmd="${global_build_usrprefix}/bin/gdlib-config";
+  if [ -f "$gd2_binary_test_cmd" ]; then
     # test binary
-    gd2_binary_test_cmd="gdlib-config --version --libs --cflags --ldflags --features";
-    echo "test system binary: /usr/bin/${gd2_binary_test_cmd}"; /usr/bin/${gd2_binary_test_cmd};
-    echo "test built binary: ${global_build_usrprefix}/bin/${gd2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${gd2_binary_test_cmd};
+    gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
+    echo "test built binary: ${gd2_binary_test_cmd}";
+    $gd2_binary_test_cmd;
   fi;
 }
 
@@ -171,6 +207,15 @@ function task_lib_gd2() {
       notify "stopRoutine" "lib:gd2:apt:install";
     else
       notify "skipRoutine" "lib:gd2:apt:install";
+    fi;
+
+    # run task:lib:gd2:apt:test
+    if [ "$gd2_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:gd2:apt:test";
+      task_lib_gd2_apt_test;
+      notify "stopRoutine" "lib:gd2:apt:test";
+    else
+      notify "skipRoutine" "lib:gd2:apt:test";
     fi;
 
     notify "stopSubTask" "lib:gd2:apt";

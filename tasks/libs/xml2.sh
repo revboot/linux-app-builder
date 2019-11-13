@@ -7,6 +7,32 @@
 function task_lib_xml2_apt_install() {
   # install packages
   sudo apt-get install -y $xml2_apt_pkgs;
+  # whereis library
+  echo "whereis system library: $(whereis libxml2.so)";
+}
+
+# task:lib:xml2:apt:test
+function task_lib_xml2_apt_test() {
+  # ldconfig tests
+  xml2_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libxml2.so";
+  if [ -f "$xml2_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    xml2_ldconfig_test_cmd1="ldconfig -p | grep ${xml2_ldconfig_test_cmd}";
+    echo "find system libraries #1: sudo bash -c \"${xml2_ldconfig_test_cmd1}\"";
+    sudo bash -c "${xml2_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    xml2_ldconfig_test_cmd2="ldconfig -v | grep libxml2.so";
+    echo "find system libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
+    sudo bash -c "${xml2_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  xml2_binary_test_cmd="/usr/bin/xml2-config";
+  if [ -f "$xml2_binary_test_cmd" ]; then
+    # test binary
+    xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
+    echo "test system binary: ${xml2_binary_test_cmd}";
+    $xml2_binary_test_cmd;
+  fi;
 }
 
 # task:lib:xml2:build:cleanup
@@ -252,22 +278,32 @@ function task_lib_xml2_build_install() {
     cd $xml2_build_path;
     sudo make uninstall;
     sudo make install;
-    # find binary
-    echo "system library: $(whereis libxml2.so)";
-    echo "built library: ${global_build_usrprefix}/lib/libxml2.so";
-    # check ldconfig
-    xml2_ldconfig_test_cmd="ldconfig -p | grep libxml2.so; ldconfig -v | grep libxml2.so";
-    echo "list libraries: ${xml2_ldconfig_test_cmd}"; ${xml2_ldconfig_test_cmd};
+    # whereis library
+    echo "whereis built library: ${global_build_usrprefix}/lib/libxml2.so";
   fi;
 }
 
 # task:lib:xml2:build:test
 function task_lib_xml2_build_test() {
-  if [ -f "${global_build_usrprefix}/bin/xml2-config" ]; then
+  # ldconfig tests
+  xml2_ldconfig_test_cmd="${global_build_usrprefix}/lib/libxml2.so";
+  if [ -f "$xml2_ldconfig_test_cmd" ]; then
+    # check ldconfig paths
+    xml2_ldconfig_test_cmd1="ldconfig -p | grep ${xml2_ldconfig_test_cmd}";
+    echo "find built libraries #1: sudo bash -c \"${xml2_ldconfig_test_cmd1}\"";
+    sudo bash -c "${xml2_ldconfig_test_cmd1}";
+    # check ldconfig versions
+    xml2_ldconfig_test_cmd2="ldconfig -v | grep libxml2.so";
+    echo "find built libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
+    sudo bash -c "${xml2_ldconfig_test_cmd2}";
+  fi;
+  # binary tests
+  xml2_binary_test_cmd="${global_build_usrprefix}/bin/xml2-config";
+  if [ -f "$xml2_binary_test_cmd" ]; then
     # test binary
-    xml2_binary_test_cmd="xml2-config --libs --cflags --modules --version";
-    echo "test system binary: /usr/bin/${xml2_binary_test_cmd}"; /usr/bin/${xml2_binary_test_cmd};
-    echo "test built binary: ${global_build_usrprefix}/bin/${xml2_binary_test_cmd}"; ${global_build_usrprefix}/bin/${xml2_binary_test_cmd};
+    xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
+    echo "test built binary: ${xml2_binary_test_cmd}";
+    $xml2_binary_test_cmd;
   fi;
 }
 
@@ -284,6 +320,15 @@ function task_lib_xml2() {
       notify "stopRoutine" "lib:xml2:apt:install";
     else
       notify "skipRoutine" "lib:xml2:apt:install";
+    fi;
+
+    # run task:lib:xml2:apt:test
+    if [ "$xml2_apt_test" == "yes" ]; then
+      notify "startRoutine" "lib:xml2:apt:test";
+      task_lib_xml2_apt_test;
+      notify "stopRoutine" "lib:xml2:apt:test";
+    else
+      notify "skipRoutine" "lib:xml2:apt:test";
     fi;
 
     notify "stopSubTask" "lib:xml2:apt";
