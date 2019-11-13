@@ -166,11 +166,9 @@ function task_lib_openssl_build_make() {
     fi;
 
     # clean, configure and make
-    cd $openssl_build_path;
-    sudo make clean;
-    echo "${openssl_build_cmd_full}";
-    sudo $openssl_build_cmd_full && \
-    sudo make;
+    sudo bash -c "cd \"${openssl_build_path}\" && make clean";
+    echo "configure arguments: ${openssl_build_cmd_full}";
+    sudo bash -c "cd \"${openssl_build_path}\" && eval ${openssl_build_cmd_full} && make";
   fi;
 }
 
@@ -178,9 +176,8 @@ function task_lib_openssl_build_make() {
 function task_lib_openssl_build_install() {
   if [ -f "$openssl_build_path/libssl.so" ]; then
     # uninstall and install
-    cd $openssl_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${openssl_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${openssl_build_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_build_usrprefix}/lib/libssl.so";
   fi;

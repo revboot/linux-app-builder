@@ -79,11 +79,9 @@ function task_lib_zlib_build_make() {
     fi;
 
     # clean, configure and make
-    cd $zlib_build_path;
-    sudo make clean;
-    echo "${zlib_build_cmd_full}";
-    sudo $zlib_build_cmd_full && \
-    sudo make;
+    sudo bash -c "cd \"${zlib_build_path}\" && make clean";
+    echo "configure arguments: ${zlib_build_cmd_full}";
+    sudo bash -c "cd \"${zlib_build_path}\" && eval ${zlib_build_cmd_full} && make";
   fi;
 }
 
@@ -91,9 +89,8 @@ function task_lib_zlib_build_make() {
 function task_lib_zlib_build_install() {
   if [ -f "$zlib_build_path/libz.so" ]; then
     # uninstall and install
-    cd $zlib_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${zlib_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${zlib_build_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_build_usrprefix}/lib/libz.so";
   fi;

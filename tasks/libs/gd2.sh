@@ -150,11 +150,9 @@ function task_lib_gd2_build_make() {
     fi;
 
     # clean, configure and make
-    cd $gd2_build_path;
-    sudo make clean;
-    echo "${gd2_build_cmd_full}";
-    sudo $gd2_build_cmd_full && \
-    sudo make;
+    sudo bash -c "cd \"${gd2_build_path}\" && make clean";
+    echo "configure arguments: ${gd2_build_cmd_full}";
+    sudo bash -c "cd \"${gd2_build_path}\" && eval ${gd2_build_cmd_full} && make";
   fi;
 }
 
@@ -162,9 +160,8 @@ function task_lib_gd2_build_make() {
 function task_lib_gd2_build_install() {
   if [ -f "$gd2_build_path/src/.libs/libgd.so" ]; then
     # uninstall and install
-    cd $gd2_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${gd2_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${gd2_build_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_build_usrprefix}/lib/libgd.so";
   fi;

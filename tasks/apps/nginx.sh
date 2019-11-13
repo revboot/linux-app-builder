@@ -17,11 +17,13 @@ function task_app_nginx_apt_test() {
   nginx_binary_test_cmd="/usr/sbin/nginx";
   if [ -f "$nginx_binary_test_cmd" ]; then
     # print shared library dependencies
-    echo "system library: ldd ${nginx_binary_test_cmd}";
-    ldd $nginx_binary_test_cmd;
+    nginx_ldd_test_cmd="ldd ${nginx_binary_test_cmd}";
+    echo "shared library dependencies: ${nginx_ldd_test_cmd}";
+    $nginx_ldd_test_cmd;
     # print ld debug statistics
-    echo "env LD_DEBUG=statistics ${nginx_binary_test_cmd} -v";
-    env LD_DEBUG=statistics $nginx_binary_test_cmd -v;
+    nginx_lddebug_test_cmd="env LD_DEBUG=statistics $nginx_binary_test_cmd -v";
+    echo "ld debug statistics: ${nginx_lddebug_test_cmd}";
+    $nginx_lddebug_test_cmd;
     # test binary
     nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
     echo "test system binary: sudo ${nginx_binary_test_cmd}";
@@ -676,11 +678,9 @@ function task_app_nginx_build_make() {
     fi;
 
     # clean, configure and make
-    cd $nginx_build_path;
-    sudo make clean;
-    echo "${nginx_build_cmd_full}";
-    sudo bash -c "eval $nginx_build_cmd_full" && \
-    sudo make -j1;
+    sudo bash -c "cd \"${nginx_build_path}\" && make clean";
+    echo "configure arguments: ${nginx_build_cmd_full}";
+    sudo bash -c "cd \"${nginx_build_path}\" && eval ${nginx_build_cmd_full} && make -j1";
   fi;
 }
 
@@ -688,9 +688,8 @@ function task_app_nginx_build_make() {
 function task_app_nginx_build_install() {
   if [ -f "$nginx_build_path/objs/nginx" ]; then
     # uninstall and install
-    cd $nginx_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${nginx_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${nginx_build_path}\" && make install";
     # create missing directory
     sudo mkdir -p "${global_build_varprefix}/lib/nginx";
     # whereis binary
@@ -725,11 +724,13 @@ function task_app_nginx_build_test() {
   nginx_binary_test_cmd="${global_build_usrprefix}/sbin/nginx";
   if [ -f "$nginx_binary_test_cmd" ]; then
     # print shared library dependencies
-    echo "system library: ldd ${nginx_binary_test_cmd}";
-    ldd $nginx_binary_test_cmd;
+    nginx_ldd_test_cmd="ldd ${nginx_binary_test_cmd}";
+    echo "shared library dependencies: ${nginx_ldd_test_cmd}";
+    $nginx_ldd_test_cmd;
     # print ld debug statistics
-    echo "env LD_DEBUG=statistics ${nginx_binary_test_cmd} -v";
-    env LD_DEBUG=statistics $nginx_binary_test_cmd -v;
+    nginx_lddebug_test_cmd="env LD_DEBUG=statistics $nginx_binary_test_cmd -v";
+    echo "ld debug statistics: ${nginx_lddebug_test_cmd}";
+    $nginx_lddebug_test_cmd;
     # test binary
     nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
     echo "test built binary: sudo ${nginx_binary_test_cmd}";

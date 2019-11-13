@@ -262,12 +262,9 @@ function task_lib_xml2_build_make() {
     fi;
 
     # clean, configure (workaround) and make
-    cd $xml2_build_path;
-    sudo make clean;
-    echo "${xml2_build_cmd_full}";
-    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && \
-    sudo $xml2_build_cmd_full && \
-    sudo make;
+    sudo bash -c "cd \"${xml2_build_path}\" && make clean";
+    echo "configure arguments: ${xml2_build_cmd_full}";
+    sudo bash -c "cd \"${xml2_build_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xml2_build_cmd_full} && make";
   fi;
 }
 
@@ -275,9 +272,8 @@ function task_lib_xml2_build_make() {
 function task_lib_xml2_build_install() {
   if [ -f "$xml2_build_path/.libs/libxml2.so" ]; then
     # uninstall and install
-    cd $xml2_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${xml2_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${xml2_build_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_build_usrprefix}/lib/libxml2.so";
   fi;

@@ -133,11 +133,9 @@ function task_lib_pcre_build_make() {
     fi;
 
     # clean, configure and make
-    cd $pcre_build_path;
-    sudo make clean;
-    echo "${pcre_build_cmd_full}";
-    sudo $pcre_build_cmd_full && \
-    sudo make;
+    sudo bash -c "cd \"${pcre_build_path}\" && make clean";
+    echo "configure arguments: ${pcre_build_cmd_full}";
+    sudo bash -c "cd \"${pcre_build_path}\" && eval ${pcre_build_cmd_full} && make";
   fi;
 }
 
@@ -145,9 +143,8 @@ function task_lib_pcre_build_make() {
 function task_lib_pcre_build_install() {
   if [ -f "$pcre_build_path/.libs/libpcre.so" ]; then
     # uninstall and install
-    cd $pcre_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${pcre_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${pcre_build_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_build_usrprefix}/lib/libpcre.so";
   fi;

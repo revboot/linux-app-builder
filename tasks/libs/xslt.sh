@@ -117,16 +117,13 @@ function task_lib_xslt_build_make() {
     fi;
 
     # clean
-    cd $xslt_build_path;
-    sudo make clean;
+    sudo bash -c "cd \"${xslt_build_path}\" && make clean";
     # download docbook (workaround)
     sudo wget -P $xslt_build_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
     sudo wget -P $xslt_build_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
     # configure (workaround) and make
-    echo "${xslt_build_cmd_full}";
-    sudo bash -c "libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf" && \
-    sudo $xslt_build_cmd_full && \
-    sudo make;
+    echo "configure arguments: ${xslt_build_cmd_full}";
+    sudo bash -c "cd \"${xslt_build_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xslt_build_cmd_full} && make";
   fi;
 }
 
@@ -134,9 +131,8 @@ function task_lib_xslt_build_make() {
 function task_lib_xslt_build_install() {
   if [ -f "$xslt_build_path/libxslt/.libs/libxslt.so" ]; then
     # uninstall and install
-    cd $xslt_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${xslt_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${xslt_build_path}\" && make install";
     # copy missing binaries to system
     sudo cp "${xslt_build_path}/xsltproc/.libs/xsltproc" "${global_build_usrprefix}/bin/xsltproc";
     sudo cp "${xslt_build_path}/xslt-config" "${global_build_usrprefix}/bin/xslt-config";

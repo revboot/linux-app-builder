@@ -79,11 +79,9 @@ function task_lib_geoip_build_make() {
     fi;
 
     # clean, configure and make
-    cd $geoip_build_path;
-    sudo make clean;
-    echo "${geoip_build_cmd_full}";
-    sudo $geoip_build_cmd_full && \
-    sudo make;
+    sudo bash -c "cd \"${geoip_build_path}\" && make clean";
+    echo "configure arguments: ${geoip_build_cmd_full}";
+    sudo bash -c "cd \"${geoip_build_path}\" && eval ${geoip_build_cmd_full} && make";
   fi;
 }
 
@@ -91,9 +89,8 @@ function task_lib_geoip_build_make() {
 function task_lib_geoip_build_install() {
   if [ -f "$geoip_build_path/libGeoIP/.libs/libGeoIP.so" ]; then
     # uninstall and install
-    cd $geoip_build_path;
-    sudo make uninstall;
-    sudo make install;
+    sudo bash -c "cd \"${geoip_build_path}\" && make uninstall";
+    sudo bash -c "cd \"${geoip_build_path}\" && make install";
     # download databases
     sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
     sudo bash -c "cd \"${global_build_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
