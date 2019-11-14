@@ -3,16 +3,16 @@
 # Task: Library: zlib
 #
 
-# task:lib:zlib:apt:install
-function task_lib_zlib_apt_install() {
+# task:lib:zlib:package:install
+function task_lib_zlib_package_install() {
   # install packages
-  sudo apt-get install -y $zlib_apt_pkgs;
+  sudo apt-get install -y $zlib_package_pkgs;
   # whereis library
   echo "whereis system library: $(whereis libz.so)";
 }
 
-# task:lib:zlib:apt:test
-function task_lib_zlib_apt_test() {
+# task:lib:zlib:package:test
+function task_lib_zlib_package_test() {
   # ldconfig tests
   zlib_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libz.so";
   if [ -f "$zlib_ldconfig_test_cmd" ]; then
@@ -27,79 +27,79 @@ function task_lib_zlib_apt_test() {
   fi;
 }
 
-# task:lib:zlib:build:cleanup
-function task_lib_zlib_build_cleanup() {
+# task:lib:zlib:source:cleanup
+function task_lib_zlib_source_cleanup() {
   # remove source files
-  if [ -d "$zlib_build_path" ]; then
-    sudo rm -Rf "${zlib_build_path}"*;
+  if [ -d "$zlib_source_path" ]; then
+    sudo rm -Rf "${zlib_source_path}"*;
   fi;
   # remove source tar
-  if [ -f "$zlib_build_tar" ]; then
-    sudo rm -f "${zlib_build_tar}"*;
+  if [ -f "$zlib_source_tar" ]; then
+    sudo rm -f "${zlib_source_tar}"*;
   fi;
 }
 
-# task:lib:zlib:build:download
-function task_lib_zlib_build_download() {
-  if [ ! -d "$zlib_build_path" ]; then
+# task:lib:zlib:source:download
+function task_lib_zlib_source_download() {
+  if [ ! -d "$zlib_source_path" ]; then
     # download and extract source files from tar
-    if [ ! -f "$zlib_build_tar" ]; then
-      sudo bash -c "cd \"${global_build_usrprefix}/src\" && wget \"${zlib_build_url}\" && tar xzf \"${zlib_build_tar}\"";
+    if [ ! -f "$zlib_source_tar" ]; then
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${zlib_source_url}\" && tar xzf \"${zlib_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_build_usrprefix}/src\" && tar xzf \"${zlib_build_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar xzf \"${zlib_source_tar}\"";
     fi;
   fi;
 }
 
-# task:lib:zlib:build:make
-function task_lib_zlib_build_make() {
-  if [ -d "$zlib_build_path" ]; then
+# task:lib:zlib:source:make
+function task_lib_zlib_source_make() {
+  if [ -d "$zlib_source_path" ]; then
     # command - add configuration tool
-    zlib_build_cmd_full="./configure";
+    zlib_source_cmd_full="./configure";
 
     # command - add arch
-    if [ -n "$zlib_build_arg_arch" ]; then
-      zlib_build_cmd_full="${zlib_build_cmd_full} --archs=\"${zlib_build_arg_arch}\"";
+    if [ -n "$zlib_source_arg_arch" ]; then
+      zlib_source_cmd_full="${zlib_source_cmd_full} --archs=\"${zlib_source_arg_arch}\"";
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$zlib_build_arg_usrprefix" ]; then
-      zlib_build_cmd_full="${zlib_build_cmd_full} --prefix=${zlib_build_arg_usrprefix}";
+    if [ -n "$zlib_source_arg_usrprefix" ]; then
+      zlib_source_cmd_full="${zlib_source_cmd_full} --prefix=${zlib_source_arg_usrprefix}";
     fi;
 
     ## command - add libraries
-    #if [ -n "$zlib_build_arg_libraries" ]; then
-    #  zlib_build_cmd_full="${zlib_build_cmd_full} --libraries=${zlib_build_arg_libraries}";
+    #if [ -n "$zlib_source_arg_libraries" ]; then
+    #  zlib_source_cmd_full="${zlib_source_cmd_full} --libraries=${zlib_source_arg_libraries}";
     #fi;
 
     # command - add options
-    if [ -n "$zlib_build_arg_options" ]; then
-      zlib_build_cmd_full="${zlib_build_cmd_full} ${zlib_build_arg_options}";
+    if [ -n "$zlib_source_arg_options" ]; then
+      zlib_source_cmd_full="${zlib_source_cmd_full} ${zlib_source_arg_options}";
     fi;
 
     # clean, configure and make
-    sudo bash -c "cd \"${zlib_build_path}\" && make clean";
-    echo "configure arguments: ${zlib_build_cmd_full}";
-    sudo bash -c "cd \"${zlib_build_path}\" && eval ${zlib_build_cmd_full} && make";
+    sudo bash -c "cd \"${zlib_source_path}\" && make clean";
+    echo "configure arguments: ${zlib_source_cmd_full}";
+    sudo bash -c "cd \"${zlib_source_path}\" && eval ${zlib_source_cmd_full} && make";
   fi;
 }
 
-# task:lib:zlib:build:install
-function task_lib_zlib_build_install() {
-  if [ -f "$zlib_build_path/libz.so" ]; then
+# task:lib:zlib:source:install
+function task_lib_zlib_source_install() {
+  if [ -f "$zlib_source_path/libz.so" ]; then
     # uninstall and install
-    sudo bash -c "cd \"${zlib_build_path}\" && make uninstall";
-    sudo bash -c "cd \"${zlib_build_path}\" && make install";
+    sudo bash -c "cd \"${zlib_source_path}\" && make uninstall";
+    sudo bash -c "cd \"${zlib_source_path}\" && make install";
     # whereis library
-    echo "whereis built library: ${global_build_usrprefix}/lib/libz.so";
+    echo "whereis built library: ${global_source_usrprefix}/lib/libz.so";
   fi;
 }
 
-# task:lib:zlib:build:test
-function task_lib_zlib_build_test() {
+# task:lib:zlib:source:test
+function task_lib_zlib_source_test() {
   # ldconfig tests
-  zlib_ldconfig_test_cmd="${global_build_usrprefix}/lib/libz.so";
+  zlib_ldconfig_test_cmd="${global_source_usrprefix}/lib/libz.so";
   if [ -f "$zlib_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";
@@ -114,85 +114,85 @@ function task_lib_zlib_build_test() {
 
 function task_lib_zlib() {
 
-  # apt subtask
-  if [ "$zlib_apt_flag" == "yes" ]; then
-    notify "startSubTask" "lib:zlib:apt";
+  # package subtask
+  if [ "$zlib_package_flag" == "yes" ]; then
+    notify "startSubTask" "lib:zlib:package";
 
-    # run task:lib:zlib:apt:install
-    if [ "$zlib_apt_install" == "yes" ]; then
-      notify "startRoutine" "lib:zlib:apt:install";
-      task_lib_zlib_apt_install;
-      notify "stopRoutine" "lib:zlib:apt:install";
+    # run task:lib:zlib:package:install
+    if [ "$zlib_package_install" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:package:install";
+      task_lib_zlib_package_install;
+      notify "stopRoutine" "lib:zlib:package:install";
     else
-      notify "skipRoutine" "lib:zlib:apt:install";
+      notify "skipRoutine" "lib:zlib:package:install";
     fi;
 
-    # run task:lib:zlib:apt:test
-    if [ "$zlib_apt_test" == "yes" ]; then
-      notify "startRoutine" "lib:zlib:apt:test";
-      task_lib_zlib_apt_test;
-      notify "stopRoutine" "lib:zlib:apt:test";
+    # run task:lib:zlib:package:test
+    if [ "$zlib_package_test" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:package:test";
+      task_lib_zlib_package_test;
+      notify "stopRoutine" "lib:zlib:package:test";
     else
-      notify "skipRoutine" "lib:zlib:apt:test";
+      notify "skipRoutine" "lib:zlib:package:test";
     fi;
 
-    notify "stopSubTask" "lib:zlib:apt";
+    notify "stopSubTask" "lib:zlib:package";
   else
-    notify "skipSubTask" "lib:zlib:apt";
+    notify "skipSubTask" "lib:zlib:package";
   fi;
 
-  # build subtask
-  if [ "$zlib_build_flag" == "yes" ]; then
-    notify "startSubTask" "lib:zlib:build";
+  # source subtask
+  if [ "$zlib_source_flag" == "yes" ]; then
+    notify "startSubTask" "lib:zlib:source";
 
-    # run task:lib:zlib:build:cleanup
-    if [ "$zlib_build_cleanup" == "yes" ]; then
-      notify "startRoutine" "lib:zlib:build:cleanup";
-      task_lib_zlib_build_cleanup;
-      notify "stopRoutine" "lib:zlib:build:cleanup";
+    # run task:lib:zlib:source:cleanup
+    if [ "$zlib_source_cleanup" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:source:cleanup";
+      task_lib_zlib_source_cleanup;
+      notify "stopRoutine" "lib:zlib:source:cleanup";
     else
-      notify "skipRoutine" "lib:zlib:build:cleanup";
+      notify "skipRoutine" "lib:zlib:source:cleanup";
     fi;
 
-    # run task:lib:zlib:build:download
-    if [ ! -d "$zlib_build_path" ]; then
-      notify "startRoutine" "lib:zlib:build:download";
-      task_lib_zlib_build_download;
-      notify "stopRoutine" "lib:zlib:build:download";
+    # run task:lib:zlib:source:download
+    if [ ! -d "$zlib_source_path" ]; then
+      notify "startRoutine" "lib:zlib:source:download";
+      task_lib_zlib_source_download;
+      notify "stopRoutine" "lib:zlib:source:download";
     else
-      notify "skipRoutine" "lib:zlib:build:download";
+      notify "skipRoutine" "lib:zlib:source:download";
     fi;
 
-    # run task:lib:zlib:build:make
-    if [ "$zlib_build_make" == "yes" ]; then
-      notify "startRoutine" "lib:zlib:build:make";
-      task_lib_zlib_build_make;
-      notify "stopRoutine" "lib:zlib:build:make";
+    # run task:lib:zlib:source:make
+    if [ "$zlib_source_make" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:source:make";
+      task_lib_zlib_source_make;
+      notify "stopRoutine" "lib:zlib:source:make";
     else
-      notify "skipRoutine" "lib:zlib:build:make";
+      notify "skipRoutine" "lib:zlib:source:make";
     fi;
 
-    # run task:lib:zlib:build:install
-    if [ "$zlib_build_install" == "yes" ]; then
-      notify "startRoutine" "lib:zlib:build:install";
-      task_lib_zlib_build_install;
-      notify "stopRoutine" "lib:zlib:build:install";
+    # run task:lib:zlib:source:install
+    if [ "$zlib_source_install" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:source:install";
+      task_lib_zlib_source_install;
+      notify "stopRoutine" "lib:zlib:source:install";
     else
-      notify "skipRoutine" "lib:zlib:build:install";
+      notify "skipRoutine" "lib:zlib:source:install";
     fi;
 
-    # run task:lib:zlib:build:test
-    if [ "$zlib_build_test" == "yes" ]; then
-      notify "startRoutine" "lib:zlib:build:test";
-      task_lib_zlib_build_test;
-      notify "stopRoutine" "lib:zlib:build:test";
+    # run task:lib:zlib:source:test
+    if [ "$zlib_source_test" == "yes" ]; then
+      notify "startRoutine" "lib:zlib:source:test";
+      task_lib_zlib_source_test;
+      notify "stopRoutine" "lib:zlib:source:test";
     else
-      notify "skipRoutine" "lib:zlib:build:test";
+      notify "skipRoutine" "lib:zlib:source:test";
     fi;
 
-    notify "stopSubTask" "lib:zlib:build";
+    notify "stopSubTask" "lib:zlib:source";
   else
-    notify "skipSubTask" "lib:zlib:build";
+    notify "skipSubTask" "lib:zlib:source";
   fi;
 
 }

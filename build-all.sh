@@ -126,22 +126,22 @@ loadSource "tasks/apps/nginx.sh" true;
 #
 
 # Cleanup
-if [ "$global_build_cleanup" == "yes" ]; then
-  sudo rm -Rf ${global_build_usrprefix}/{src,include,lib,bin,sbin}/{zlib*,libz*,pcre*,libpcre*,openssl*,libssl*,gd2*,libgd*,xml2*,libxml*,xslt*,libxslt*,geoip*,GeoIP*,libGeoIP*,nginx*};
-  sudo rm -Rf ${global_build_varprefix}/{src,include,lib,bin,sbin}/{zlib*,libz*,pcre*,libpcre*,openssl*,libssl*,gd2*,libgd*,xml2*,libxml*,xslt*,libxslt*,geoip*,GeoIP*,libGeoIP*,nginx*};
+if [ "$global_source_cleanup" == "yes" ]; then
+  sudo rm -Rf ${global_source_usrprefix}/{src,include,lib,bin,sbin}/{zlib*,libz*,pcre*,libpcre*,openssl*,libssl*,gd2*,libgd*,xml2*,libxml*,xslt*,libxslt*,geoip*,GeoIP*,libGeoIP*,nginx*};
+  sudo rm -Rf ${global_source_varprefix}/{src,include,lib,bin,sbin}/{zlib*,libz*,pcre*,libpcre*,openssl*,libssl*,gd2*,libgd*,xml2*,libxml*,xslt*,libxslt*,geoip*,GeoIP*,libGeoIP*,nginx*};
 fi;
 
 # Install dependencies via apt
-if [ "$global_apt_flag" == "yes" ]; then
+if [ "$global_package_flag" == "yes" ]; then
   # - development tools
-  if [ "$dev_apt_flag" == "yes" ]; then
-    global_apt_pkgs="${global_apt_pkgs} ${dev_apt_pkgs}";
+  if [ "$dev_package_flag" == "yes" ]; then
+    global_package_pkgs="${global_package_pkgs} ${dev_package_pkgs}";
   fi;
-  sudo apt-get install -y $global_apt_pkgs;
+  sudo apt-get install -y $global_package_pkgs;
 fi;
 
 # Build dependencies
-if [ "$global_build_flag" == "yes" ]; then
+if [ "$global_source_flag" == "yes" ]; then
 
   # task: library: zlib
   if [ "$zlib_task" == "yes" ]; then
