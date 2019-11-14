@@ -5,8 +5,16 @@
 
 # task:lib:pcre:package:install
 function task_lib_pcre_package_install() {
-  # install packages
-  sudo apt-get install -y $pcre_package_pkgs;
+  # install binary packages
+  if [ "$pcre_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $pcre_package_pkgs_bin;
+  # install development packages
+  elif [ "$pcre_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $pcre_package_pkgs_dev;
+  # install both packages
+  elif [ "$pcre_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $pcre_package_pkgs_bin $pcre_package_pkgs_dev;
+  fi;
   # whereis library
   echo "whereis system library: $(whereis libpcre.so)";
 }

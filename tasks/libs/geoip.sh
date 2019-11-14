@@ -5,8 +5,16 @@
 
 # task:lib:geoip:package:install
 function task_lib_geoip_package_install() {
-  # install packages
-  sudo apt-get install -y $geoip_package_pkgs;
+  # install binary packages
+  if [ "$geoip_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $geoip_package_pkgs_bin;
+  # install development packages
+  elif [ "$geoip_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $geoip_package_pkgs_dev;
+  # install both packages
+  elif [ "$geoip_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $geoip_package_pkgs_bin $geoip_package_pkgs_dev;
+  fi;
   # whereis library
   echo "whereis system library: $(whereis libGeoIP.so)";
 }

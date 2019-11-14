@@ -5,8 +5,16 @@
 
 # task:lib:nginx:package:install
 function task_lib_nginx_package_install() {
-  # install packages
-  sudo apt-get install -y $nginx_package_pkgs;
+  # install binary packages
+  if [ "$nginx_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $nginx_package_pkgs_bin;
+  # install development packages
+  elif [ "$nginx_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $nginx_package_pkgs_dev;
+  # install both packages
+  elif [ "$nginx_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $nginx_package_pkgs_bin $nginx_package_pkgs_dev;
+  fi;
   # whereis binary
   echo "whereis system binary: $(whereis nginx)";
 }

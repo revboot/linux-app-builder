@@ -133,11 +133,16 @@ fi;
 
 # Install dependencies via apt
 if [ "$global_package_flag" == "yes" ]; then
-  # - development tools
-  if [ "$dev_package_flag" == "yes" ]; then
-    global_package_pkgs="${global_package_pkgs} ${dev_package_pkgs}";
+  # install binary packages
+  if [ "$global_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $global_package_pkgs_bin;
+  # install development packages
+  elif [ "$global_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $global_package_pkgs_dev;
+  # install both packages
+  elif [ "$global_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $global_package_pkgs_bin $global_package_pkgs_dev;
   fi;
-  sudo apt-get install -y $global_package_pkgs;
 fi;
 
 # Build dependencies

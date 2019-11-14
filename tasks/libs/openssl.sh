@@ -5,8 +5,16 @@
 
 # task:lib:openssl:package:install
 function task_lib_openssl_package_install() {
-  # install packages
-  sudo apt-get install -y $openssl_package_pkgs;
+  # install binary packages
+  if [ "$openssl_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $openssl_package_pkgs_bin;
+  # install development packages
+  elif [ "$openssl_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $openssl_package_pkgs_dev;
+  # install both packages
+  elif [ "$openssl_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $openssl_package_pkgs_bin $openssl_package_pkgs_dev;
+  fi;
   # whereis library
   echo "whereis system library: $(whereis libssl.so)";
 }

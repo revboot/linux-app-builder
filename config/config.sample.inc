@@ -5,19 +5,18 @@
 
 # - global
 global_package_flag="yes";
+global_package_pkgs="both"; #bin,dev,both
 global_source_flag="yes";
 global_source_cleanup="no";
 global_source_usrprefix="/usr/local";
 global_source_varprefix="/var/local";
-
-# - development tools
-dev_package_flag="yes";
 
 # - zlib (version 1.1.3 — 1.2.x)
 zlib_task="yes";
 zlib_package_flag="yes";
 zlib_package_install="yes";
 zlib_package_test="yes";
+zlib_package_pkgs="dev"; #bin,dev,both
 zlib_source_flag="yes";
 zlib_source_cleanup="no";
 zlib_source_make="yes";
@@ -33,6 +32,7 @@ pcre_task="yes";
 pcre_package_flag="yes";
 pcre_package_install="yes";
 pcre_package_test="yes";
+pcre_package_pkgs="dev"; #bin,dev,both
 pcre_source_flag="yes";
 pcre_source_cleanup="no";
 pcre_source_make="yes";
@@ -55,6 +55,7 @@ openssl_task="yes";
 openssl_package_flag="yes";
 openssl_package_install="yes";
 openssl_package_test="yes";
+openssl_package_pkgs="dev"; #bin,dev,both
 openssl_source_flag="yes";
 openssl_source_cleanup="no";
 openssl_source_make="yes";
@@ -84,6 +85,7 @@ gd2_task="yes";
 gd2_package_flag="yes";
 gd2_package_install="yes";
 gd2_package_test="yes";
+gd2_package_pkgs="dev"; #bin,dev,both
 gd2_source_flag="yes";
 gd2_source_cleanup="no";
 gd2_source_make="yes";
@@ -107,6 +109,7 @@ xml2_task="yes";
 xml2_package_flag="yes";
 xml2_package_install="yes";
 xml2_package_test="yes";
+xml2_package_pkgs="dev"; #bin,dev,both
 xml2_source_flag="yes";
 xml2_source_cleanup="no";
 xml2_source_make="yes";
@@ -154,6 +157,7 @@ xslt_task="yes";
 xslt_package_flag="yes";
 xslt_package_install="yes";
 xslt_package_test="yes";
+xslt_package_pkgs="dev"; #bin,dev,both
 xslt_source_flag="yes";
 xslt_source_cleanup="yes"; #force clean to avoid docbook issue
 xslt_source_make="yes";
@@ -172,6 +176,7 @@ geoip_task="yes";
 geoip_package_flag="yes";
 geoip_package_install="yes";
 geoip_package_test="yes";
+geoip_package_pkgs="dev"; #bin,dev,both
 geoip_source_flag="yes";
 geoip_source_cleanup="no";
 geoip_source_make="yes";
@@ -186,6 +191,7 @@ nginx_task="yes";
 nginx_package_flag="no";
 nginx_package_install="no";
 nginx_package_test="no";
+nginx_package_pkgs="bin"; #bin
 nginx_source_flag="yes";
 nginx_source_cleanup="no";
 nginx_source_make="yes";

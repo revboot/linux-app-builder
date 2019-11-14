@@ -5,8 +5,16 @@
 
 # task:lib:zlib:package:install
 function task_lib_zlib_package_install() {
-  # install packages
-  sudo apt-get install -y $zlib_package_pkgs;
+  # install binary packages
+  if [ "$zlib_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $zlib_package_pkgs_bin;
+  # install development packages
+  elif [ "$zlib_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $zlib_package_pkgs_dev;
+  # install both packages
+  elif [ "$zlib_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $zlib_package_pkgs_bin $zlib_package_pkgs_dev;
+  fi;
   # whereis library
   echo "whereis system library: $(whereis libz.so)";
 }

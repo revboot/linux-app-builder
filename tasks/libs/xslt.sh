@@ -5,8 +5,16 @@
 
 # task:lib:xslt:package:install
 function task_lib_xslt_package_install() {
-  # install packages
-  sudo apt-get install -y $xslt_package_pkgs;
+  # install binary packages
+  if [ "$xslt_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $xslt_package_pkgs_bin;
+  # install development packages
+  elif [ "$xslt_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $xslt_package_pkgs_dev;
+  # install both packages
+  elif [ "$xslt_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $xslt_package_pkgs_bin $xslt_package_pkgs_dev;
+  fi;
   # whereis library
   echo "whereis system library: $(whereis libxslt.so)";
 }

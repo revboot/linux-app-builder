@@ -5,8 +5,16 @@
 
 # task:lib:gd2:package:install
 function task_lib_gd2_package_install() {
-  # install packages
-  sudo apt-get install -y $gd2_package_pkgs;
+  # install binary packages
+  if [ "$gd2_package_pkgs" == "bin" ]; then
+    sudo apt-get install -y $gd2_package_pkgs_bin;
+  # install development packages
+  elif [ "$gd2_package_pkgs" == "dev" ]; then
+    sudo apt-get install -y $gd2_package_pkgs_dev;
+  # install both packages
+  elif [ "$gd2_package_pkgs" == "both" ]; then
+    sudo apt-get install -y $gd2_package_pkgs_bin $gd2_package_pkgs_dev;
+  fi;
   # whereis library
   echo "whereis system library: $(whereis libgd.so)";
 }
