@@ -749,11 +749,11 @@ function task_app_nginx_source_test() {
 function task_app_nginx() {
 
   # package subtask
-  if [ "$nginx_package_flag" == "yes" ]; then
+  if ([ "$nginx_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "app:nginx:package";
 
     # run task:app:nginx:package:install
-    if [ "$nginx_package_install" == "yes" ]; then
+    if ([ "$nginx_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "app:nginx:package:install";
       task_app_nginx_package_install;
       notify "stopRoutine" "app:nginx:package:install";
@@ -762,7 +762,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:package:test
-    if [ "$nginx_package_test" == "yes" ]; then
+    if ([ "$nginx_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "app:nginx:package:test";
       task_app_nginx_package_test;
       notify "stopRoutine" "app:nginx:package:test";
@@ -776,11 +776,11 @@ function task_app_nginx() {
   fi;
 
   # source subtask
-  if [ "$nginx_source_flag" == "yes" ]; then
+  if ([ "$nginx_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "app:nginx:source";
 
     # run task:app:nginx:source:cleanup
-    if [ "$nginx_source_cleanup" == "yes" ]; then
+    if ([ "$nginx_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
       notify "startRoutine" "app:nginx:source:cleanup";
       task_app_nginx_source_cleanup;
       notify "stopRoutine" "app:nginx:source:cleanup";
@@ -789,7 +789,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:source:download
-    if [ ! -d "$nginx_source_path" ]; then
+    if ([ ! -d "$nginx_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "app:nginx:source:download";
       task_app_nginx_source_download;
       notify "stopRoutine" "app:nginx:source:download";
@@ -798,7 +798,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:source:make
-    if [ "$nginx_source_make" == "yes" ]; then
+    if ([ "$nginx_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
       notify "startRoutine" "app:nginx:source:make";
       task_app_nginx_source_make;
       notify "stopRoutine" "app:nginx:source:make";
@@ -807,7 +807,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:source:install
-    if [ "$nginx_source_install" == "yes" ]; then
+    if ([ "$nginx_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "stopRoutine" "app:nginx:source:install";
       task_app_nginx_source_install;
       notify "stopRoutine" "app:nginx:source:install";
@@ -816,7 +816,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:source:config
-    if [ "$nginx_source_config" == "system" ] || [ "$nginx_source_config" == "build" ]; then
+    if ([ "$nginx_source_config" != "no" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "config" ]; then
       notify "startRoutine" "app:nginx:source:config";
       task_app_nginx_source_config;
       notify "stopRoutine" "app:nginx:source:config";
@@ -825,7 +825,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:source:test
-    if [ "$nginx_source_test" == "yes" ]; then
+    if ([ "$nginx_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "app:nginx:source:test";
       task_app_nginx_source_test;
       notify "stopRoutine" "app:nginx:source:test";

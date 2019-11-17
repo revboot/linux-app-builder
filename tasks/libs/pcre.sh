@@ -185,11 +185,11 @@ function task_lib_pcre_source_test() {
 function task_lib_pcre() {
 
   # package subtask
-  if [ "$pcre_package_flag" == "yes" ]; then
+  if ([ "$pcre_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "lib:pcre:package";
 
     # run task:lib:pcre:package:install
-    if [ "$pcre_package_install" == "yes" ]; then
+    if ([ "$pcre_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:pcre:package:install";
       task_lib_pcre_package_install;
       notify "stopRoutine" "lib:pcre:package:install";
@@ -198,7 +198,7 @@ function task_lib_pcre() {
     fi;
 
     # run task:lib:pcre:package:test
-    if [ "$pcre_package_test" == "yes" ]; then
+    if ([ "$pcre_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:pcre:package:test";
       task_lib_pcre_package_test;
       notify "stopRoutine" "lib:pcre:package:test";
@@ -212,11 +212,11 @@ function task_lib_pcre() {
   fi;
 
   # source subtask
-  if [ "$pcre_source_flag" == "yes" ]; then
+  if ([ "$pcre_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "lib:pcre:source";
 
     # run task:lib:pcre:source:cleanup
-    if [ "$pcre_source_cleanup" == "yes" ]; then
+    if ([ "$pcre_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
       notify "startRoutine" "lib:pcre:source:cleanup";
       task_lib_pcre_source_cleanup;
       notify "stopRoutine" "lib:pcre:source:cleanup";
@@ -225,7 +225,7 @@ function task_lib_pcre() {
     fi;
 
     # run task:lib:pcre:source:download
-    if [ ! -d "$pcre_source_path" ]; then
+    if ([ ! -d "$pcre_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:pcre:source:download";
       task_lib_pcre_source_download;
       notify "stopRoutine" "lib:pcre:source:download";
@@ -234,7 +234,7 @@ function task_lib_pcre() {
     fi;
 
     # run task:lib:pcre:source:make
-    if [ "$pcre_source_make" == "yes" ]; then
+    if ([ "$pcre_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
       notify "startRoutine" "lib:pcre:source:make";
       task_lib_pcre_source_make;
       notify "stopRoutine" "lib:pcre:source:make";
@@ -243,7 +243,7 @@ function task_lib_pcre() {
     fi;
 
     # run task:lib:pcre:source:install
-    if [ "$pcre_source_install" == "yes" ]; then
+    if ([ "$pcre_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:pcre:source:install";
       task_lib_pcre_source_install;
       notify "stopRoutine" "lib:pcre:source:install";
@@ -252,7 +252,7 @@ function task_lib_pcre() {
     fi;
 
     # run task:lib:pcre:source:test
-    if [ "$pcre_source_test" == "yes" ]; then
+    if ([ "$pcre_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:pcre:source:test";
       task_lib_pcre_source_test;
       notify "stopRoutine" "lib:pcre:source:test";

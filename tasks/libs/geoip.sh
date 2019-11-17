@@ -128,11 +128,11 @@ function task_lib_geoip_source_test() {
 function task_lib_geoip() {
 
   # package subtask
-  if [ "$geoip_package_flag" == "yes" ]; then
+  if ([ "$geoip_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "lib:geoip:package";
 
     # run task:lib:geoip:package:install
-    if [ "$geoip_package_install" == "yes" ]; then
+    if ([ "$geoip_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:geoip:package:install";
       task_lib_geoip_package_install;
       notify "stopRoutine" "lib:geoip:package:install";
@@ -141,7 +141,7 @@ function task_lib_geoip() {
     fi;
 
     # run task:lib:geoip:package:test
-    if [ "$geoip_package_test" == "yes" ]; then
+    if ([ "$geoip_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:geoip:package:test";
       task_lib_geoip_package_test;
       notify "stopRoutine" "lib:geoip:package:test";
@@ -155,11 +155,11 @@ function task_lib_geoip() {
   fi;
 
   # source subtask
-  if [ "$geoip_source_flag" == "yes" ]; then
+  if ([ "$geoip_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "lib:geoip:source";
 
     # run task:lib:geoip:source:cleanup
-    if [ "$geoip_source_cleanup" == "yes" ]; then
+    if ([ "$geoip_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
       notify "startRoutine" "lib:geoip:source:cleanup";
       task_lib_geoip_source_cleanup;
       notify "stopRoutine" "lib:geoip:source:cleanup";
@@ -168,7 +168,7 @@ function task_lib_geoip() {
     fi;
 
     # run task:lib:geoip:source:download
-    if [ ! -d "$geoip_source_path" ]; then
+    if ([ ! -d "$geoip_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:geoip:source:download";
       task_lib_geoip_source_download;
       notify "stopRoutine" "lib:geoip:source:download";
@@ -177,7 +177,7 @@ function task_lib_geoip() {
     fi;
 
     # run task:lib:geoip:source:make
-    if [ "$geoip_source_make" == "yes" ]; then
+    if ([ "$geoip_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
       notify "startRoutine" "lib:geoip:source:make";
       task_lib_geoip_source_make;
       notify "stopRoutine" "lib:geoip:source:make";
@@ -186,7 +186,7 @@ function task_lib_geoip() {
     fi;
 
     # run task:lib:geoip:source:install
-    if [ "$geoip_source_install" == "yes" ]; then
+    if ([ "$geoip_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:geoip:source:install";
       task_lib_geoip_source_install;
       notify "stopRoutine" "lib:geoip:source:install";
@@ -195,7 +195,7 @@ function task_lib_geoip() {
     fi;
 
     # run task:lib:geoip:source:test
-    if [ "$geoip_source_test" == "yes" ]; then
+    if ([ "$geoip_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:geoip:source:test";
       task_lib_geoip_source_test;
       notify "stopRoutine" "lib:geoip:source:test";

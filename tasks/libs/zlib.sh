@@ -123,11 +123,11 @@ function task_lib_zlib_source_test() {
 function task_lib_zlib() {
 
   # package subtask
-  if [ "$zlib_package_flag" == "yes" ]; then
+  if ([ "$zlib_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "lib:zlib:package";
 
     # run task:lib:zlib:package:install
-    if [ "$zlib_package_install" == "yes" ]; then
+    if ([ "$zlib_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:zlib:package:install";
       task_lib_zlib_package_install;
       notify "stopRoutine" "lib:zlib:package:install";
@@ -136,7 +136,7 @@ function task_lib_zlib() {
     fi;
 
     # run task:lib:zlib:package:test
-    if [ "$zlib_package_test" == "yes" ]; then
+    if ([ "$zlib_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:zlib:package:test";
       task_lib_zlib_package_test;
       notify "stopRoutine" "lib:zlib:package:test";
@@ -150,11 +150,11 @@ function task_lib_zlib() {
   fi;
 
   # source subtask
-  if [ "$zlib_source_flag" == "yes" ]; then
+  if ([ "$zlib_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "lib:zlib:source";
 
     # run task:lib:zlib:source:cleanup
-    if [ "$zlib_source_cleanup" == "yes" ]; then
+    if ([ "$zlib_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
       notify "startRoutine" "lib:zlib:source:cleanup";
       task_lib_zlib_source_cleanup;
       notify "stopRoutine" "lib:zlib:source:cleanup";
@@ -163,7 +163,7 @@ function task_lib_zlib() {
     fi;
 
     # run task:lib:zlib:source:download
-    if [ ! -d "$zlib_source_path" ]; then
+    if ([ ! -d "$zlib_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:zlib:source:download";
       task_lib_zlib_source_download;
       notify "stopRoutine" "lib:zlib:source:download";
@@ -172,7 +172,7 @@ function task_lib_zlib() {
     fi;
 
     # run task:lib:zlib:source:make
-    if [ "$zlib_source_make" == "yes" ]; then
+    if ([ "$zlib_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
       notify "startRoutine" "lib:zlib:source:make";
       task_lib_zlib_source_make;
       notify "stopRoutine" "lib:zlib:source:make";
@@ -181,7 +181,7 @@ function task_lib_zlib() {
     fi;
 
     # run task:lib:zlib:source:install
-    if [ "$zlib_source_install" == "yes" ]; then
+    if ([ "$zlib_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:zlib:source:install";
       task_lib_zlib_source_install;
       notify "stopRoutine" "lib:zlib:source:install";
@@ -190,7 +190,7 @@ function task_lib_zlib() {
     fi;
 
     # run task:lib:zlib:source:test
-    if [ "$zlib_source_test" == "yes" ]; then
+    if ([ "$zlib_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:zlib:source:test";
       task_lib_zlib_source_test;
       notify "stopRoutine" "lib:zlib:source:test";

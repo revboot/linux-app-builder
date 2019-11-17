@@ -314,11 +314,11 @@ function task_lib_xml2_source_test() {
 function task_lib_xml2() {
 
   # package subtask
-  if [ "$xml2_package_flag" == "yes" ]; then
+  if ([ "$xml2_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "lib:xml2:package";
 
     # run task:lib:xml2:package:install
-    if [ "$xml2_package_install" == "yes" ]; then
+    if ([ "$xml2_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:xml2:package:install";
       task_lib_xml2_package_install;
       notify "stopRoutine" "lib:xml2:package:install";
@@ -327,7 +327,7 @@ function task_lib_xml2() {
     fi;
 
     # run task:lib:xml2:package:test
-    if [ "$xml2_package_test" == "yes" ]; then
+    if ([ "$xml2_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:xml2:package:test";
       task_lib_xml2_package_test;
       notify "stopRoutine" "lib:xml2:package:test";
@@ -341,11 +341,11 @@ function task_lib_xml2() {
   fi;
 
   # source subtask
-  if [ "$xml2_source_flag" == "yes" ]; then
+  if ([ "$xml2_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "lib:xml2:source";
 
     # run task:lib:xml2:source:cleanup
-    if [ "$xml2_source_cleanup" == "yes" ]; then
+    if ([ "$xml2_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
       notify "startRoutine" "lib:xml2:source:cleanup";
       task_lib_xml2_source_cleanup;
       notify "stopRoutine" "lib:xml2:source:cleanup";
@@ -354,7 +354,7 @@ function task_lib_xml2() {
     fi;
 
     # run task:lib:xml2:source:download
-    if [ ! -d "$xml2_source_path" ]; then
+    if ([ ! -d "$xml2_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:xml2:source:download";
       task_lib_xml2_source_download;
       notify "stopRoutine" "lib:xml2:source:download";
@@ -363,7 +363,7 @@ function task_lib_xml2() {
     fi;
 
     # run task:lib:xml2:source:make
-    if [ "$xml2_source_make" == "yes" ]; then
+    if ([ "$xml2_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
       notify "startRoutine" "lib:xml2:source:make";
       task_lib_xml2_source_make;
       notify "stopRoutine" "lib:xml2:source:make";
@@ -372,7 +372,7 @@ function task_lib_xml2() {
     fi;
 
     # run task:lib:xml2:source:install
-    if [ "$xml2_source_install" == "yes" ]; then
+    if ([ "$xml2_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
       notify "startRoutine" "lib:xml2:source:install";
       task_lib_xml2_source_install;
       notify "stopRoutine" "lib:xml2:source:install";
@@ -381,7 +381,7 @@ function task_lib_xml2() {
     fi;
 
     # run task:lib:xml2:source:test
-    if [ "$xml2_source_test" == "yes" ]; then
+    if ([ "$xml2_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
       notify "startRoutine" "lib:xml2:source:test";
       task_lib_xml2_source_test;
       notify "stopRoutine" "lib:xml2:source:test";
