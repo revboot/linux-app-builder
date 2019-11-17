@@ -3,8 +3,8 @@
 # Task: Application: nginx
 #
 
-# task:lib:nginx:package:install
-function task_lib_nginx_package_install() {
+# task:app:nginx:package:install
+function task_app_nginx_package_install() {
   # install binary packages
   if [ "$nginx_package_pkgs" == "bin" ]; then
     sudo apt-get install -y $nginx_package_pkgs_bin;
