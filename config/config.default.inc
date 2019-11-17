@@ -4,7 +4,9 @@
 #
 
 # - global
+global_task="yes";
 global_package_flag="yes";
+global_package_install="yes";
 global_package_pkgs="both"; #bin,dev,both
 global_package_pkgs_bin="sed grep wget";
 global_package_pkgs_dev="build-essential gcc g++ autoconf automake make m4 bison gawk";

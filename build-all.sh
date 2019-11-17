@@ -104,6 +104,8 @@ loadSource "config/config.local.inc" false;
 # Load tasks
 #
 
+# task: misc: global
+loadSource "tasks/misc/global.sh" true;
 # task: library: zlib
 loadSource "tasks/libs/zlib.sh" true;
 # task: library: pcre
@@ -125,28 +127,17 @@ loadSource "tasks/apps/nginx.sh" true;
 # Main program
 #
 
-# Cleanup
-if [ "$global_source_cleanup" == "yes" ]; then
-  sudo rm -Rf ${global_source_usrprefix}/{src,include,lib,bin,sbin}/{zlib*,libz*,pcre*,libpcre*,openssl*,libssl*,gd2*,libgd*,xml2*,libxml*,xslt*,libxslt*,geoip*,GeoIP*,libGeoIP*,nginx*};
-  sudo rm -Rf ${global_source_varprefix}/{src,include,lib,bin,sbin}/{zlib*,libz*,pcre*,libpcre*,openssl*,libssl*,gd2*,libgd*,xml2*,libxml*,xslt*,libxslt*,geoip*,GeoIP*,libGeoIP*,nginx*};
-fi;
-
-# Install dependencies via apt
-if [ "$global_package_flag" == "yes" ]; then
-  # install binary packages
-  if [ "$global_package_pkgs" == "bin" ]; then
-    sudo apt-get install -y $global_package_pkgs_bin;
-  # install development packages
-  elif [ "$global_package_pkgs" == "dev" ]; then
-    sudo apt-get install -y $global_package_pkgs_dev;
-  # install both packages
-  elif [ "$global_package_pkgs" == "both" ]; then
-    sudo apt-get install -y $global_package_pkgs_bin $global_package_pkgs_dev;
-  fi;
-fi;
-
 # Build dependencies
 if [ "$global_source_flag" == "yes" ]; then
+
+  # task: misc: global
+  if [ "$global_task" == "yes" ]; then
+    notify "startTask" "misc:global";
+    task_misc_global;
+    notify "stopTask" "misc:global";
+  else
+    notify "skipTask" "misc:global";
+  fi;
 
   # task: library: zlib
   if [ "$zlib_task" == "yes" ]; then

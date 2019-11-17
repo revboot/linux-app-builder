@@ -4,7 +4,9 @@
 #
 
 # - global
+global_task="yes";
 global_package_flag="yes";
+global_package_install="yes";
 global_package_pkgs="both"; #bin,dev,both
 global_source_flag="yes";
 global_source_cleanup="no";
