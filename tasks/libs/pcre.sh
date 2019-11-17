@@ -225,7 +225,7 @@ function task_lib_pcre() {
     fi;
 
     # run task:lib:pcre:source:download
-    if ([ ! -d "$pcre_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    if ([ "$pcre_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:pcre:source:download";
       task_lib_pcre_source_download;
       notify "stopRoutine" "lib:pcre:source:download";

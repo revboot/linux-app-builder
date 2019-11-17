@@ -163,7 +163,7 @@ function task_lib_zlib() {
     fi;
 
     # run task:lib:zlib:source:download
-    if ([ ! -d "$zlib_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    if ([ "$zlib_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:zlib:source:download";
       task_lib_zlib_source_download;
       notify "stopRoutine" "lib:zlib:source:download";

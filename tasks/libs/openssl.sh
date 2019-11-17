@@ -258,7 +258,7 @@ function task_lib_openssl() {
     fi;
 
     # run task:lib:openssl:source:download
-    if ([ ! -d "$openssl_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    if ([ "$openssl_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:openssl:source:download";
       task_lib_openssl_source_download;
       notify "stopRoutine" "lib:openssl:source:download";

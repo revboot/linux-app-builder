@@ -789,7 +789,7 @@ function task_app_nginx() {
     fi;
 
     # run task:app:nginx:source:download
-    if ([ ! -d "$nginx_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    if ([ "$nginx_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "app:nginx:source:download";
       task_app_nginx_source_download;
       notify "stopRoutine" "app:nginx:source:download";

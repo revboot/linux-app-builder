@@ -223,7 +223,7 @@ function task_lib_xslt() {
     fi;
 
     # run task:lib:xslt:source:download
-    if ([ ! -d "$xslt_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    if ([ "$xslt_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:xslt:source:download";
       task_lib_xslt_source_download;
       notify "stopRoutine" "lib:xslt:source:download";

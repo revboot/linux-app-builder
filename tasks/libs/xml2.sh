@@ -354,7 +354,7 @@ function task_lib_xml2() {
     fi;
 
     # run task:lib:xml2:source:download
-    if ([ ! -d "$xml2_source_path" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    if ([ "$xml2_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
       notify "startRoutine" "lib:xml2:source:download";
       task_lib_xml2_source_download;
       notify "stopRoutine" "lib:xml2:source:download";
