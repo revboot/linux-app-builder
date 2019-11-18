@@ -56,10 +56,10 @@ function task_app_nginx_source_download() {
   if [ ! -d "$nginx_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$nginx_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${nginx_source_url}\" && tar xzf \"${nginx_source_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${nginx_source_url}\" -O \"${nginx_source_tar}\" && tar -xzf \"${nginx_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar xzf \"${nginx_source_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${nginx_source_tar}\"";
     fi;
   fi;
 }

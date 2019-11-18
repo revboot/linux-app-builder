@@ -60,10 +60,10 @@ function task_lib_gd2_source_download() {
   if [ ! -d "$gd2_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$gd2_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${gd2_source_url}\" && tar xzf \"${gd2_source_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${gd2_source_url}\" -O \"${gd2_source_tar}\" && tar -xzf \"${gd2_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar xzf \"${gd2_source_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${gd2_source_tar}\"";
     fi;
   fi;
 }

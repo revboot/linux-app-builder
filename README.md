@@ -6,14 +6,15 @@ Installs web applications and libraries from either packages or sources, with fl
 ## Supported Applications and Libraries
 The following applications and libraries can be installed via packages or sources:
 - Applications:
-  - [Nginx](https://nginx.org), sources: [www.nginx.org](https://www.nginx.org/en/download.html), [trac.nginx.org](http://trac.nginx.org/nginx/browser), [github.com](https://github.com/nginx/nginx)
+  - [Nginx](https://nginx.org), sources: [www.nginx.org](https://www.nginx.org/en/download.html)*, [trac.nginx.org](http://trac.nginx.org/nginx/browser), [github.com](https://github.com/nginx/nginx)
 - Libraries:
-  - [Zlib/libz](https://www.zlib.net), sources: [www.zlib.net/tarball](https://www.zlib.net/zlib-1.2.11.tar.gz), [github.com](https://github.com/madler/zlib)
-  - [PCRE/libpcre](https://www.pcre.org), sources: [ftp.pcre.org](https://ftp.pcre.org/pub/pcre), [vcs.pcre.org](https://vcs.pcre.org/pcre2)
-  - [OpenSSL/libssl](https://www.openssl.org), sources: [www.openssl.org](https://www.openssl.org/source), [git.openssl.org](https://git.openssl.org/?p=openssl.git), [github.com](https://github.com/openssl/openssl)
-  - [XML2/libxml2](http://xmlsoft.org), sources: [www.xmlsoft.org](http://www.xmlsoft.org/downloads.html), [gitlab.gnome.org](https://gitlab.gnome.org/GNOME/libxml2), [github.com](https://github.com/GNOME/libxml2)
-  - [XSLT/libxslt](http://xmlsoft.org/XSLT), sources: [www.xmlsoft.org](http://www.xmlsoft.org/XSLT/downloads.html), [gitlab.gnome.org](https://gitlab.gnome.org/GNOME/libxslt), [github.com](https://github.com/GNOME/libxslt)
-  - [GeoIP/libgeoip](https://dev.maxmind.com/geoip/legacy), sources: [dev.maxmind.com](https://dev.maxmind.com/geoip/legacy/downloadable), [github.com](https://github.com/maxmind/geoip-api-c)
+  - [Zlib/libz](https://www.zlib.net), sources: [www.zlib.net/tarball](https://www.zlib.net/zlib-1.2.11.tar.gz), [github.com](https://github.com/madler/zlib)*
+  - [PCRE/libpcre](https://www.pcre.org), sources: [ftp.pcre.org](https://ftp.pcre.org/pub/pcre)*, [vcs.pcre.org](https://vcs.pcre.org/pcre2)
+  - [OpenSSL/libssl](https://www.openssl.org), sources: [www.openssl.org](https://www.openssl.org/source)*, [git.openssl.org](https://git.openssl.org/?p=openssl.git), [github.com](https://github.com/openssl/openssl)
+  - [GD2/libgd2](https://libgd.github.io), sources: [libgd.github.io](https://libgd.github.io/pages/downloads.html), [github.com](https://github.com/libgd/libgd)*
+  - [XML2/libxml2](http://xmlsoft.org), sources: [www.xmlsoft.org](http://www.xmlsoft.org/downloads.html), [gitlab.gnome.org](https://gitlab.gnome.org/GNOME/libxml2)*, [github.com](https://github.com/GNOME/libxml2)
+  - [XSLT/libxslt](http://xmlsoft.org/XSLT), sources: [www.xmlsoft.org](http://www.xmlsoft.org/XSLT/downloads.html), [gitlab.gnome.org](https://gitlab.gnome.org/GNOME/libxslt)*, [github.com](https://github.com/GNOME/libxslt)
+  - [GeoIP/libgeoip](https://dev.maxmind.com/geoip/legacy), sources: [dev.maxmind.com](https://dev.maxmind.com/geoip/legacy/downloadable), [github.com](https://github.com/maxmind/geoip-api-c)*
 
 ## Supported Operating Systems
 The following operating systems are supported:

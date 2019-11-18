@@ -66,10 +66,10 @@ function task_lib_xslt_source_download() {
   if [ ! -d "$xslt_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$xslt_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${xslt_source_url}\" && tar xzf \"${xslt_source_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${xslt_source_url}\" -O \"${xslt_source_tar}\" && tar -xzf \"${xslt_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar xzf \"${xslt_source_tar}\"";
+      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${xslt_source_tar}\"";
     fi;
   fi;
 }
