@@ -1,6 +1,8 @@
 # Stack Installer
 Installs applications and libraries from either packages or sources, with flexible usage of cleanup, download, make, install, config and test routines, command line arguments and customizable configuration.
 
+[![Build Status](https://travis-ci.com/revboot/stack-installer.svg?branch=master)](https://travis-ci.com/revboot/stack-installer)
+
 ## Applications and Libraries
 The following applications and libraries will be installed via package or source:
 - Applications:

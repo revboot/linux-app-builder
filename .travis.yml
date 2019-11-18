@@ -1,0 +1,5 @@
+dist: xenial
+language: minimal
+
+script:
+  ./stack-installer.sh --task=all --subtask=all --routine=all
