@@ -1,10 +1,10 @@
 # Stack Installer
-Installs applications and libraries from either packages or sources, with flexible usage of cleanup, download, make, install, config and test routines, command line arguments and customizable configuration.
+Installs web applications and libraries from either packages or sources, with flexible usage of cleanup, download, make, install, config and test routines, command line arguments and customizable configuration.
 
 [![Build Status](https://travis-ci.com/revboot/stack-installer.svg?branch=master)](https://travis-ci.com/revboot/stack-installer)
 
-## Applications and Libraries
-The following applications and libraries will be installed via package or source:
+## Supported Applications and Libraries
+The following applications and libraries can be installed via packages or sources:
 - Applications:
   - [Nginx](https://nginx.org), sources: [www.nginx.org](https://www.nginx.org/en/download.html), [trac.nginx.org](http://trac.nginx.org/nginx/browser), [github.com](https://github.com/nginx/nginx)
 - Libraries:
@@ -14,6 +14,14 @@ The following applications and libraries will be installed via package or source
   - [XML2/libxml2](http://xmlsoft.org), sources: [www.xmlsoft.org](http://www.xmlsoft.org/downloads.html), [gitlab.gnome.org](https://gitlab.gnome.org/GNOME/libxml2), [github.com](https://github.com/GNOME/libxml2)
   - [XSLT/libxslt](http://xmlsoft.org/XSLT), sources: [www.xmlsoft.org](http://www.xmlsoft.org/XSLT/downloads.html), [gitlab.gnome.org](https://gitlab.gnome.org/GNOME/libxslt), [github.com](https://github.com/GNOME/libxslt)
   - [GeoIP/libgeoip](https://dev.maxmind.com/geoip/legacy), sources: [dev.maxmind.com](https://dev.maxmind.com/geoip/legacy/downloadable), [github.com](https://github.com/maxmind/geoip-api-c)
+
+## Supported Operating Systems
+The following operating systems are supported:
+- Ubuntu LTS family
+  - Ubuntu [18.04 (bionic)](http://releases.ubuntu.com/18.04)
+  - Ubuntu [16.04 (xenial)](http://releases.ubuntu.com/16.04)
+  - Ubuntu [14.04 (trusty)](http://releases.ubuntu.com/14.04)
+  - Ubuntu [12.04 (precise)](http://releases.ubuntu.com/12.04)
 
 ## Usage
 

@@ -8,8 +8,12 @@ global_task="yes";
 global_package_flag="yes";
 global_package_install="yes";
 global_package_pkgs="both"; #bin,dev,both
-global_package_pkgs_bin="sed grep wget";
-global_package_pkgs_dev="build-essential gcc g++ autoconf automake make m4 bison gawk";
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04"|"18.04")
+  global_package_pkgs_bin="sed grep wget";
+  global_package_pkgs_dev="build-essential gcc g++ autoconf automake make m4 bison gawk";
+  ;;
+esac;
 global_source_flag="yes";
 global_source_cleanup="no";
 global_source_usrprefix="/usr/local";
@@ -21,8 +25,12 @@ zlib_package_flag="yes";
 zlib_package_install="yes";
 zlib_package_test="yes";
 zlib_package_pkgs="dev"; #bin,dev,both
-zlib_package_pkgs_bin="zlib1g";
-zlib_package_pkgs_dev="zlib1g-dev";
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04"|"18.04")
+  zlib_package_pkgs_bin="zlib1g";
+  zlib_package_pkgs_dev="zlib1g-dev";
+  ;;
+esac;
 zlib_source_flag="yes";
 zlib_source_cleanup="no";
 zlib_source_download="yes";
@@ -45,8 +53,16 @@ pcre_package_flag="yes";
 pcre_package_install="yes";
 pcre_package_test="yes";
 pcre_package_pkgs="dev"; #bin,dev,both
-pcre_package_pkgs_bin="libpcre3 libpcrecpp0 libbz2 libreadline"; #libedit, depends on zlib
-pcre_package_pkgs_dev="libpcre3-dev libpcre++-dev libbz2-dev libreadline-dev"; #libedit-dev, depends on zlib
+case "$DISTRIB_RELEASE" in
+"12.04")
+  pcre_package_pkgs_bin="libpcre3     libpcrecpp0   libbz2-1.0 libreadline5"; #libedit2,libeditline0, depends on zlib
+  pcre_package_pkgs_dev="libpcre3-dev libpcre++-dev libbz2-dev libreadline-dev"; #libedit-dev,libeditline-dev, depends on zlib
+  ;;
+"14.04"|"16.04"|"18.04")
+  pcre_package_pkgs_bin="libpcre3     libpcrecpp0v5 libbz2-1.0 libreadline5"; #libedit2,libeditline0, depends on zlib
+  pcre_package_pkgs_dev="libpcre3-dev libpcre++-dev libbz2-dev libreadline-dev"; #libedit-dev,libeditline-dev, depends on zlib
+  ;;
+esac;
 pcre_source_flag="yes";
 pcre_source_cleanup="no";
 pcre_source_download="yes";
@@ -76,8 +92,16 @@ openssl_package_flag="yes";
 openssl_package_install="yes";
 openssl_package_test="yes";
 openssl_package_pkgs="dev"; #bin,dev,both
-openssl_package_pkgs_bin="libssl1.0.2"; #depends on zlib
-openssl_package_pkgs_dev="libssl-dev"; #depends on zlib
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04")
+  openssl_package_pkgs_bin="libssl1.0.0"; #depends on zlib
+  openssl_package_pkgs_dev="libssl-dev"; #depends on zlib
+  ;;
+"18.04")
+  openssl_package_pkgs_bin="libssl1.1"; #depends on zlib
+  openssl_package_pkgs_dev="libssl-dev"; #depends on zlib
+  ;;
+esac;
 openssl_source_flag="yes";
 openssl_source_cleanup="no";
 openssl_source_download="yes";
@@ -114,8 +138,20 @@ gd2_package_flag="yes";
 gd2_package_install="yes";
 gd2_package_test="yes";
 gd2_package_pkgs="dev"; #bin,dev,both
-gd2_package_pkgs_bin="libgd2-xpm libpng12 libjpeg libwebp libtiff4 libfreetype6 libfontconfig1"; #libgd2-noxpm for gd alternative without xpm support, depends on zlib
-gd2_package_pkgs_dev="libgd2-xpm-dev libpng12-dev libjpeg-dev libwebp-dev libtiff4-dev libfreetype6-dev libfontconfig1-dev"; #libgd2-noxpm-dev for gd alternative without xpm support, depends on zlib
+case "$DISTRIB_RELEASE" in
+"12.04")
+  gd2_package_pkgs_bin="libgd2-xpm     libpng12-0  libjpeg8    libwebp2    libtiff4    libxpm4    libfreetype6     libfontconfig1"; #depends on zlib
+  gd2_package_pkgs_dev="libgd2-xpm-dev libpng-dev  libjpeg-dev libwebp-dev libtiff-dev libxpm-dev libfreetype6-dev libfontconfig1-dev"; #depends on zlib
+  ;;
+"14.04"|"16.04")
+  gd2_package_pkgs_bin="libgd3         libpng12-0  libjpeg8    libwebp5    libtiff5    libxpm4    libfreetype6     libfontconfig1"; #depends on zlib
+  gd2_package_pkgs_dev="libgd-dev      libpng-dev  libjpeg-dev libwebp-dev libtiff-dev libxpm-dev libfreetype6-dev libfontconfig1-dev"; #depends on zlib
+  ;;
+"18.04")
+  gd2_package_pkgs_bin="libgd3         libpng16-16 libjpeg8    libwebp6    libtiff5    libxpm4    libfreetype6     libfontconfig1"; #depends on zlib
+  gd2_package_pkgs_dev="libgd-dev      libpng-dev  libjpeg-dev libwebp-dev libtiff-dev libxpm-dev libfreetype6-dev libfontconfig1-dev"; #depends on zlib
+  ;;
+esac;
 gd2_source_flag="yes";
 gd2_source_cleanup="no";
 gd2_source_download="yes";
@@ -146,8 +182,24 @@ xml2_package_flag="yes";
 xml2_package_install="yes";
 xml2_package_test="yes";
 xml2_package_pkgs="dev"; #bin,dev,both
-xml2_package_pkgs_bin="libxml2 liblzma libreadline libicu python"; #depends on zlib
-xml2_package_pkgs_dev="libxml2-dev liblzma-dev libreadline-dev libicu-dev python-dev"; #depends on zlib
+case "$DISTRIB_RELEASE" in
+"12.04")
+  xml2_package_pkgs_bin="libxml2     liblzma5    libreadline5    libicu48   python"; #depends on zlib
+  xml2_package_pkgs_dev="libxml2-dev liblzma-dev libreadline-dev libicu-dev python-dev"; #depends on zlib
+  ;;
+"14.04")
+  xml2_package_pkgs_bin="libxml2     liblzma5    libreadline5    libicu52   python"; #depends on zlib
+  xml2_package_pkgs_dev="libxml2-dev liblzma-dev libreadline-dev libicu-dev python-dev"; #depends on zlib
+  ;;
+"16.04")
+  xml2_package_pkgs_bin="libxml2     liblzma5    libreadline5    libicu55   python"; #depends on zlib
+  xml2_package_pkgs_dev="libxml2-dev liblzma-dev libreadline-dev libicu-dev python-dev"; #depends on zlib
+  ;;
+"18.04")
+  xml2_package_pkgs_bin="libxml2     liblzma5    libreadline5    libicu60   python"; #depends on zlib
+  xml2_package_pkgs_dev="libxml2-dev liblzma-dev libreadline-dev libicu-dev python-dev"; #depends on zlib
+  ;;
+esac;
 xml2_source_flag="yes";
 xml2_source_cleanup="no";
 xml2_source_download="yes";
@@ -202,8 +254,12 @@ xslt_package_flag="yes";
 xslt_package_install="yes";
 xslt_package_test="yes";
 xslt_package_pkgs="dev"; #bin,dev,both
-xslt_package_pkgs_bin="libxslt1.1 python-dev";
-xslt_package_pkgs_dev="libxslt1-dev python-dev";
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04"|"18.04")
+  xslt_package_pkgs_bin="libxslt1.1   python-dev";
+  xslt_package_pkgs_dev="libxslt1-dev python-dev";
+  ;;
+esac;
 xslt_source_flag="yes";
 xslt_source_cleanup="yes"; #force clean to avoid docbook issue
 xslt_source_download="yes";
@@ -229,8 +285,12 @@ geoip_package_flag="yes";
 geoip_package_install="yes";
 geoip_package_test="yes";
 geoip_package_pkgs="dev"; #bin,dev,both
-geoip_package_pkgs_bin="libgeoip1 geoip-database";
-geoip_package_pkgs_dev="libgeoip-dev geoip-database";
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04"|"18.04")
+  geoip_package_pkgs_bin="libgeoip1    geoip-database";
+  geoip_package_pkgs_dev="libgeoip-dev geoip-database";
+  ;;
+esac;
 geoip_source_flag="yes";
 geoip_source_cleanup="no";
 geoip_source_download="yes";
@@ -252,7 +312,11 @@ nginx_package_flag="no";
 nginx_package_install="no";
 nginx_package_test="no";
 nginx_package_pkgs="bin";
-nginx_package_pkgs_bin="nginx-full"; #or nginx-light,nginx-extras, depends on zlib1g,libpcre3,libssl1.1
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04"|"18.04")
+  nginx_package_pkgs_bin="nginx-full"; #or nginx-light,nginx-extras, depends on zlib,pcre,openssl
+  ;;
+esac;
 nginx_source_flag="yes";
 nginx_source_cleanup="no";
 nginx_source_download="yes";

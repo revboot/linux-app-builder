@@ -32,6 +32,7 @@
 # https://stackoverflow.com/questions/7868818/in-bash-is-there-an-equivalent-of-die-error-msg
 # https://stackoverflow.com/questions/16203088/bash-if-statement-with-multiple-conditions-throws-an-error
 # https://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+# https://bash.cyberciti.biz/guide/The_case_statement
 #
 
 #
@@ -98,6 +99,21 @@ SCRIPT_DIR=$(cd $(dirname "$0") && pwd);
 # Set environment
 #LD_LIBRARY_PATH=/usr/local/lib;
 #export LD_LIBRARY_PATH;
+
+# Retrieve operating system info from lsb
+if [ -f /etc/lsb-release ] ; then
+  source /etc/lsb-release;
+fi;
+
+# Validate operating system
+case "$DISTRIB_RELEASE" in
+  "12.04"|"14.04"|"16.04"|"18.04")
+    echo -e "$DISTRIB_DESCRIPTION ($DISTRIB_CODENAME) is a supported operating system.";
+    ;;
+  *)
+    error 1 "Unsupported operating system";
+    ;;
+esac;
 
 # Get CLI arguments
 declare -g opts='';
