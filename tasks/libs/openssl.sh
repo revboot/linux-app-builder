@@ -3,7 +3,7 @@
 # Task: Library: openssl
 #
 
-# task:lib:openssl:package:install
+# declare routine package:install
 function task_lib_openssl_package_install() {
   # install binary packages
   if [ "$openssl_package_pkgs" == "bin" ]; then
@@ -19,7 +19,7 @@ function task_lib_openssl_package_install() {
   echo "whereis system library: $(whereis libssl.so)";
 }
 
-# task:lib:openssl:package:test
+# declare routine package:test
 function task_lib_openssl_package_test() {
   # ldconfig tests
   openssl_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libssl.so";
@@ -43,7 +43,7 @@ function task_lib_openssl_package_test() {
   fi;
 }
 
-# task:lib:openssl:source:cleanup
+# declare routine source:cleanup
 function task_lib_openssl_source_cleanup() {
   # remove source files
   if [ -d "$openssl_source_path" ]; then
@@ -55,7 +55,7 @@ function task_lib_openssl_source_cleanup() {
   fi;
 }
 
-# task:lib:openssl:source:download
+# declare routine source:download
 function task_lib_openssl_source_download() {
   if [ ! -d "$openssl_source_path" ]; then
     # download and extract source files from tar
@@ -68,7 +68,7 @@ function task_lib_openssl_source_download() {
   fi;
 }
 
-# task:lib:openssl:source:make
+# declare routine source:make
 function task_lib_openssl_source_make() {
   if [ -d "$openssl_source_path" ]; then
     # command - add configuration tool
@@ -180,7 +180,7 @@ function task_lib_openssl_source_make() {
   fi;
 }
 
-# task:lib:openssl:source:install
+# declare routine source:install
 function task_lib_openssl_source_install() {
   if [ -f "$openssl_source_path/libssl.so" ]; then
     # uninstall and install
@@ -191,7 +191,7 @@ function task_lib_openssl_source_install() {
   fi;
 }
 
-# task:lib:openssl:source:test
+# declare routine source:test
 function task_lib_openssl_source_test() {
   # ldconfig tests
   openssl_ldconfig_test_cmd="${global_source_usrprefix}/lib/libssl.so";
@@ -215,87 +215,92 @@ function task_lib_openssl_source_test() {
   fi;
 }
 
-function task_lib_openssl() {
+# declare subtask package
+function task_lib_openssl_package() {
+  # run routine package:install
+  if ([ "$openssl_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
+    notify "startRoutine" "lib:openssl:package:install";
+    task_lib_openssl_package_install;
+    notify "stopRoutine" "lib:openssl:package:install";
+  else
+    notify "skipRoutine" "lib:openssl:package:install";
+  fi;
 
-  # package subtask
+  # run routine package:test
+  if ([ "$openssl_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
+    notify "startRoutine" "lib:openssl:package:test";
+    task_lib_openssl_package_test;
+    notify "stopRoutine" "lib:openssl:package:test";
+  else
+    notify "skipRoutine" "lib:openssl:package:test";
+  fi;
+}
+
+# declare subtask source
+function task_lib_openssl_source() {
+  # run routine source:cleanup
+  if ([ "$openssl_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+    notify "startRoutine" "lib:openssl:source:cleanup";
+    task_lib_openssl_source_cleanup;
+    notify "stopRoutine" "lib:openssl:source:cleanup";
+  else
+    notify "skipRoutine" "lib:openssl:source:cleanup";
+  fi;
+
+  # run routine source:download
+  if ([ "$openssl_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    notify "startRoutine" "lib:openssl:source:download";
+    task_lib_openssl_source_download;
+    notify "stopRoutine" "lib:openssl:source:download";
+  else
+    notify "skipRoutine" "lib:openssl:source:download";
+  fi;
+
+  # run routine source:make
+  if ([ "$openssl_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
+    notify "startRoutine" "lib:openssl:source:make";
+    task_lib_openssl_source_make;
+    notify "stopRoutine" "lib:openssl:source:make";
+  else
+    notify "skipRoutine" "lib:openssl:source:make";
+  fi;
+
+  # run routine source:install
+  if ([ "$openssl_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
+    notify "startRoutine" "lib:openssl:source:install";
+    task_lib_openssl_source_install;
+    notify "stopRoutine" "lib:openssl:source:install";
+  else
+    notify "skipRoutine" "lib:openssl:source:install";
+  fi;
+
+  # run routine source:test
+  if ([ "$openssl_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
+    notify "startRoutine" "lib:openssl:source:test";
+    task_lib_openssl_source_test;
+    notify "stopRoutine" "lib:openssl:source:test";
+  else
+    notify "skipRoutine" "lib:openssl:source:test";
+  fi;
+}
+
+# declare task
+function task_lib_openssl() {
+  # run subtask package
   if ([ "$openssl_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "lib:openssl:package";
-
-    # run task:lib:openssl:package:install
-    if ([ "$openssl_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
-      notify "startRoutine" "lib:openssl:package:install";
-      task_lib_openssl_package_install;
-      notify "stopRoutine" "lib:openssl:package:install";
-    else
-      notify "skipRoutine" "lib:openssl:package:install";
-    fi;
-
-    # run task:lib:openssl:package:test
-    if ([ "$openssl_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
-      notify "startRoutine" "lib:openssl:package:test";
-      task_lib_openssl_package_test;
-      notify "stopRoutine" "lib:openssl:package:test";
-    else
-      notify "skipRoutine" "lib:openssl:package:test";
-    fi;
-
+    task_lib_openssl_package;
     notify "stopSubTask" "lib:openssl:package";
   else
     notify "skipSubTask" "lib:openssl:package";
   fi;
 
-  # source subtask
+  # run subtask source
   if ([ "$openssl_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "lib:openssl:source";
-
-    # run task:lib:openssl:source:cleanup
-    if ([ "$openssl_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
-      notify "startRoutine" "lib:openssl:source:cleanup";
-      task_lib_openssl_source_cleanup;
-      notify "stopRoutine" "lib:openssl:source:cleanup";
-    else
-      notify "skipRoutine" "lib:openssl:source:cleanup";
-    fi;
-
-    # run task:lib:openssl:source:download
-    if ([ "$openssl_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
-      notify "startRoutine" "lib:openssl:source:download";
-      task_lib_openssl_source_download;
-      notify "stopRoutine" "lib:openssl:source:download";
-    else
-      notify "skipRoutine" "lib:openssl:source:download";
-    fi;
-
-    # run task:lib:openssl:source:make
-    if ([ "$openssl_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
-      notify "startRoutine" "lib:openssl:source:make";
-      task_lib_openssl_source_make;
-      notify "stopRoutine" "lib:openssl:source:make";
-    else
-      notify "skipRoutine" "lib:openssl:source:make";
-    fi;
-
-    # run task:lib:openssl:source:install
-    if ([ "$openssl_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
-      notify "startRoutine" "lib:openssl:source:install";
-      task_lib_openssl_source_install;
-      notify "stopRoutine" "lib:openssl:source:install";
-    else
-      notify "skipRoutine" "lib:openssl:source:install";
-    fi;
-
-    # run task:lib:openssl:source:test
-    if ([ "$openssl_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
-      notify "startRoutine" "lib:openssl:source:test";
-      task_lib_openssl_source_test;
-      notify "stopRoutine" "lib:openssl:source:test";
-    else
-      notify "skipRoutine" "lib:openssl:source:test";
-    fi;
-
+    task_lib_openssl_source;
     notify "stopSubTask" "lib:openssl:source";
   else
     notify "skipSubTask" "lib:openssl:source";
   fi;
-
 }

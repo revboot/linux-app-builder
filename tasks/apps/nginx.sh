@@ -3,7 +3,7 @@
 # Task: Application: nginx
 #
 
-# task:app:nginx:package:install
+# declare routine package:install
 function task_app_nginx_package_install() {
   # install binary packages
   if [ "$nginx_package_pkgs" == "bin" ]; then
@@ -19,7 +19,7 @@ function task_app_nginx_package_install() {
   echo "whereis system binary: $(whereis nginx)";
 }
 
-# task:app:nginx:package:test
+# declare routine package:test
 function task_app_nginx_package_test() {
   # ldd, ld and binary tests
   nginx_binary_test_cmd="/usr/sbin/nginx";
@@ -39,7 +39,7 @@ function task_app_nginx_package_test() {
   fi;
 }
 
-# task:app:nginx:source:cleanup
+# declare routine source:cleanup
 function task_app_nginx_source_cleanup() {
   # remove source files
   if [ -d "$nginx_source_path" ]; then
@@ -51,7 +51,7 @@ function task_app_nginx_source_cleanup() {
   fi;
 }
 
-# task:app:nginx:source:download
+# declare routine source:download
 function task_app_nginx_source_download() {
   if [ ! -d "$nginx_source_path" ]; then
     # download and extract source files from tar
@@ -64,7 +64,7 @@ function task_app_nginx_source_download() {
   fi;
 }
 
-# task:app:nginx:source:make
+# declare routine source:make
 function task_app_nginx_source_make() {
   if [ -d "$nginx_source_path" ]; then
     # command - add configuration tool
@@ -692,7 +692,7 @@ function task_app_nginx_source_make() {
   fi;
 }
 
-# task:app:nginx:source:install
+# declare routine source:install
 function task_app_nginx_source_install() {
   if [ -f "$nginx_source_path/objs/nginx" ]; then
     # uninstall and install
@@ -705,7 +705,7 @@ function task_app_nginx_source_install() {
   fi;
 }
 
-# task:app:nginx:source:config
+# declare routine source:config
 function task_app_nginx_source_config() {
   # use configuration from system
   if [ "$nginx_source_config" == "system" ]; then
@@ -726,7 +726,7 @@ function task_app_nginx_source_config() {
   fi;
 }
 
-# task:app:nginx:source:test
+# declare routine source:test
 function task_app_nginx_source_test() {
   # ldd, ld and binary tests
   nginx_binary_test_cmd="${global_source_usrprefix}/sbin/nginx";
@@ -746,96 +746,101 @@ function task_app_nginx_source_test() {
   fi;
 }
 
-function task_app_nginx() {
+# declare subtask package
+function task_app_nginx_package() {
+  # run routine package:install
+  if ([ "$nginx_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
+    notify "startRoutine" "app:nginx:package:install";
+    task_app_nginx_package_install;
+    notify "stopRoutine" "app:nginx:package:install";
+  else
+    notify "skipRoutine" "app:nginx:package:install";
+  fi;
 
-  # package subtask
+  # run routine package:test
+  if ([ "$nginx_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
+    notify "startRoutine" "app:nginx:package:test";
+    task_app_nginx_package_test;
+    notify "stopRoutine" "app:nginx:package:test";
+  else
+    notify "skipRoutine" "app:nginx:package:test";
+  fi;
+}
+
+# declare subtask source
+function task_app_nginx_source() {
+  # run routine source:cleanup
+  if ([ "$nginx_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+    notify "startRoutine" "app:nginx:source:cleanup";
+    task_app_nginx_source_cleanup;
+    notify "stopRoutine" "app:nginx:source:cleanup";
+  else
+    notify "skipRoutine" "app:nginx:source:cleanup";
+  fi;
+
+  # run routine source:download
+  if ([ "$nginx_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
+    notify "startRoutine" "app:nginx:source:download";
+    task_app_nginx_source_download;
+    notify "stopRoutine" "app:nginx:source:download";
+  else
+    notify "skipRoutine" "app:nginx:source:download";
+  fi;
+
+  # run routine source:make
+  if ([ "$nginx_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
+    notify "startRoutine" "app:nginx:source:make";
+    task_app_nginx_source_make;
+    notify "stopRoutine" "app:nginx:source:make";
+  else
+    notify "skipRoutine" "app:nginx:source:make";
+  fi;
+
+  # run routine source:install
+  if ([ "$nginx_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
+    notify "stopRoutine" "app:nginx:source:install";
+    task_app_nginx_source_install;
+    notify "stopRoutine" "app:nginx:source:install";
+  else
+    notify "skipRoutine" "app:nginx:source:install";
+  fi;
+
+  # run routine source:config
+  if ([ "$nginx_source_config" != "no" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "config" ]; then
+    notify "startRoutine" "app:nginx:source:config";
+    task_app_nginx_source_config;
+    notify "stopRoutine" "app:nginx:source:config";
+  else
+    notify "skipRoutine" "app:nginx:source:config";
+  fi;
+
+  # run routine source:test
+  if ([ "$nginx_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
+    notify "startRoutine" "app:nginx:source:test";
+    task_app_nginx_source_test;
+    notify "stopRoutine" "app:nginx:source:test";
+  else
+    notify "skipRoutine" "app:nginx:source:test";
+  fi;
+}
+
+# declare task
+function task_app_nginx() {
+  # run subtask package
   if ([ "$nginx_package_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "package" ]; then
     notify "startSubTask" "app:nginx:package";
-
-    # run task:app:nginx:package:install
-    if ([ "$nginx_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
-      notify "startRoutine" "app:nginx:package:install";
-      task_app_nginx_package_install;
-      notify "stopRoutine" "app:nginx:package:install";
-    else
-      notify "skipRoutine" "app:nginx:package:install";
-    fi;
-
-    # run task:app:nginx:package:test
-    if ([ "$nginx_package_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
-      notify "startRoutine" "app:nginx:package:test";
-      task_app_nginx_package_test;
-      notify "stopRoutine" "app:nginx:package:test";
-    else
-      notify "skipRoutine" "app:nginx:package:test";
-    fi;
-
+    task_app_nginx_package;
     notify "stopSubTask" "app:nginx:package";
   else
     notify "skipSubTask" "app:nginx:package";
   fi;
 
-  # source subtask
+  # run subtask source
   if ([ "$nginx_source_flag" == "yes" ] && [ "$args_subtask" == "config" ]) || [ "$args_subtask" == "all" ] || [ "$args_subtask" == "source" ]; then
     notify "startSubTask" "app:nginx:source";
-
-    # run task:app:nginx:source:cleanup
-    if ([ "$nginx_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
-      notify "startRoutine" "app:nginx:source:cleanup";
-      task_app_nginx_source_cleanup;
-      notify "stopRoutine" "app:nginx:source:cleanup";
-    else
-      notify "skipRoutine" "app:nginx:source:cleanup";
-    fi;
-
-    # run task:app:nginx:source:download
-    if ([ "$nginx_source_download" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "download" ]; then
-      notify "startRoutine" "app:nginx:source:download";
-      task_app_nginx_source_download;
-      notify "stopRoutine" "app:nginx:source:download";
-    else
-      notify "skipRoutine" "app:nginx:source:download";
-    fi;
-
-    # run task:app:nginx:source:make
-    if ([ "$nginx_source_make" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "make" ]; then
-      notify "startRoutine" "app:nginx:source:make";
-      task_app_nginx_source_make;
-      notify "stopRoutine" "app:nginx:source:make";
-    else
-      notify "skipRoutine" "app:nginx:source:make";
-    fi;
-
-    # run task:app:nginx:source:install
-    if ([ "$nginx_source_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
-      notify "stopRoutine" "app:nginx:source:install";
-      task_app_nginx_source_install;
-      notify "stopRoutine" "app:nginx:source:install";
-    else
-      notify "skipRoutine" "app:nginx:source:install";
-    fi;
-
-    # run task:app:nginx:source:config
-    if ([ "$nginx_source_config" != "no" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "config" ]; then
-      notify "startRoutine" "app:nginx:source:config";
-      task_app_nginx_source_config;
-      notify "stopRoutine" "app:nginx:source:config";
-    else
-      notify "skipRoutine" "app:nginx:source:config";
-    fi;
-
-    # run task:app:nginx:source:test
-    if ([ "$nginx_source_test" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "test" ]; then
-      notify "startRoutine" "app:nginx:source:test";
-      task_app_nginx_source_test;
-      notify "stopRoutine" "app:nginx:source:test";
-    else
-      notify "skipRoutine" "app:nginx:source:test";
-    fi;
-
+    task_app_nginx_source;
     notify "stopSubTask" "app:nginx:source";
   else
     notify "skipSubTask" "app:nginx:source";
   fi;
-
 }
