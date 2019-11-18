@@ -5,6 +5,12 @@
 
 # declare routine package:install
 function task_misc_global_package_install() {
+  # enable all ubuntu repositories
+  sudo add-apt-repository main;
+  sudo add-apt-repository universe;
+  sudo add-apt-repository restricted;
+  sudo add-apt-repository multiverse;
+  sudo apt-get update;
   # install binary packages
   if [ "$global_package_pkgs" == "bin" ]; then
     sudo apt-get install -y $global_package_pkgs_bin;
