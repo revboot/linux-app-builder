@@ -3,6 +3,20 @@
 # Task: Library: gd2
 #
 
+# declare routine package:uninstall
+function task_lib_gd2_package_uninstall() {
+  # uninstall binary packages
+  if [ "$gd2_package_pkgs" == "bin" ]; then
+    sudo apt-get remove --purge $gd2_package_pkgs_bin;
+  # uninstall development packages
+  elif [ "$gd2_package_pkgs" == "dev" ]; then
+    sudo apt-get remove --purge $gd2_package_pkgs_dev;
+  # uninstall both packages
+  elif [ "$gd2_package_pkgs" == "both" ]; then
+    sudo apt-get remove --purge $gd2_package_pkgs_bin $gd2_package_pkgs_dev;
+  fi;
+}
+
 # declare routine package:install
 function task_lib_gd2_package_install() {
   # install binary packages
@@ -164,11 +178,18 @@ function task_lib_gd2_source_make() {
   fi;
 }
 
+# declare routine source:uninstall
+function task_lib_gd2_source_uninstall() {
+  if [ -f "${global_source_usrprefix}/lib/libgd.so" ]; then
+    # uninstall binaries from source
+    sudo bash -c "cd \"${gd2_source_path}\" && make uninstall";
+  fi;
+}
+
 # declare routine source:install
 function task_lib_gd2_source_install() {
   if [ -f "$gd2_source_path/src/.libs/libgd.so" ]; then
-    # uninstall and install
-    sudo bash -c "cd \"${gd2_source_path}\" && make uninstall";
+    # install binaries from source
     sudo bash -c "cd \"${gd2_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libgd.so";
@@ -201,6 +222,15 @@ function task_lib_gd2_source_test() {
 
 # declare subtask package
 function task_lib_gd2_package() {
+  # run routine package:uninstall
+  if ([ "$gd2_package_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:gd2:package:uninstall";
+    task_lib_gd2_package_uninstall;
+    notify "stopRoutine" "lib:gd2:package:uninstall";
+  else
+    notify "skipRoutine" "lib:gd2:package:uninstall";
+  fi;
+
   # run routine package:install
   if ([ "$gd2_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
     notify "startRoutine" "lib:gd2:package:install";
@@ -247,6 +277,15 @@ function task_lib_gd2_source() {
     notify "stopRoutine" "lib:gd2:source:make";
   else
     notify "skipRoutine" "lib:gd2:source:make";
+  fi;
+
+  # run routine source:uninstall
+  if ([ "$gd2_source_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:gd2:source:uninstall";
+    task_lib_gd2_source_uninstall;
+    notify "stopRoutine" "lib:gd2:source:uninstall";
+  else
+    notify "skipRoutine" "lib:gd2:source:uninstall";
   fi;
 
   # run routine source:install

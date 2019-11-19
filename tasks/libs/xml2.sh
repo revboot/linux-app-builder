@@ -3,6 +3,20 @@
 # Task: Library: xml2
 #
 
+# declare routine package:uninstall
+function task_lib_xml2_package_uninstall() {
+  # uninstall binary packages
+  if [ "$xml2_package_pkgs" == "bin" ]; then
+    sudo apt-get remove --purge $xml2_package_pkgs_bin;
+  # uninstall development packages
+  elif [ "$xml2_package_pkgs" == "dev" ]; then
+    sudo apt-get remove --purge $xml2_package_pkgs_dev;
+  # uninstall both packages
+  elif [ "$xml2_package_pkgs" == "both" ]; then
+    sudo apt-get remove --purge $xml2_package_pkgs_bin $xml2_package_pkgs_dev;
+  fi;
+}
+
 # declare routine package:install
 function task_lib_xml2_package_install() {
   # install binary packages
@@ -276,11 +290,18 @@ function task_lib_xml2_source_make() {
   fi;
 }
 
+# declare routine source:uninstall
+function task_lib_xml2_source_uninstall() {
+  if [ -f "${global_source_usrprefix}/lib/libxml2.so" ]; then
+    # uninstall binaries from source
+    sudo bash -c "cd \"${xml2_source_path}\" && make uninstall";
+  fi;
+}
+
 # declare routine source:install
 function task_lib_xml2_source_install() {
   if [ -f "$xml2_source_path/.libs/libxml2.so" ]; then
-    # uninstall and install
-    sudo bash -c "cd \"${xml2_source_path}\" && make uninstall";
+    # install binaries from source
     sudo bash -c "cd \"${xml2_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libxml2.so";
@@ -313,6 +334,15 @@ function task_lib_xml2_source_test() {
 
 # declare subtask package
 function task_lib_xml2_package() {
+  # run routine package:uninstall
+  if ([ "$xml2_package_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:xml2:package:uninstall";
+    task_lib_xml2_package_uninstall;
+    notify "stopRoutine" "lib:xml2:package:uninstall";
+  else
+    notify "skipRoutine" "lib:xml2:package:uninstall";
+  fi;
+
   # run routine package:install
   if ([ "$xml2_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
     notify "startRoutine" "lib:xml2:package:install";
@@ -359,6 +389,15 @@ function task_lib_xml2_source() {
     notify "stopRoutine" "lib:xml2:source:make";
   else
     notify "skipRoutine" "lib:xml2:source:make";
+  fi;
+
+  # run routine source:uninstall
+  if ([ "$xml2_source_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:xml2:source:uninstall";
+    task_lib_xml2_source_uninstall;
+    notify "stopRoutine" "lib:xml2:source:uninstall";
+  else
+    notify "skipRoutine" "lib:xml2:source:uninstall";
   fi;
 
   # run routine source:install

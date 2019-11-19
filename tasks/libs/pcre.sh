@@ -3,6 +3,20 @@
 # Task: Library: pcre
 #
 
+# declare routine package:uninstall
+function task_lib_pcre_package_uninstall() {
+  # uninstall binary packages
+  if [ "$pcre_package_pkgs" == "bin" ]; then
+    sudo apt-get remove --purge $pcre_package_pkgs_bin;
+  # uninstall development packages
+  elif [ "$pcre_package_pkgs" == "dev" ]; then
+    sudo apt-get remove --purge $pcre_package_pkgs_dev;
+  # uninstall both packages
+  elif [ "$pcre_package_pkgs" == "both" ]; then
+    sudo apt-get remove --purge $pcre_package_pkgs_bin $pcre_package_pkgs_dev;
+  fi;
+}
+
 # declare routine package:install
 function task_lib_pcre_package_install() {
   # install binary packages
@@ -147,11 +161,18 @@ function task_lib_pcre_source_make() {
   fi;
 }
 
+# declare routine source:uninstall
+function task_lib_pcre_source_uninstall() {
+  if [ -f "${global_source_usrprefix}/lib/libpcre.so" ]; then
+    # uninstall binaries from source
+    sudo bash -c "cd \"${pcre_source_path}\" && make uninstall";
+  fi;
+}
+
 # declare routine source:install
 function task_lib_pcre_source_install() {
   if [ -f "$pcre_source_path/.libs/libpcre.so" ]; then
-    # uninstall and install
-    sudo bash -c "cd \"${pcre_source_path}\" && make uninstall";
+    # install binaries from source
     sudo bash -c "cd \"${pcre_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libpcre.so";
@@ -184,6 +205,15 @@ function task_lib_pcre_source_test() {
 
 # declare subtask package
 function task_lib_pcre_package() {
+  # run routine package:uninstall
+  if ([ "$pcre_package_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:pcre:package:uninstall";
+    task_lib_pcre_package_uninstall;
+    notify "stopRoutine" "lib:pcre:package:uninstall";
+  else
+    notify "skipRoutine" "lib:pcre:package:uninstall";
+  fi;
+
   # run routine package:install
   if ([ "$pcre_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
     notify "startRoutine" "lib:pcre:package:install";
@@ -230,6 +260,15 @@ function task_lib_pcre_source() {
     notify "stopRoutine" "lib:pcre:source:make";
   else
     notify "skipRoutine" "lib:pcre:source:make";
+  fi;
+
+  # run routine source:uninstall
+  if ([ "$pcre_source_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:pcre:source:uninstall";
+    task_lib_pcre_source_uninstall;
+    notify "stopRoutine" "lib:pcre:source:uninstall";
+  else
+    notify "skipRoutine" "lib:pcre:source:uninstall";
   fi;
 
   # run routine source:install

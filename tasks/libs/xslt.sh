@@ -3,6 +3,20 @@
 # Task: Library: xslt
 #
 
+# declare routine package:uninstall
+function task_lib_xslt_package_uninstall() {
+  # uninstall binary packages
+  if [ "$xslt_package_pkgs" == "bin" ]; then
+    sudo apt-get remove --purge $xslt_package_pkgs_bin;
+  # uninstall development packages
+  elif [ "$xslt_package_pkgs" == "dev" ]; then
+    sudo apt-get remove --purge $xslt_package_pkgs_dev;
+  # uninstall both packages
+  elif [ "$xslt_package_pkgs" == "both" ]; then
+    sudo apt-get remove --purge $xslt_package_pkgs_bin $xslt_package_pkgs_dev;
+  fi;
+}
+
 # declare routine package:install
 function task_lib_xslt_package_install() {
   # install binary packages
@@ -135,11 +149,18 @@ function task_lib_xslt_source_make() {
   fi;
 }
 
+# declare routine source:uninstall
+function task_lib_xslt_source_uninstall() {
+  if [ -f "${global_source_usrprefix}/lib/libxslt.so" ]; then
+    # uninstall binaries from source
+    sudo bash -c "cd \"${xslt_source_path}\" && make uninstall";
+  fi;
+}
+
 # declare routine source:install
 function task_lib_xslt_source_install() {
   if [ -f "$xslt_source_path/libxslt/.libs/libxslt.so" ]; then
-    # uninstall and install
-    sudo bash -c "cd \"${xslt_source_path}\" && make uninstall";
+    # install binaries from source
     sudo bash -c "cd \"${xslt_source_path}\" && make install";
     # copy missing binaries to system
     sudo cp "${xslt_source_path}/xsltproc/.libs/xsltproc" "${global_source_usrprefix}/bin/xsltproc";
@@ -182,6 +203,15 @@ function task_lib_xslt_source_test() {
 
 # declare subtask package
 function task_lib_xslt_package() {
+  # run routine package:uninstall
+  if ([ "$xslt_package_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:xslt:package:uninstall";
+    task_lib_xslt_package_uninstall;
+    notify "stopRoutine" "lib:xslt:package:uninstall";
+  else
+    notify "skipRoutine" "lib:xslt:package:uninstall";
+  fi;
+
   # run routine package:install
   if ([ "$xslt_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
     notify "startRoutine" "lib:xslt:package:install";
@@ -228,6 +258,15 @@ function task_lib_xslt_source() {
     notify "stopRoutine" "lib:xslt:source:make";
   else
     notify "skipRoutine" "lib:xslt:source:make";
+  fi;
+
+  # run routine source:uninstall
+  if ([ "$xslt_source_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:xslt:source:uninstall";
+    task_lib_xslt_source_uninstall;
+    notify "stopRoutine" "lib:xslt:source:uninstall";
+  else
+    notify "skipRoutine" "lib:xslt:source:uninstall";
   fi;
 
   # run routine source:install

@@ -67,6 +67,7 @@ Routines:
   - download                  selects the download routine
   - make                      selects the make routine
   - install                   selects the install routine
+  - uninstall                 selects the uninstall routine (never runs with all)
   - config                    selects the config routine
   - test                      selects the test routine
 ```
@@ -99,19 +100,22 @@ or
 6. Run all operations for nginx, with sources, in one statement  
 `./stack-installer.sh --task=nginx --subtask=source --routine=all`
 
-7. Run all operations for zlib, with sources, separately  
+7. Run all operations for nginx, with sources, separately  
 ```
-./stack-installer.sh --task=zlib --subtask=source --routine=cleanup
-./stack-installer.sh --task=zlib --subtask=source --routine=download
-./stack-installer.sh --task=zlib --subtask=source --routine=make
-./stack-installer.sh --task=zlib --subtask=source --routine=install
-./stack-installer.sh --task=zlib --subtask=source --routine=test
+./stack-installer.sh --task=nginx --subtask=source --routine=cleanup
+./stack-installer.sh --task=nginx --subtask=source --routine=download
+./stack-installer.sh --task=nginx --subtask=source --routine=make
+./stack-installer.sh --task=nginx --subtask=source --routine=install
+./stack-installer.sh --task=nginx --subtask=source --routine=test
 ```
 
-8. Cleanup all applications and libraries, but only remove source and tarballs  
+8. Run uninstall operation for nginx, with sources  
+`./stack-installer.sh --task=nginx --subtask=source --routine=uninstall`
+
+9. Cleanup all applications and libraries, but only remove source and tarballs  
 `./stack-installer.sh --task=all --subtask=source --routine=cleanup`
 
-9. Cleanup all applications and libraries, including source, tarballs and installed binaries  
+10. Cleanup all applications and libraries, including source, tarballs and installed binaries  
 `./stack-installer.sh --task=misc --subtask=global --routine=cleanup`
 
 ## Credits

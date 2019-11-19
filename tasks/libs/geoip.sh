@@ -3,6 +3,20 @@
 # Task: Library: geoip
 #
 
+# declare routine package:uninstall
+function task_lib_geoip_package_uninstall() {
+  # uninstall binary packages
+  if [ "$geoip_package_pkgs" == "bin" ]; then
+    sudo apt-get remove --purge $geoip_package_pkgs_bin;
+  # uninstall development packages
+  elif [ "$geoip_package_pkgs" == "dev" ]; then
+    sudo apt-get remove --purge $geoip_package_pkgs_dev;
+  # uninstall both packages
+  elif [ "$geoip_package_pkgs" == "both" ]; then
+    sudo apt-get remove --purge $geoip_package_pkgs_bin $geoip_package_pkgs_dev;
+  fi;
+}
+
 # declare routine package:install
 function task_lib_geoip_package_install() {
   # install binary packages
@@ -93,11 +107,18 @@ function task_lib_geoip_source_make() {
   fi;
 }
 
+# declare routine source:uninstall
+function task_lib_geoip_source_uninstall() {
+  if [ -f "${global_source_usrprefix}/lib/libGeoIP.so" ]; then
+    # uninstall binaries from source
+    sudo bash -c "cd \"${geoip_source_path}\" && make uninstall";
+  fi;
+}
+
 # declare routine source:install
 function task_lib_geoip_source_install() {
   if [ -f "$geoip_source_path/libGeoIP/.libs/libGeoIP.so" ]; then
-    # uninstall and install
-    sudo bash -c "cd \"${geoip_source_path}\" && make uninstall";
+    # install binaries from source
     sudo bash -c "cd \"${geoip_source_path}\" && make install";
     # download databases
     sudo bash -c "cd \"${global_source_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
@@ -127,6 +148,15 @@ function task_lib_geoip_source_test() {
 
 # declare subtask package
 function task_lib_geoip_package() {
+  # run routine package:uninstall
+  if ([ "$geoip_package_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:geoip:package:uninstall";
+    task_lib_geoip_package_uninstall;
+    notify "stopRoutine" "lib:geoip:package:uninstall";
+  else
+    notify "skipRoutine" "lib:geoip:package:uninstall";
+  fi;
+
   # run routine package:install
   if ([ "$geoip_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
     notify "startRoutine" "lib:geoip:package:install";
@@ -173,6 +203,15 @@ function task_lib_geoip_source() {
     notify "stopRoutine" "lib:geoip:source:make";
   else
     notify "skipRoutine" "lib:geoip:source:make";
+  fi;
+
+  # run routine source:uninstall
+  if ([ "$geoip_source_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "lib:geoip:source:uninstall";
+    task_lib_geoip_source_uninstall;
+    notify "stopRoutine" "lib:geoip:source:uninstall";
+  else
+    notify "skipRoutine" "lib:geoip:source:uninstall";
   fi;
 
   # run routine source:install

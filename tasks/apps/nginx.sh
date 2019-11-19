@@ -3,6 +3,20 @@
 # Task: Application: nginx
 #
 
+# declare routine package:uninstall
+function task_app_nginx_package_uninstall() {
+  # uninstall binary packages
+  if [ "$nginx_package_pkgs" == "bin" ]; then
+    sudo apt-get remove --purge $nginx_package_pkgs_bin;
+  # uninstall development packages
+  elif [ "$nginx_package_pkgs" == "dev" ]; then
+    sudo apt-get remove --purge $nginx_package_pkgs_dev;
+  # uninstall both packages
+  elif [ "$nginx_package_pkgs" == "both" ]; then
+    sudo apt-get remove --purge $nginx_package_pkgs_bin $nginx_package_pkgs_dev;
+  fi;
+}
+
 # declare routine package:install
 function task_app_nginx_package_install() {
   # install binary packages
@@ -692,11 +706,18 @@ function task_app_nginx_source_make() {
   fi;
 }
 
+# declare routine source:uninstall
+function task_app_nginx_source_uninstall() {
+  if [ -f "${global_source_usrprefix}/sbin/nginx" ]; then
+    # uninstall binaries from source
+    sudo bash -c "cd \"${nginx_source_path}\" && make uninstall";
+  fi;
+}
+
 # declare routine source:install
 function task_app_nginx_source_install() {
   if [ -f "$nginx_source_path/objs/nginx" ]; then
-    # uninstall and install
-    sudo bash -c "cd \"${nginx_source_path}\" && make uninstall";
+    # install binaries from source
     sudo bash -c "cd \"${nginx_source_path}\" && make install";
     # create missing directory
     sudo mkdir -p "${global_source_varprefix}/lib/nginx";
@@ -748,6 +769,15 @@ function task_app_nginx_source_test() {
 
 # declare subtask package
 function task_app_nginx_package() {
+  # run routine package:uninstall
+  if ([ "$nginx_package_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "app:nginx:package:uninstall";
+    task_app_nginx_package_uninstall;
+    notify "stopRoutine" "app:nginx:package:uninstall";
+  else
+    notify "skipRoutine" "app:nginx:package:uninstall";
+  fi;
+
   # run routine package:install
   if ([ "$nginx_package_install" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "install" ]; then
     notify "startRoutine" "app:nginx:package:install";
@@ -794,6 +824,15 @@ function task_app_nginx_source() {
     notify "stopRoutine" "app:nginx:source:make";
   else
     notify "skipRoutine" "app:nginx:source:make";
+  fi;
+
+  # run routine source:uninstall
+  if ([ "$nginx_source_uninstall" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "uninstall" ]; then
+    notify "startRoutine" "app:nginx:source:uninstall";
+    task_app_nginx_source_uninstall;
+    notify "stopRoutine" "app:nginx:source:uninstall";
+  else
+    notify "skipRoutine" "app:nginx:source:uninstall";
   fi;
 
   # run routine source:install
