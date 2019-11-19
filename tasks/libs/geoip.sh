@@ -14,6 +14,8 @@ function task_lib_geoip_package_uninstall() {
   # uninstall both packages
   elif [ "$geoip_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $geoip_package_pkgs_bin $geoip_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:geoip:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_geoip_package_install() {
   # install both packages
   elif [ "$geoip_package_pkgs" == "both" ]; then
     sudo apt-get install -y $geoip_package_pkgs_bin $geoip_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:geoip:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libGeoIP.so)";
@@ -46,6 +50,8 @@ function task_lib_geoip_package_test() {
     geoip_ldconfig_test_cmd2="ldconfig -v | grep libGeoIP.so";
     echo "find system libraries #2: sudo bash -c \"${geoip_ldconfig_test_cmd2}\"";
     sudo bash -c "${geoip_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:geoip:package:test";
   fi;
 }
 
@@ -54,10 +60,14 @@ function task_lib_geoip_source_cleanup() {
   # remove source files
   if [ -d "$geoip_source_path" ]; then
     sudo rm -Rf "${geoip_source_path}"*;
+  else
+    notify "warnRoutine" "lib:geoip:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$geoip_source_tar" ]; then
     sudo rm -f "${geoip_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:geoip:source:cleanup";
   fi;
 }
 
@@ -71,6 +81,8 @@ function task_lib_geoip_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${geoip_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:geoip:source:download";
   fi;
 }
 
@@ -104,6 +116,8 @@ function task_lib_geoip_source_make() {
     sudo bash -c "cd \"${geoip_source_path}\" && make clean";
     echo "configure arguments: ${geoip_source_cmd_full}";
     sudo bash -c "cd \"${geoip_source_path}\" && eval ${geoip_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:geoip:source:make";
   fi;
 }
 
@@ -112,6 +126,8 @@ function task_lib_geoip_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libGeoIP.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${geoip_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:geoip:source:uninstall";
   fi;
 }
 
@@ -127,6 +143,8 @@ function task_lib_geoip_source_install() {
     sudo bash -c "cd \"${global_source_usrprefix}/share/GeoIP\" && rm -f GeoLiteCityv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz\" && rm -f GeoLiteCityv6.dat && gunzip GeoLiteCityv6.dat.gz";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libGeoIP.so";
+  else
+    notify "errorRoutine" "lib:geoip:source:install";
   fi;
 }
 
@@ -143,6 +161,8 @@ function task_lib_geoip_source_test() {
     geoip_ldconfig_test_cmd2="ldconfig -v | grep libGeoIP.so";
     echo "find built libraries #2: sudo bash -c \"${geoip_ldconfig_test_cmd2}\"";
     sudo bash -c "${geoip_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:geoip:source:test";
   fi;
 }
 

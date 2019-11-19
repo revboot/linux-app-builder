@@ -14,6 +14,8 @@ function task_lib_xslt_package_uninstall() {
   # uninstall both packages
   elif [ "$xslt_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $xslt_package_pkgs_bin $xslt_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:xslt:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_xslt_package_install() {
   # install both packages
   elif [ "$xslt_package_pkgs" == "both" ]; then
     sudo apt-get install -y $xslt_package_pkgs_bin $xslt_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:xslt:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libxslt.so)";
@@ -46,6 +50,8 @@ function task_lib_xslt_package_test() {
     xslt_ldconfig_test_cmd2="ldconfig -v | grep libxslt.so";
     echo "find system libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
     sudo bash -c "${xslt_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:xslt:package:test";
   fi;
   # binary tests
   xslt_binary_test_cmd="/usr/bin/xslt-config";
@@ -60,6 +66,8 @@ function task_lib_xslt_package_test() {
     xslt_binary_test_cmd3="${xslt_binary_test_cmd} --version";
     echo "test system binary #3: ${xslt_binary_test_cmd3}";
     $xslt_binary_test_cmd3;
+  else
+    notify "errorRoutine" "lib:xslt:package:test";
   fi;
 }
 
@@ -68,10 +76,14 @@ function task_lib_xslt_source_cleanup() {
   # remove source files
   if [ -d "$xslt_source_path" ]; then
     sudo rm -Rf "${xslt_source_path}"*;
+  else
+    notify "warnRoutine" "lib:xslt:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$xslt_source_tar" ]; then
     sudo rm -f "${xslt_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:xslt:source:cleanup";
   fi;
 }
 
@@ -85,6 +97,8 @@ function task_lib_xslt_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${xslt_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:xslt:source:download";
   fi;
 }
 
@@ -146,6 +160,8 @@ function task_lib_xslt_source_make() {
     # configure (workaround) and make
     echo "configure arguments: ${xslt_source_cmd_full}";
     sudo bash -c "cd \"${xslt_source_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xslt_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:xslt:source:make";
   fi;
 }
 
@@ -154,6 +170,8 @@ function task_lib_xslt_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libxslt.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${xslt_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:xslt:source:uninstall";
   fi;
 }
 
@@ -168,6 +186,8 @@ function task_lib_xslt_source_install() {
     sudo chmod +x "${global_source_usrprefix}/bin/xslt-config";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libxslt.so";
+  else
+    notify "errorRoutine" "lib:xslt:source:install";
   fi;
 }
 
@@ -184,6 +204,8 @@ function task_lib_xslt_source_test() {
     xslt_ldconfig_test_cmd2="ldconfig -v | grep libxslt.so";
     echo "find built libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
     sudo bash -c "${xslt_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:xslt:source:test";
   fi;
   # binary tests
   xslt_binary_test_cmd="${global_source_usrprefix}/bin/xslt-config";
@@ -198,6 +220,8 @@ function task_lib_xslt_source_test() {
     xslt_binary_test_cmd3="${xslt_binary_test_cmd} --version";
     echo "test built binary #3: ${xslt_binary_test_cmd3}";
     $xslt_binary_test_cmd3;
+  else
+    notify "errorRoutine" "lib:xslt:source:test";
   fi;
 }
 

@@ -14,6 +14,8 @@ function task_lib_zlib_package_uninstall() {
   # uninstall both packages
   elif [ "$zlib_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $zlib_package_pkgs_bin $zlib_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:zlib:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_zlib_package_install() {
   # install both packages
   elif [ "$zlib_package_pkgs" == "both" ]; then
     sudo apt-get install -y $zlib_package_pkgs_bin $zlib_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:zlib:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libz.so)";
@@ -46,6 +50,8 @@ function task_lib_zlib_package_test() {
     zlib_ldconfig_test_cmd2="ldconfig -v | grep libz.so";
     echo "find system libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
     sudo bash -c "${zlib_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:zlib:package:test";
   fi;
 }
 
@@ -54,10 +60,14 @@ function task_lib_zlib_source_cleanup() {
   # remove source files
   if [ -d "$zlib_source_path" ]; then
     sudo rm -Rf "${zlib_source_path}"*;
+  else
+    notify "warnRoutine" "lib:zlib:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$zlib_source_tar" ]; then
     sudo rm -f "${zlib_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:zlib:source:cleanup";
   fi;
 }
 
@@ -71,6 +81,8 @@ function task_lib_zlib_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${zlib_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:zlib:source:download";
   fi;
 }
 
@@ -104,6 +116,8 @@ function task_lib_zlib_source_make() {
     sudo bash -c "cd \"${zlib_source_path}\" && make clean";
     echo "configure arguments: ${zlib_source_cmd_full}";
     sudo bash -c "cd \"${zlib_source_path}\" && eval ${zlib_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:zlib:source:make";
   fi;
 }
 
@@ -112,6 +126,8 @@ function task_lib_zlib_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libz.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${zlib_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:zlib:source:uninstall";
   fi;
 }
 
@@ -122,6 +138,8 @@ function task_lib_zlib_source_install() {
     sudo bash -c "cd \"${zlib_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libz.so";
+  else
+    notify "errorRoutine" "lib:zlib:source:install";
   fi;
 }
 
@@ -138,6 +156,8 @@ function task_lib_zlib_source_test() {
     zlib_ldconfig_test_cmd2="ldconfig -v | grep libz.so";
     echo "find built libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
     sudo bash -c "${zlib_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:zlib:source:test";
   fi;
 }
 

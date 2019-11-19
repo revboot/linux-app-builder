@@ -14,6 +14,8 @@ function task_lib_openssl_package_uninstall() {
   # uninstall both packages
   elif [ "$openssl_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $openssl_package_pkgs_bin $openssl_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:openssl:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_openssl_package_install() {
   # install both packages
   elif [ "$openssl_package_pkgs" == "both" ]; then
     sudo apt-get install -y $openssl_package_pkgs_bin $openssl_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:openssl:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libssl.so)";
@@ -46,6 +50,8 @@ function task_lib_openssl_package_test() {
     openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
     echo "find system libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:openssl:package:test";
   fi;
   # binary tests
   openssl_binary_test_cmd="/usr/bin/openssl";
@@ -54,6 +60,8 @@ function task_lib_openssl_package_test() {
     openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
     echo "test system binary: ${openssl_binary_test_cmd}";
     $openssl_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:openssl:package:test";
   fi;
 }
 
@@ -62,10 +70,14 @@ function task_lib_openssl_source_cleanup() {
   # remove source files
   if [ -d "$openssl_source_path" ]; then
     sudo rm -Rf "${openssl_source_path}"*;
+  else
+    notify "warnRoutine" "lib:openssl:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$openssl_source_tar" ]; then
     sudo rm -f "${openssl_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:openssl:source:cleanup";
   fi;
 }
 
@@ -79,6 +91,8 @@ function task_lib_openssl_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${openssl_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:openssl:source:download";
   fi;
 }
 
@@ -191,6 +205,8 @@ function task_lib_openssl_source_make() {
     sudo bash -c "cd \"${openssl_source_path}\" && make clean";
     echo "configure arguments: ${openssl_source_cmd_full}";
     sudo bash -c "cd \"${openssl_source_path}\" && eval ${openssl_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:openssl:source:make";
   fi;
 }
 
@@ -199,6 +215,8 @@ function task_lib_openssl_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libssl.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${openssl_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:openssl:source:uninstall";
   fi;
 }
 
@@ -209,6 +227,8 @@ function task_lib_openssl_source_install() {
     sudo bash -c "cd \"${openssl_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libssl.so";
+  else
+    notify "errorRoutine" "lib:openssl:source:install";
   fi;
 }
 
@@ -225,6 +245,8 @@ function task_lib_openssl_source_test() {
     openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
     echo "find built libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:openssl:source:test";
   fi;
   # binary tests
   openssl_binary_test_cmd="${global_source_usrprefix}/bin/openssl";
@@ -233,6 +255,8 @@ function task_lib_openssl_source_test() {
     openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
     echo "test built binary: ${openssl_binary_test_cmd}";
     $openssl_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:openssl:source:test";
   fi;
 }
 

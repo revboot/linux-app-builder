@@ -20,6 +20,8 @@ function task_misc_global_package_install() {
   # install both packages
   elif [ "$global_package_pkgs" == "both" ]; then
     sudo apt-get install -y $global_package_pkgs_bin $global_package_pkgs_dev;
+  else
+    notify "errorRoutine" "misc:global:package:install";
   fi;
 }
 

@@ -14,6 +14,8 @@ function task_lib_pcre_package_uninstall() {
   # uninstall both packages
   elif [ "$pcre_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $pcre_package_pkgs_bin $pcre_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:pcre:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_pcre_package_install() {
   # install both packages
   elif [ "$pcre_package_pkgs" == "both" ]; then
     sudo apt-get install -y $pcre_package_pkgs_bin $pcre_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:pcre:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libpcre.so)";
@@ -46,6 +50,8 @@ function task_lib_pcre_package_test() {
     pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
     echo "find system libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:pcre:package:test";
   fi;
   # binary tests
   pcre_binary_test_cmd="/usr/bin/pcre-config";
@@ -54,6 +60,8 @@ function task_lib_pcre_package_test() {
     pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
     echo "test system binary: ${pcre_binary_test_cmd}";
     $pcre_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:pcre:package:test";
   fi;
 }
 
@@ -62,10 +70,14 @@ function task_lib_pcre_source_cleanup() {
   # remove source files
   if [ -d "$pcre_source_path" ]; then
     sudo rm -Rf "${pcre_source_path}"*;
+  else
+    notify "warnRoutine" "lib:pcre:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$pcre_source_tar" ]; then
     sudo rm -f "${pcre_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:pcre:source:cleanup";
   fi;
 }
 
@@ -79,6 +91,8 @@ function task_lib_pcre_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${pcre_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:pcre:source:download";
   fi;
 }
 
@@ -158,6 +172,8 @@ function task_lib_pcre_source_make() {
     sudo bash -c "cd \"${pcre_source_path}\" && make clean";
     echo "configure arguments: ${pcre_source_cmd_full}";
     sudo bash -c "cd \"${pcre_source_path}\" && eval ${pcre_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:pcre:source:make";
   fi;
 }
 
@@ -166,6 +182,8 @@ function task_lib_pcre_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libpcre.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${pcre_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:pcre:source:uninstall";
   fi;
 }
 
@@ -176,6 +194,8 @@ function task_lib_pcre_source_install() {
     sudo bash -c "cd \"${pcre_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libpcre.so";
+  else
+    notify "errorRoutine" "lib:pcre:source:install";
   fi;
 }
 
@@ -192,6 +212,8 @@ function task_lib_pcre_source_test() {
     pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
     echo "find built libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:pcre:source:test";
   fi;
   # binary tests
   pcre_binary_test_cmd="${global_source_usrprefix}/bin/pcre-config";
@@ -200,6 +222,8 @@ function task_lib_pcre_source_test() {
     pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
     echo "test built binary: ${pcre_binary_test_cmd}";
     $pcre_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:pcre:source:test";
   fi;
 }
 

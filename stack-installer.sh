@@ -64,17 +64,22 @@ notify() {
   elif [ $1 == "skipTask" ]; then
     printf "\nSkipping task:$2\n\n";
   elif [ $1 == "startSubTask" ]; then
-    printf "\n- Starting task:$2\n";
+    printf "\n- Starting subtask:$2\n";
   elif [ $1 == "stopSubTask" ]; then
-    printf "\n- Finishing task:$2\n";
+    printf "\n- Finishing subtask:$2\n";
   elif [ $1 == "skipSubTask" ]; then
-    printf "\n- Skipping task:$2\n";
+    printf "\n- Skipping subtask:$2\n";
   elif [ $1 == "startRoutine" ]; then
-    printf "\n-- Starting task:$2\n\n";
+    printf "\n-- Starting routine:$2\n\n";
   elif [ $1 == "stopRoutine" ]; then
-    printf "\n-- Finishing task:$2\n";
+    printf "\n-- Finishing routine:$2\n";
   elif [ $1 == "skipRoutine" ]; then
-    printf "\n-- Skipping task:$2\n";
+    printf "\n-- Skipping routine:$2\n";
+  elif [ $1 == "warnRoutine" ]; then
+    printf "\n-- Warning on routine:$2\n";
+  elif [ $1 == "errorRoutine" ]; then
+    printf "\n-- Error on routine:$2\n";
+    die 1;
   fi;
 }
 

@@ -14,6 +14,8 @@ function task_lib_xml2_package_uninstall() {
   # uninstall both packages
   elif [ "$xml2_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $xml2_package_pkgs_bin $xml2_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:xml2:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_xml2_package_install() {
   # install both packages
   elif [ "$xml2_package_pkgs" == "both" ]; then
     sudo apt-get install -y $xml2_package_pkgs_bin $xml2_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:xml2:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libxml2.so)";
@@ -46,6 +50,8 @@ function task_lib_xml2_package_test() {
     xml2_ldconfig_test_cmd2="ldconfig -v | grep libxml2.so";
     echo "find system libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
     sudo bash -c "${xml2_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:xml2:package:test";
   fi;
   # binary tests
   xml2_binary_test_cmd="/usr/bin/xml2-config";
@@ -54,6 +60,8 @@ function task_lib_xml2_package_test() {
     xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
     echo "test system binary: ${xml2_binary_test_cmd}";
     $xml2_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:xml2:package:test";
   fi;
 }
 
@@ -62,10 +70,14 @@ function task_lib_xml2_source_cleanup() {
   # remove source files
   if [ -d "$xml2_source_path" ]; then
     sudo rm -Rf "${xml2_source_path}"*;
+  else
+    notify "warnRoutine" "lib:xml2:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$xml2_source_tar" ]; then
     sudo rm -f "${xml2_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:xml2:source:cleanup";
   fi;
 }
 
@@ -79,6 +91,8 @@ function task_lib_xml2_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${xml2_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:xml2:source:download";
   fi;
 }
 
@@ -287,6 +301,8 @@ function task_lib_xml2_source_make() {
     sudo bash -c "cd \"${xml2_source_path}\" && make clean";
     echo "configure arguments: ${xml2_source_cmd_full}";
     sudo bash -c "cd \"${xml2_source_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xml2_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:xml2:source:make";
   fi;
 }
 
@@ -295,6 +311,8 @@ function task_lib_xml2_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libxml2.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${xml2_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:xml2:source:uninstall";
   fi;
 }
 
@@ -305,6 +323,8 @@ function task_lib_xml2_source_install() {
     sudo bash -c "cd \"${xml2_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libxml2.so";
+  else
+    notify "errorRoutine" "lib:xml2:source:install";
   fi;
 }
 
@@ -321,6 +341,8 @@ function task_lib_xml2_source_test() {
     xml2_ldconfig_test_cmd2="ldconfig -v | grep libxml2.so";
     echo "find built libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
     sudo bash -c "${xml2_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:xml2:source:test";
   fi;
   # binary tests
   xml2_binary_test_cmd="${global_source_usrprefix}/bin/xml2-config";
@@ -329,6 +351,8 @@ function task_lib_xml2_source_test() {
     xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
     echo "test built binary: ${xml2_binary_test_cmd}";
     $xml2_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:xml2:source:test";
   fi;
 }
 

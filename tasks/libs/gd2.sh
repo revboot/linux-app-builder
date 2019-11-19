@@ -14,6 +14,8 @@ function task_lib_gd2_package_uninstall() {
   # uninstall both packages
   elif [ "$gd2_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $gd2_package_pkgs_bin $gd2_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:gd2:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_lib_gd2_package_install() {
   # install both packages
   elif [ "$gd2_package_pkgs" == "both" ]; then
     sudo apt-get install -y $gd2_package_pkgs_bin $gd2_package_pkgs_dev;
+  else
+    notify "errorRoutine" "lib:gd2:package:install";
   fi;
   # whereis library
   echo "whereis system library: $(whereis libgd.so)";
@@ -46,6 +50,8 @@ function task_lib_gd2_package_test() {
     gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
     echo "find system libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:gd2:package:test";
   fi;
   # binary tests
   gd2_binary_test_cmd="/usr/bin/gdlib-config";
@@ -54,6 +60,8 @@ function task_lib_gd2_package_test() {
     gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
     echo "test system binary: ${gd2_binary_test_cmd}";
     $gd2_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:gd2:package:test";
   fi;
 }
 
@@ -62,10 +70,14 @@ function task_lib_gd2_source_cleanup() {
   # remove source files
   if [ -d "$gd2_source_path" ]; then
     sudo rm -Rf "${gd2_source_path}"*;
+  else
+    notify "warnRoutine" "lib:gd2:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$gd2_source_tar" ]; then
     sudo rm -f "${gd2_source_tar}"*;
+  else
+    notify "warnRoutine" "lib:gd2:source:cleanup";
   fi;
 }
 
@@ -79,6 +91,8 @@ function task_lib_gd2_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${gd2_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "lib:gd2:source:download";
   fi;
 }
 
@@ -175,6 +189,8 @@ function task_lib_gd2_source_make() {
     sudo bash -c "cd \"${gd2_source_path}\" && make clean";
     echo "configure arguments: ${gd2_source_cmd_full}";
     sudo bash -c "cd \"${gd2_source_path}\" && eval ${gd2_source_cmd_full} && make";
+  else
+    notify "errorRoutine" "lib:gd2:source:make";
   fi;
 }
 
@@ -183,6 +199,8 @@ function task_lib_gd2_source_uninstall() {
   if [ -f "${global_source_usrprefix}/lib/libgd.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${gd2_source_path}\" && make uninstall";
+  else
+    notify "errorRoutine" "lib:gd2:source:uninstall";
   fi;
 }
 
@@ -193,6 +211,8 @@ function task_lib_gd2_source_install() {
     sudo bash -c "cd \"${gd2_source_path}\" && make install";
     # whereis library
     echo "whereis built library: ${global_source_usrprefix}/lib/libgd.so";
+  else
+    notify "errorRoutine" "lib:gd2:source:install";
   fi;
 }
 
@@ -209,6 +229,8 @@ function task_lib_gd2_source_test() {
     gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
     echo "find built libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd2}";
+  else
+    notify "errorRoutine" "lib:gd2:source:test";
   fi;
   # binary tests
   gd2_binary_test_cmd="${global_source_usrprefix}/bin/gdlib-config";
@@ -217,6 +239,8 @@ function task_lib_gd2_source_test() {
     gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
     echo "test built binary: ${gd2_binary_test_cmd}";
     $gd2_binary_test_cmd;
+  else
+    notify "errorRoutine" "lib:gd2:source:test";
   fi;
 }
 

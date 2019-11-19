@@ -14,6 +14,8 @@ function task_app_nginx_package_uninstall() {
   # uninstall both packages
   elif [ "$nginx_package_pkgs" == "both" ]; then
     sudo apt-get remove --purge $nginx_package_pkgs_bin $nginx_package_pkgs_dev;
+  else
+    notify "errorRoutine" "app:nginx:package:uninstall";
   fi;
 }
 
@@ -28,6 +30,8 @@ function task_app_nginx_package_install() {
   # install both packages
   elif [ "$nginx_package_pkgs" == "both" ]; then
     sudo apt-get install -y $nginx_package_pkgs_bin $nginx_package_pkgs_dev;
+  else
+    notify "errorRoutine" "app:nginx:package:install";
   fi;
   # whereis binary
   echo "whereis system binary: $(whereis nginx)";
@@ -50,6 +54,8 @@ function task_app_nginx_package_test() {
     nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
     echo "test system binary: sudo ${nginx_binary_test_cmd}";
     sudo $nginx_binary_test_cmd;
+  else
+    notify "errorRoutine" "app:nginx:package:test";
   fi;
 }
 
@@ -58,10 +64,14 @@ function task_app_nginx_source_cleanup() {
   # remove source files
   if [ -d "$nginx_source_path" ]; then
     sudo rm -Rf "${nginx_source_path}"*;
+  else
+    notify "warnRoutine" "app:nginx:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$nginx_source_tar" ]; then
     sudo rm -f "${nginx_source_tar}"*;
+  else
+    notify "warnRoutine" "app:nginx:source:cleanup";
   fi;
 }
 
@@ -75,6 +85,8 @@ function task_app_nginx_source_download() {
     else
       sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${nginx_source_tar}\"";
     fi;
+  else
+    notify "warnRoutine" "app:nginx:source:download";
   fi;
 }
 
@@ -703,6 +715,8 @@ function task_app_nginx_source_make() {
     sudo bash -c "cd \"${nginx_source_path}\" && make clean";
     echo "configure arguments: ${nginx_source_cmd_full}";
     sudo bash -c "cd \"${nginx_source_path}\" && eval ${nginx_source_cmd_full} && make -j1";
+  else
+    notify "errorRoutine" "app:nginx:source:make";
   fi;
 }
 
@@ -719,6 +733,8 @@ function task_app_nginx_source_uninstall() {
     elif [ -L "${global_source_varprefix}/etc/nginx" ]; then
       sudo rm -f "${global_source_varprefix}/etc/nginx";
     fi;
+  else
+    notify "errorRoutine" "app:nginx:source:uninstall";
   fi;
 }
 
@@ -731,13 +747,15 @@ function task_app_nginx_source_install() {
     sudo mkdir -p "${global_source_varprefix}/lib/nginx";
     # whereis binary
     echo "whereis built binary: ${global_source_usrprefix}/sbin/nginx";
+  else
+    notify "errorRoutine" "app:nginx:source:install";
   fi;
 }
 
 # declare routine source:config
 function task_app_nginx_source_config() {
   # use configuration from system
-  if [ "$nginx_source_config" == "system" ]; then
+  if [ -f "/etc/nginx" ] && [ "$nginx_source_config" == "system" ]; then
     # remove source etc directory
     if [ -d "${global_source_varprefix}/etc/nginx" ]; then
       sudo rm -Rf "${global_source_varprefix}/etc/nginx";
@@ -749,9 +767,11 @@ function task_app_nginx_source_config() {
     sudo ln -s "/etc/nginx" "${global_source_varprefix}/etc/nginx";
     sudo rm -f "${global_source_varprefix}/etc/nginx/*.default";
   # use configuration from build
-  elif [ "$nginx_source_config" == "build" ]; then
+  elif [ -f "${global_source_varprefix}/etc/nginx" ] && [ "$nginx_source_config" == "build" ]; then
     # copy configuration from build etc to system etc
     sudo cp "${global_source_varprefix}/etc/nginx/*" "/etc/nginx";
+  else
+    notify "errorRoutine" "app:nginx:source:config";
   fi;
 }
 
@@ -772,6 +792,8 @@ function task_app_nginx_source_test() {
     nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
     echo "test built binary: sudo ${nginx_binary_test_cmd}";
     sudo $nginx_binary_test_cmd;
+  else
+    notify "errorRoutine" "app:nginx:source:test";
   fi;
 }
 
