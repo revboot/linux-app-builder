@@ -710,7 +710,15 @@ function task_app_nginx_source_make() {
 function task_app_nginx_source_uninstall() {
   if [ -f "${global_source_usrprefix}/sbin/nginx" ]; then
     # uninstall binaries from source
-    sudo bash -c "cd \"${nginx_source_path}\" && make uninstall";
+    sudo rm -f "${global_source_usrprefix}/sbin/nginx";
+    sudo rm -Rf "${global_source_usrprefix}/share/nginx";
+    # remove source etc directory
+    if [ -d "${global_source_varprefix}/etc/nginx" ]; then
+      sudo rm -Rf "${global_source_varprefix}/etc/nginx";
+    # remove source etc symlink
+    elif [ -L "${global_source_varprefix}/etc/nginx" ]; then
+      sudo rm -f "${global_source_varprefix}/etc/nginx";
+    fi;
   fi;
 }
 
@@ -730,10 +738,10 @@ function task_app_nginx_source_install() {
 function task_app_nginx_source_config() {
   # use configuration from system
   if [ "$nginx_source_config" == "system" ]; then
-    # remove build etc directory
+    # remove source etc directory
     if [ -d "${global_source_varprefix}/etc/nginx" ]; then
       sudo rm -Rf "${global_source_varprefix}/etc/nginx";
-    # remove build etc symlink
+    # remove source etc symlink
     elif [ -L "${global_source_varprefix}/etc/nginx" ]; then
       sudo rm -f "${global_source_varprefix}/etc/nginx";
     fi;
