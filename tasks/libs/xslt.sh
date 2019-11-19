@@ -34,7 +34,7 @@ function task_lib_xslt_package_install() {
     notify "errorRoutine" "lib:xslt:package:install";
   fi;
   # whereis library
-  echo "whereis system library: $(whereis libxslt.so)";
+  echo "whereis package library: $(whereis libxslt.so)";
 }
 
 # declare routine package:test
@@ -44,11 +44,11 @@ function task_lib_xslt_package_test() {
   if [ -f "$xslt_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xslt_ldconfig_test_cmd1="ldconfig -p | grep ${xslt_ldconfig_test_cmd}";
-    echo "find system libraries #1: sudo bash -c \"${xslt_ldconfig_test_cmd1}\"";
+    echo "find package libraries #1: sudo bash -c \"${xslt_ldconfig_test_cmd1}\"";
     sudo bash -c "${xslt_ldconfig_test_cmd1}";
     # check ldconfig versions
     xslt_ldconfig_test_cmd2="ldconfig -v | grep libxslt.so";
-    echo "find system libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
+    echo "find package libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
     sudo bash -c "${xslt_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:xslt:package:test";
@@ -58,13 +58,13 @@ function task_lib_xslt_package_test() {
   if [ -f "$xslt_binary_test_cmd" ]; then
     # test binary #1,#2,#3
     xslt_binary_test_cmd1="${xslt_binary_test_cmd} --libs --cflags";
-    echo "test system binary #1: ${xslt_binary_test_cmd1}";
+    echo "test package binary #1: ${xslt_binary_test_cmd1}";
     $xslt_binary_test_cmd1;
     xslt_binary_test_cmd2="${xslt_binary_test_cmd} --plugins";
-    echo "test system binary #2: ${xslt_binary_test_cmd2}";
+    echo "test package binary #2: ${xslt_binary_test_cmd2}";
     $xslt_binary_test_cmd2;
     xslt_binary_test_cmd3="${xslt_binary_test_cmd} --version";
-    echo "test system binary #3: ${xslt_binary_test_cmd3}";
+    echo "test package binary #3: ${xslt_binary_test_cmd3}";
     $xslt_binary_test_cmd3;
   else
     notify "errorRoutine" "lib:xslt:package:test";
@@ -124,16 +124,16 @@ function task_lib_xslt_source_make() {
     #fi;
 
     # command - add libraries: xml2
-    if [ "$xslt_source_arg_libraries_xml2" == "system" ]; then
+    if [ "$xslt_source_arg_libraries_xml2" == "package" ]; then
       xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix";
-    elif [ "$xslt_source_arg_libraries_xml2" == "custom" ]; then
+    elif [ "$xslt_source_arg_libraries_xml2" == "source" ]; then
       xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix=${global_source_usrprefix}";
     fi;
 
     # command - add libraries: python
-    if [ "$xslt_source_arg_libraries_python" == "system" ]; then
+    if [ "$xslt_source_arg_libraries_python" == "package" ]; then
       xslt_source_cmd_full="${xslt_source_cmd_full} --with-python";
-    elif [ "$xslt_source_arg_libraries_python" == "custom" ]; then
+    elif [ "$xslt_source_arg_libraries_python" == "source" ]; then
       xslt_source_cmd_full="${xslt_source_cmd_full} --with-python=${python_source_path}";
     fi;
 
@@ -180,12 +180,12 @@ function task_lib_xslt_source_install() {
   if [ -f "$xslt_source_path/libxslt/.libs/libxslt.so" ]; then
     # install binaries from source
     sudo bash -c "cd \"${xslt_source_path}\" && make install";
-    # copy missing binaries to system
+    # copy missing binaries
     sudo cp "${xslt_source_path}/xsltproc/.libs/xsltproc" "${global_source_usrprefix}/bin/xsltproc";
     sudo cp "${xslt_source_path}/xslt-config" "${global_source_usrprefix}/bin/xslt-config";
     sudo chmod +x "${global_source_usrprefix}/bin/xslt-config";
     # whereis library
-    echo "whereis built library: ${global_source_usrprefix}/lib/libxslt.so";
+    echo "whereis source library: ${global_source_usrprefix}/lib/libxslt.so";
   else
     notify "errorRoutine" "lib:xslt:source:install";
   fi;
@@ -198,11 +198,11 @@ function task_lib_xslt_source_test() {
   if [ -f "$xslt_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xslt_ldconfig_test_cmd1="ldconfig -p | grep ${xslt_ldconfig_test_cmd}";
-    echo "find built libraries #1: sudo bash -c \"${xslt_ldconfig_test_cmd1}\"";
+    echo "find source libraries #1: sudo bash -c \"${xslt_ldconfig_test_cmd1}\"";
     sudo bash -c "${xslt_ldconfig_test_cmd1}";
     # check ldconfig versions
     xslt_ldconfig_test_cmd2="ldconfig -v | grep libxslt.so";
-    echo "find built libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
+    echo "find source libraries #2: sudo bash -c \"${xslt_ldconfig_test_cmd2}\"";
     sudo bash -c "${xslt_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:xslt:source:test";
@@ -212,13 +212,13 @@ function task_lib_xslt_source_test() {
   if [ -f "$xslt_binary_test_cmd" ]; then
     # test binary #1,#2,#3
     xslt_binary_test_cmd1="${xslt_binary_test_cmd} --libs --cflags";
-    echo "test built binary #1: ${xslt_binary_test_cmd1}";
+    echo "test source binary #1: ${xslt_binary_test_cmd1}";
     $xslt_binary_test_cmd1;
     xslt_binary_test_cmd2="${xslt_binary_test_cmd} --plugins";
-    echo "test built binary #2: ${xslt_binary_test_cmd2}";
+    echo "test source binary #2: ${xslt_binary_test_cmd2}";
     $xslt_binary_test_cmd2;
     xslt_binary_test_cmd3="${xslt_binary_test_cmd} --version";
-    echo "test built binary #3: ${xslt_binary_test_cmd3}";
+    echo "test source binary #3: ${xslt_binary_test_cmd3}";
     $xslt_binary_test_cmd3;
   else
     notify "errorRoutine" "lib:xslt:source:test";

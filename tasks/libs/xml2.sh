@@ -34,7 +34,7 @@ function task_lib_xml2_package_install() {
     notify "errorRoutine" "lib:xml2:package:install";
   fi;
   # whereis library
-  echo "whereis system library: $(whereis libxml2.so)";
+  echo "whereis package library: $(whereis libxml2.so)";
 }
 
 # declare routine package:test
@@ -44,11 +44,11 @@ function task_lib_xml2_package_test() {
   if [ -f "$xml2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xml2_ldconfig_test_cmd1="ldconfig -p | grep ${xml2_ldconfig_test_cmd}";
-    echo "find system libraries #1: sudo bash -c \"${xml2_ldconfig_test_cmd1}\"";
+    echo "find package libraries #1: sudo bash -c \"${xml2_ldconfig_test_cmd1}\"";
     sudo bash -c "${xml2_ldconfig_test_cmd1}";
     # check ldconfig versions
     xml2_ldconfig_test_cmd2="ldconfig -v | grep libxml2.so";
-    echo "find system libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
+    echo "find package libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
     sudo bash -c "${xml2_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:xml2:package:test";
@@ -58,7 +58,7 @@ function task_lib_xml2_package_test() {
   if [ -f "$xml2_binary_test_cmd" ]; then
     # test binary
     xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
-    echo "test system binary: ${xml2_binary_test_cmd}";
+    echo "test package binary: ${xml2_binary_test_cmd}";
     $xml2_binary_test_cmd;
   else
     notify "errorRoutine" "lib:xml2:package:test";
@@ -118,37 +118,37 @@ function task_lib_xml2_source_make() {
     #fi;
 
     # command - add libraries: zlib
-    if [ "$xml2_source_arg_libraries_zlib" == "system" ]; then
+    if [ "$xml2_source_arg_libraries_zlib" == "package" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-zlib";
-    elif [ "$xml2_source_arg_libraries_zlib" == "custom" ]; then
+    elif [ "$xml2_source_arg_libraries_zlib" == "source" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-zlib=${zlib_source_path}";
     fi;
 
     # command - add libraries: lzma
-    if [ "$xml2_source_arg_libraries_lzma" == "system" ]; then
+    if [ "$xml2_source_arg_libraries_lzma" == "package" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-lzma";
-    elif [ "$xml2_source_arg_libraries_lzma" == "custom" ]; then
+    elif [ "$xml2_source_arg_libraries_lzma" == "source" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-lzma=${lzma_source_path}";
     fi;
 
     # command - add libraries: readline
-    if [ "$xml2_source_arg_libraries_readline" == "system" ]; then
+    if [ "$xml2_source_arg_libraries_readline" == "package" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-readline";
-    elif [ "$xml2_source_arg_libraries_readline" == "custom" ]; then
+    elif [ "$xml2_source_arg_libraries_readline" == "source" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-readline=${readline_source_path}";
     fi;
 
     # command - add libraries: iconv
-    if [ "$xml2_source_arg_libraries_iconv" == "system" ]; then
+    if [ "$xml2_source_arg_libraries_iconv" == "package" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-iconv";
-    elif [ "$xml2_source_arg_libraries_iconv" == "custom" ]; then
+    elif [ "$xml2_source_arg_libraries_iconv" == "source" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-iconv=${iconv_source_path}";
     fi;
 
     # command - add libraries: python
-    if [ "$xml2_source_arg_libraries_python" == "system" ]; then
+    if [ "$xml2_source_arg_libraries_python" == "package" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-python";
-    elif [ "$xml2_source_arg_libraries_python" == "custom" ]; then
+    elif [ "$xml2_source_arg_libraries_python" == "source" ]; then
       xml2_source_cmd_full="${xml2_source_cmd_full} --with-python=${python_source_path}";
     fi;
 
@@ -322,7 +322,7 @@ function task_lib_xml2_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${xml2_source_path}\" && make install";
     # whereis library
-    echo "whereis built library: ${global_source_usrprefix}/lib/libxml2.so";
+    echo "whereis source library: ${global_source_usrprefix}/lib/libxml2.so";
   else
     notify "errorRoutine" "lib:xml2:source:install";
   fi;
@@ -335,11 +335,11 @@ function task_lib_xml2_source_test() {
   if [ -f "$xml2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xml2_ldconfig_test_cmd1="ldconfig -p | grep ${xml2_ldconfig_test_cmd}";
-    echo "find built libraries #1: sudo bash -c \"${xml2_ldconfig_test_cmd1}\"";
+    echo "find source libraries #1: sudo bash -c \"${xml2_ldconfig_test_cmd1}\"";
     sudo bash -c "${xml2_ldconfig_test_cmd1}";
     # check ldconfig versions
     xml2_ldconfig_test_cmd2="ldconfig -v | grep libxml2.so";
-    echo "find built libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
+    echo "find source libraries #2: sudo bash -c \"${xml2_ldconfig_test_cmd2}\"";
     sudo bash -c "${xml2_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:xml2:source:test";
@@ -349,7 +349,7 @@ function task_lib_xml2_source_test() {
   if [ -f "$xml2_binary_test_cmd" ]; then
     # test binary
     xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
-    echo "test built binary: ${xml2_binary_test_cmd}";
+    echo "test source binary: ${xml2_binary_test_cmd}";
     $xml2_binary_test_cmd;
   else
     notify "errorRoutine" "lib:xml2:source:test";

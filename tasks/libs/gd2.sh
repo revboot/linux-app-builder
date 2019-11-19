@@ -34,7 +34,7 @@ function task_lib_gd2_package_install() {
     notify "errorRoutine" "lib:gd2:package:install";
   fi;
   # whereis library
-  echo "whereis system library: $(whereis libgd.so)";
+  echo "whereis package library: $(whereis libgd.so)";
 }
 
 # declare routine package:test
@@ -44,11 +44,11 @@ function task_lib_gd2_package_test() {
   if [ -f "$gd2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
-    echo "find system libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
+    echo "find package libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd1}";
     # check ldconfig versions
     gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
-    echo "find system libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
+    echo "find package libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:gd2:package:test";
@@ -58,7 +58,7 @@ function task_lib_gd2_package_test() {
   if [ -f "$gd2_binary_test_cmd" ]; then
     # test binary
     gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
-    echo "test system binary: ${gd2_binary_test_cmd}";
+    echo "test package binary: ${gd2_binary_test_cmd}";
     $gd2_binary_test_cmd;
   else
     notify "errorRoutine" "lib:gd2:package:test";
@@ -118,65 +118,65 @@ function task_lib_gd2_source_make() {
     #fi;
 
     # command - add libraries: zlib
-    if [ "$gd2_source_arg_libraries_zlib" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_zlib" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-zlib";
-    elif [ "$gd2_source_arg_libraries_zlib" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_zlib" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-zlib=${zlib_source_path}";
     fi;
 
     # command - add libraries: png
-    if [ "$gd2_source_arg_libraries_png" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_png" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-png";
-    elif [ "$gd2_source_arg_libraries_png" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_png" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-png=${png_source_path}";
     fi;
 
     # command - add libraries: jpeg
-    if [ "$gd2_source_arg_libraries_jpeg" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_jpeg" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-jpeg";
-    elif [ "$gd2_source_arg_libraries_jpeg" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_jpeg" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-jpeg=${jpeg_source_path}";
     fi;
 
     # command - add libraries: webp
-    if [ "$gd2_source_arg_libraries_webp" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_webp" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-webp";
-    elif [ "$gd2_source_arg_libraries_webp" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_webp" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-webp=${webp_source_path}";
     fi;
 
     # command - add libraries: tiff
-    if [ "$gd2_source_arg_libraries_tiff" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_tiff" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-tiff";
-    elif [ "$gd2_source_arg_libraries_tiff" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_tiff" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-tiff=${tiff_source_path}";
     fi;
 
     # command - add libraries: xpm
-    if [ "$gd2_source_arg_libraries_xpm" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_xpm" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-xpm";
-    elif [ "$gd2_source_arg_libraries_xpm" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_xpm" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-xpm=${xpm_source_path}";
     fi;
 
     # command - add libraries: liq
-    if [ "$gd2_source_arg_libraries_liq" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_liq" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-liq";
-    elif [ "$gd2_source_arg_libraries_liq" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_liq" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-liq=${liq_source_path}";
     fi;
 
     # command - add libraries: freetype
-    if [ "$gd2_source_arg_libraries_freetype" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_freetype" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-freetype";
-    elif [ "$gd2_source_arg_libraries_freetype" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_freetype" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-freetype=${freetype_source_path}";
     fi;
 
     # command - add libraries: fontconfig
-    if [ "$gd2_source_arg_libraries_fontconfig" == "system" ]; then
+    if [ "$gd2_source_arg_libraries_fontconfig" == "package" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-fontconfig";
-    elif [ "$gd2_source_arg_libraries_fontconfig" == "custom" ]; then
+    elif [ "$gd2_source_arg_libraries_fontconfig" == "source" ]; then
       gd2_source_cmd_full="${gd2_source_cmd_full} --with-fontconfig=${fontconfig_source_path}";
     fi;
 
@@ -210,7 +210,7 @@ function task_lib_gd2_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${gd2_source_path}\" && make install";
     # whereis library
-    echo "whereis built library: ${global_source_usrprefix}/lib/libgd.so";
+    echo "whereis source library: ${global_source_usrprefix}/lib/libgd.so";
   else
     notify "errorRoutine" "lib:gd2:source:install";
   fi;
@@ -223,11 +223,11 @@ function task_lib_gd2_source_test() {
   if [ -f "$gd2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
-    echo "find built libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
+    echo "find source libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd1}";
     # check ldconfig versions
     gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
-    echo "find built libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
+    echo "find source libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:gd2:source:test";
@@ -237,7 +237,7 @@ function task_lib_gd2_source_test() {
   if [ -f "$gd2_binary_test_cmd" ]; then
     # test binary
     gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
-    echo "test built binary: ${gd2_binary_test_cmd}";
+    echo "test source binary: ${gd2_binary_test_cmd}";
     $gd2_binary_test_cmd;
   else
     notify "errorRoutine" "lib:gd2:source:test";

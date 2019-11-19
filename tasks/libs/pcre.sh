@@ -34,7 +34,7 @@ function task_lib_pcre_package_install() {
     notify "errorRoutine" "lib:pcre:package:install";
   fi;
   # whereis library
-  echo "whereis system library: $(whereis libpcre.so)";
+  echo "whereis package library: $(whereis libpcre.so)";
 }
 
 # declare routine package:test
@@ -44,11 +44,11 @@ function task_lib_pcre_package_test() {
   if [ -f "$pcre_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
-    echo "find system libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
+    echo "find package libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd1}";
     # check ldconfig versions
     pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
-    echo "find system libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
+    echo "find package libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:pcre:package:test";
@@ -58,7 +58,7 @@ function task_lib_pcre_package_test() {
   if [ -f "$pcre_binary_test_cmd" ]; then
     # test binary
     pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
-    echo "test system binary: ${pcre_binary_test_cmd}";
+    echo "test package binary: ${pcre_binary_test_cmd}";
     $pcre_binary_test_cmd;
   else
     notify "errorRoutine" "lib:pcre:package:test";
@@ -193,7 +193,7 @@ function task_lib_pcre_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${pcre_source_path}\" && make install";
     # whereis library
-    echo "whereis built library: ${global_source_usrprefix}/lib/libpcre.so";
+    echo "whereis source library: ${global_source_usrprefix}/lib/libpcre.so";
   else
     notify "errorRoutine" "lib:pcre:source:install";
   fi;
@@ -206,11 +206,11 @@ function task_lib_pcre_source_test() {
   if [ -f "$pcre_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
-    echo "find built libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
+    echo "find source libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd1}";
     # check ldconfig versions
     pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
-    echo "find built libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
+    echo "find source libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:pcre:source:test";
@@ -220,7 +220,7 @@ function task_lib_pcre_source_test() {
   if [ -f "$pcre_binary_test_cmd" ]; then
     # test binary
     pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
-    echo "test built binary: ${pcre_binary_test_cmd}";
+    echo "test source binary: ${pcre_binary_test_cmd}";
     $pcre_binary_test_cmd;
   else
     notify "errorRoutine" "lib:pcre:source:test";

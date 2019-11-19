@@ -34,7 +34,7 @@ function task_lib_zlib_package_install() {
     notify "errorRoutine" "lib:zlib:package:install";
   fi;
   # whereis library
-  echo "whereis system library: $(whereis libz.so)";
+  echo "whereis package library: $(whereis libz.so)";
 }
 
 # declare routine package:test
@@ -44,11 +44,11 @@ function task_lib_zlib_package_test() {
   if [ -f "$zlib_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";
-    echo "find system libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
+    echo "find package libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
     sudo bash -c "${zlib_ldconfig_test_cmd1}";
     # check ldconfig versions
     zlib_ldconfig_test_cmd2="ldconfig -v | grep libz.so";
-    echo "find system libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
+    echo "find package libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
     sudo bash -c "${zlib_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:zlib:package:test";
@@ -137,7 +137,7 @@ function task_lib_zlib_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${zlib_source_path}\" && make install";
     # whereis library
-    echo "whereis built library: ${global_source_usrprefix}/lib/libz.so";
+    echo "whereis source library: ${global_source_usrprefix}/lib/libz.so";
   else
     notify "errorRoutine" "lib:zlib:source:install";
   fi;
@@ -150,11 +150,11 @@ function task_lib_zlib_source_test() {
   if [ -f "$zlib_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";
-    echo "find built libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
+    echo "find source libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
     sudo bash -c "${zlib_ldconfig_test_cmd1}";
     # check ldconfig versions
     zlib_ldconfig_test_cmd2="ldconfig -v | grep libz.so";
-    echo "find built libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
+    echo "find source libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
     sudo bash -c "${zlib_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:zlib:source:test";

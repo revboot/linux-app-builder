@@ -121,7 +121,7 @@ openssl_source_path="${global_source_usrprefix}/src/openssl-${openssl_source_ver
 openssl_source_arg_arch="linux-x86_64";
 openssl_source_arg_usrprefix="${global_source_usrprefix}";
 #openssl_source_arg_libraries="--with-zlib-include=${global_source_usrprefix}/include --with-zlib-lib=${global_source_usrprefix}/lib";
-openssl_source_arg_libraries_zlib="custom"; #system,custom,no
+openssl_source_arg_libraries_zlib="source"; #package,source,no
 openssl_source_arg_options="";
 openssl_source_arg_main_threads="yes";
 openssl_source_arg_main_zlib="yes";
@@ -173,15 +173,15 @@ gd2_source_path="${global_source_usrprefix}/src/libgd-${gd2_source_version}";
 gd2_source_arg_arch="linux-x86_64";
 gd2_source_arg_usrprefix="${global_source_usrprefix}";
 #gd2_source_arg_libraries="--with-zlib=${zlib_source_path} --with-png --with-jpeg --with-webp --with-tiff --with-xpm --with-freetype --with-fontconfig"; #--with-liq
-gd2_source_arg_libraries_zlib="custom"; #system,custom,no
-gd2_source_arg_libraries_png="system"; #system,custom,no
-gd2_source_arg_libraries_jpeg="system"; #system,custom,no
-gd2_source_arg_libraries_webp="system"; #system,custom,no
-gd2_source_arg_libraries_tiff="system"; #system,custom,no
-gd2_source_arg_libraries_xpm="system"; #system,custom,no
-gd2_source_arg_libraries_liq="no"; #system,custom,no
-gd2_source_arg_libraries_freetype="system"; #system,custom,no
-gd2_source_arg_libraries_fontconfig="system"; #system,custom,no
+gd2_source_arg_libraries_zlib="source"; #package,source,no
+gd2_source_arg_libraries_png="package"; #package,source,no
+gd2_source_arg_libraries_jpeg="package"; #package,source,no
+gd2_source_arg_libraries_webp="package"; #package,source,no
+gd2_source_arg_libraries_tiff="package"; #package,source,no
+gd2_source_arg_libraries_xpm="package"; #package,source,no
+gd2_source_arg_libraries_liq="no"; #package,source,no
+gd2_source_arg_libraries_freetype="package"; #package,source,no
+gd2_source_arg_libraries_fontconfig="package"; #package,source,no
 gd2_source_arg_options="";
 
 # - xml2 (version 2.6.27 - 2.9.x)
@@ -223,11 +223,11 @@ xml2_source_path="${global_source_usrprefix}/src/libxml2-v${xml2_source_version}
 xml2_source_arg_arch="linux-x86_64";
 xml2_source_arg_usrprefix="${global_source_usrprefix}";
 #xml2_source_arg_libraries="--with-zlib=${zlib_source_path} --with-lzma --with-readline --with-iconv --with-python";
-xml2_source_arg_libraries_zlib="custom"; #system,custom,no
-xml2_source_arg_libraries_lzma="system"; #system,custom,no
-xml2_source_arg_libraries_readline="system"; #system,custom,no
-xml2_source_arg_libraries_iconv="system"; #system,custom,no
-xml2_source_arg_libraries_python="system"; #system,custom,no
+xml2_source_arg_libraries_zlib="source"; #package,source,no
+xml2_source_arg_libraries_lzma="package"; #package,source,no
+xml2_source_arg_libraries_readline="package"; #package,source,no
+xml2_source_arg_libraries_iconv="package"; #package,source,no
+xml2_source_arg_libraries_python="package"; #package,source,no
 xml2_source_arg_options="";
 xml2_source_arg_main_threads="yes";
 xml2_source_arg_main_threadalloc="yes";
@@ -285,8 +285,8 @@ xslt_source_path="${global_source_usrprefix}/src/libxslt-v${xslt_source_version}
 xslt_source_arg_arch="linux-x86_64";
 xslt_source_arg_usrprefix="${global_source_usrprefix}";
 #xslt_source_arg_libraries="--with-libxml-prefix=${global_source_usrprefix} --with-python";
-xslt_source_arg_libraries_xml2="custom"; #system,custom,no
-xslt_source_arg_libraries_python="system"; #system,custom,no
+xslt_source_arg_libraries_xml2="source"; #package,source,no
+xslt_source_arg_libraries_python="package"; #package,source,no
 xslt_source_arg_options="";
 xslt_source_arg_main_crypto="yes";
 xslt_source_arg_main_plugins="yes";
@@ -338,7 +338,7 @@ nginx_source_download="yes";
 nginx_source_make="yes";
 nginx_source_uninstall="no";
 nginx_source_install="yes";
-nginx_source_config="system"; #system,build,no
+nginx_source_config="package"; #package,source,no
 nginx_source_test="yes";
 nginx_source_version="1.16.1";
 nginx_source_url="https://nginx.org/download/nginx-${nginx_source_version}.tar.gz";
@@ -348,14 +348,14 @@ nginx_source_arg_arch="linux-x86_64";
 nginx_source_arg_usrprefix="${global_source_usrprefix}";
 nginx_source_arg_varprefix="${global_source_varprefix}";
 #nginx_source_arg_libraries="--with-zlib=${zlib_source_path} --with-pcre=${pcre_source_path} --with-pcre-jit --with-openssl=${openssl_source_path}";
-nginx_source_arg_libraries_zlib="system"; #system,custom (set to custom with gcc -static or when recompiling via nginx makefile)
-nginx_source_arg_libraries_pcre="system"; #system,custom (set to custom with gcc -static or when recompiling via nginx makefile)
-nginx_source_arg_libraries_openssl="system"; #system,custom (set to custom with gcc -static or when recompiling via nginx makefile)
-nginx_source_arg_libraries_libatomic="system"; #system,custom (set to custom with gcc -static or when recompiling via nginx makefile)
+nginx_source_arg_libraries_zlib="package"; #package,source (set to source with gcc -static or when recompiling via nginx makefile)
+nginx_source_arg_libraries_pcre="package"; #package,source (set to source with gcc -static or when recompiling via nginx makefile)
+nginx_source_arg_libraries_openssl="package"; #package,source (set to source with gcc -static or when recompiling via nginx makefile)
+nginx_source_arg_libraries_libatomic="package"; #package,source (set to source with gcc -static or when recompiling via nginx makefile)
 nginx_source_arg_options="";
 # - nginx - compiler
 nginx_source_arg_compiler_flag="yes";
-nginx_source_arg_compiler_L_I="custom"; #custom,no
+nginx_source_arg_compiler_paths="source"; #source,package
 nginx_source_arg_compiler_cc="-Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fexceptions -fasynchronous-unwind-tables -D FD_SETSIZE=8192 -O2"; #-Wdate-time -fPIE -fstack-protector-strong -static -static-libgcc
 nginx_source_arg_compiler_ld="-Wl,--as-needed -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now"; #-fPIE -pie -static
 # - nginx - main config

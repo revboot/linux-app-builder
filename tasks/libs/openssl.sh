@@ -34,7 +34,7 @@ function task_lib_openssl_package_install() {
     notify "errorRoutine" "lib:openssl:package:install";
   fi;
   # whereis library
-  echo "whereis system library: $(whereis libssl.so)";
+  echo "whereis package library: $(whereis libssl.so)";
 }
 
 # declare routine package:test
@@ -44,11 +44,11 @@ function task_lib_openssl_package_test() {
   if [ -f "$openssl_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
-    echo "find system libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
+    echo "find package libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd1}";
     # check ldconfig versions
     openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
-    echo "find system libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
+    echo "find package libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:openssl:package:test";
@@ -58,7 +58,7 @@ function task_lib_openssl_package_test() {
   if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
     openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
-    echo "test system binary: ${openssl_binary_test_cmd}";
+    echo "test package binary: ${openssl_binary_test_cmd}";
     $openssl_binary_test_cmd;
   else
     notify "errorRoutine" "lib:openssl:package:test";
@@ -118,9 +118,9 @@ function task_lib_openssl_source_make() {
     #fi;
 
     # command - add libraries: zlib
-    if [ "$openssl_source_arg_libraries_zlib" == "system" ]; then
+    if [ "$openssl_source_arg_libraries_zlib" == "package" ]; then
       openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib";
-    elif [ "$openssl_source_arg_libraries_zlib" == "custom" ]; then
+    elif [ "$openssl_source_arg_libraries_zlib" == "source" ]; then
       openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib-include=${global_source_usrprefix}/include --with-zlib-lib=${global_source_usrprefix}/lib";
     fi;
 
@@ -226,7 +226,7 @@ function task_lib_openssl_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${openssl_source_path}\" && make install";
     # whereis library
-    echo "whereis built library: ${global_source_usrprefix}/lib/libssl.so";
+    echo "whereis source library: ${global_source_usrprefix}/lib/libssl.so";
   else
     notify "errorRoutine" "lib:openssl:source:install";
   fi;
@@ -239,11 +239,11 @@ function task_lib_openssl_source_test() {
   if [ -f "$openssl_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
-    echo "find built libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
+    echo "find source libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
     sudo  bash -c "${openssl_ldconfig_test_cmd1}";
     # check ldconfig versions
     openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
-    echo "find built libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
+    echo "find source libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd2}";
   else
     notify "errorRoutine" "lib:openssl:source:test";
@@ -253,7 +253,7 @@ function task_lib_openssl_source_test() {
   if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
     openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
-    echo "test built binary: ${openssl_binary_test_cmd}";
+    echo "test source binary: ${openssl_binary_test_cmd}";
     $openssl_binary_test_cmd;
   else
     notify "errorRoutine" "lib:openssl:source:test";

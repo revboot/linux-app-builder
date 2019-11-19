@@ -34,7 +34,7 @@ function task_app_nginx_package_install() {
     notify "errorRoutine" "app:nginx:package:install";
   fi;
   # whereis binary
-  echo "whereis system binary: $(whereis nginx)";
+  echo "whereis package binary: $(whereis nginx)";
 }
 
 # declare routine package:test
@@ -52,7 +52,7 @@ function task_app_nginx_package_test() {
     $nginx_lddebug_test_cmd;
     # test binary
     nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
-    echo "test system binary: sudo ${nginx_binary_test_cmd}";
+    echo "test package binary: sudo ${nginx_binary_test_cmd}";
     sudo $nginx_binary_test_cmd;
   else
     notify "errorRoutine" "app:nginx:package:test";
@@ -98,8 +98,8 @@ function task_app_nginx_source_make() {
 
     # command - add compiler
     if [ "$nginx_source_arg_compiler_flag" == "yes" ]; then
-      # command - add compiler: li
-      if [ "$nginx_source_arg_compiler_L_I" == "custom" ]; then
+      # command - add compiler: paths
+      if [ "$nginx_source_arg_compiler_paths" == "source" ]; then
         nginx_source_arg_compiler_cc="${nginx_source_arg_compiler_cc} -I ${global_source_usrprefix}/include";
         nginx_source_arg_compiler_ld="${nginx_source_arg_compiler_ld} -L ${global_source_usrprefix}/lib";
       fi;
@@ -141,28 +141,28 @@ function task_app_nginx_source_make() {
     fi;
 
     # command - add libraries: zlib
-    if [ "$nginx_source_arg_libraries_zlib" == "system" ]; then
+    if [ "$nginx_source_arg_libraries_zlib" == "package" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full}";
-    elif [ "$nginx_source_arg_libraries_zlib" == "custom" ]; then
+    elif [ "$nginx_source_arg_libraries_zlib" == "source" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full} --with-zlib=${zlib_source_path}";
     fi;
 
     # command - add libraries: pcre
-    if [ "$nginx_source_arg_libraries_pcre" == "system" ]; then
+    if [ "$nginx_source_arg_libraries_pcre" == "package" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full}";
-    elif [ "$nginx_source_arg_libraries_pcre" == "custom" ]; then
+    elif [ "$nginx_source_arg_libraries_pcre" == "source" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full} --with-pcre=${pcre_source_path} --with-pcre-jit";
     elif [ "$nginx_source_arg_libraries_pcre" == "no" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full} --without-pcre";
     fi;
 
     # command - add libraries: openssl
-    if [ "$nginx_source_arg_libraries_openssl" == "system" ]; then
+    if [ "$nginx_source_arg_libraries_openssl" == "package" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full}";
-    elif [ "$nginx_source_arg_libraries_openssl" == "custom" ]; then
+    elif [ "$nginx_source_arg_libraries_openssl" == "source" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full} --with-openssl=${openssl_source_path}";
     fi;
-    if [ "$nginx_source_arg_libraries_openssl" == "system" ] || [ "$nginx_source_arg_libraries_openssl" == "custom" ]; then
+    if [ "$nginx_source_arg_libraries_openssl" == "package" ] || [ "$nginx_source_arg_libraries_openssl" == "source" ]; then
       # command - add openssl arch
       if [ -n "$openssl_source_arg_arch" ]; then
         nginx_source_cmd_full="${nginx_source_cmd_full} --with-openssl-opt=${openssl_source_arg_arch}";
@@ -247,9 +247,9 @@ function task_app_nginx_source_make() {
     fi;
 
     # command - add libraries: libatomic
-    if [ "$nginx_source_arg_libraries_libatomic" == "system" ]; then
+    if [ "$nginx_source_arg_libraries_libatomic" == "package" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full}";
-    elif [ "$nginx_source_arg_libraries_libatomic" == "custom" ]; then
+    elif [ "$nginx_source_arg_libraries_libatomic" == "source" ]; then
       nginx_source_cmd_full="${nginx_source_cmd_full} --with-libatomic=${libatomic_source_path}";
     fi;
 
@@ -746,7 +746,7 @@ function task_app_nginx_source_install() {
     # create missing directory
     sudo mkdir -p "${global_source_varprefix}/lib/nginx";
     # whereis binary
-    echo "whereis built binary: ${global_source_usrprefix}/sbin/nginx";
+    echo "whereis source binary: ${global_source_usrprefix}/sbin/nginx";
   else
     notify "errorRoutine" "app:nginx:source:install";
   fi;
@@ -754,8 +754,8 @@ function task_app_nginx_source_install() {
 
 # declare routine source:config
 function task_app_nginx_source_config() {
-  # use configuration from system
-  if [ -f "/etc/nginx" ] && [ "$nginx_source_config" == "system" ]; then
+  # use configuration from package
+  if [ -f "/etc/nginx" ] && [ "$nginx_source_config" == "package" ]; then
     # remove source etc directory
     if [ -d "${global_source_varprefix}/etc/nginx" ]; then
       sudo rm -Rf "${global_source_varprefix}/etc/nginx";
@@ -766,9 +766,9 @@ function task_app_nginx_source_config() {
     # symlink directory and remove backups
     sudo ln -s "/etc/nginx" "${global_source_varprefix}/etc/nginx";
     sudo rm -f "${global_source_varprefix}/etc/nginx/*.default";
-  # use configuration from build
-  elif [ -f "${global_source_varprefix}/etc/nginx" ] && [ "$nginx_source_config" == "build" ]; then
-    # copy configuration from build etc to system etc
+  # use configuration from source
+  elif [ -f "${global_source_varprefix}/etc/nginx" ] && [ "$nginx_source_config" == "source" ]; then
+    # copy configuration from source etc to package etc
     sudo cp "${global_source_varprefix}/etc/nginx/*" "/etc/nginx";
   else
     notify "errorRoutine" "app:nginx:source:config";
@@ -790,7 +790,7 @@ function task_app_nginx_source_test() {
     $nginx_lddebug_test_cmd;
     # test binary
     nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
-    echo "test built binary: sudo ${nginx_binary_test_cmd}";
+    echo "test source binary: sudo ${nginx_binary_test_cmd}";
     sudo $nginx_binary_test_cmd;
   else
     notify "errorRoutine" "app:nginx:source:test";
