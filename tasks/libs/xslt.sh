@@ -234,7 +234,7 @@ function task_lib_xslt_package() {
 # declare subtask source
 function task_lib_xslt_source() {
   # run routine source:cleanup
-  if ([ "$xslt_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+  if ([ "$xslt_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "cleanup" ]; then
     notify "startRoutine" "lib:xslt:source:cleanup";
     task_lib_xslt_source_cleanup;
     notify "stopRoutine" "lib:xslt:source:cleanup";

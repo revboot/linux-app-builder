@@ -236,7 +236,7 @@ function task_lib_pcre_package() {
 # declare subtask source
 function task_lib_pcre_source() {
   # run routine source:cleanup
-  if ([ "$pcre_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+  if ([ "$pcre_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "cleanup" ]; then
     notify "startRoutine" "lib:pcre:source:cleanup";
     task_lib_pcre_source_cleanup;
     notify "stopRoutine" "lib:pcre:source:cleanup";

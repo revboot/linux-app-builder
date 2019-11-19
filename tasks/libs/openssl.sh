@@ -269,7 +269,7 @@ function task_lib_openssl_package() {
 # declare subtask source
 function task_lib_openssl_source() {
   # run routine source:cleanup
-  if ([ "$openssl_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+  if ([ "$openssl_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "cleanup" ]; then
     notify "startRoutine" "lib:openssl:source:cleanup";
     task_lib_openssl_source_cleanup;
     notify "stopRoutine" "lib:openssl:source:cleanup";

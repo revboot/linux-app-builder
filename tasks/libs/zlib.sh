@@ -174,7 +174,7 @@ function task_lib_zlib_package() {
 # declare subtask source
 function task_lib_zlib_source() {
   # run routine source:cleanup
-  if ([ "$zlib_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+  if ([ "$zlib_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "cleanup" ]; then
     notify "startRoutine" "lib:zlib:source:cleanup";
     task_lib_zlib_source_cleanup;
     notify "stopRoutine" "lib:zlib:source:cleanup";

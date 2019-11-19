@@ -808,7 +808,7 @@ function task_app_nginx_package() {
 # declare subtask source
 function task_app_nginx_source() {
   # run routine source:cleanup
-  if ([ "$nginx_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+  if ([ "$nginx_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "cleanup" ]; then
     notify "startRoutine" "app:nginx:source:cleanup";
     task_app_nginx_source_cleanup;
     notify "stopRoutine" "app:nginx:source:cleanup";

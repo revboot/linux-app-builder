@@ -46,7 +46,7 @@ function task_misc_global_package() {
 # declare subtask source
 function task_misc_global_source() {
   # run routine source:cleanup
-  if ([ "$global_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "cleanup" ]; then
+  if ([ "$global_source_cleanup" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "cleanup" ]; then
     notify "startRoutine" "lib:global:source:cleanup";
     task_misc_global_source_cleanup;
     notify "stopRoutine" "lib:global:source:cleanup";
