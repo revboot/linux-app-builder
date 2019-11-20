@@ -752,10 +752,10 @@ function task_app_nginx_source_install() {
   fi;
 }
 
-# declare routine source:config
-function task_app_nginx_source_config() {
+# declare routine source:etc
+function task_app_nginx_source_etc() {
   # use configuration from package
-  if [ -f "${global_package_path_usr_etc}/nginx" ] && [ "$nginx_source_config" == "package" ]; then
+  if [ -d "${global_package_path_usr_etc}/nginx" ] && [ "$nginx_source_etc_mode" == "package" ]; then
     # remove source etc directory
     if [ -d "${global_source_path_usr_etc}/nginx" ]; then
       sudo rm -Rf "${global_source_path_usr_etc}/nginx";
@@ -767,11 +767,11 @@ function task_app_nginx_source_config() {
     sudo ln -s "${global_package_path_usr_etc}/nginx" "${global_source_path_usr_etc}/nginx";
     sudo rm -f "${global_source_path_usr_etc}/nginx/*.default";
   # use configuration from source
-  elif [ -f "${global_source_path_usr_etc}/nginx" ] && [ "$nginx_source_config" == "source" ]; then
+  elif [ -d "${global_source_path_usr_etc}/nginx" ] && [ "$nginx_source_etc_mode" == "source" ]; then
     # copy configuration from source etc to package etc
     sudo cp "${global_source_path_usr_etc}/nginx/*" "${global_package_path_usr_etc}/nginx";
   else
-    notify "errorRoutine" "app:nginx:source:config";
+    notify "errorRoutine" "app:nginx:source:etc";
   fi;
 }
 
@@ -874,13 +874,13 @@ function task_app_nginx_source() {
     notify "skipRoutine" "app:nginx:source:install";
   fi;
 
-  # run routine source:config
-  if ([ "$nginx_source_config" != "no" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "config" ]; then
-    notify "startRoutine" "app:nginx:source:config";
-    task_app_nginx_source_config;
-    notify "stopRoutine" "app:nginx:source:config";
+  # run routine source:etc
+  if ([ "$nginx_source_etc" == "yes" ] && [ "$args_routine" == "config" ]) || [ "$args_routine" == "all" ] || [ "$args_routine" == "etc" ]; then
+    notify "startRoutine" "app:nginx:source:etc";
+    task_app_nginx_source_etc;
+    notify "stopRoutine" "app:nginx:source:etc";
   else
-    notify "skipRoutine" "app:nginx:source:config";
+    notify "skipRoutine" "app:nginx:source:etc";
   fi;
 
   # run routine source:test

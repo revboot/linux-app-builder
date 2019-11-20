@@ -178,7 +178,7 @@ while true; do
       echo -e "  - download                  selects the download routine";
       echo -e "  - make                      selects the make routine";
       echo -e "  - install                   selects the install routine";
-      echo -e "  - config                    selects the config routine";
+      echo -e "  - etc                       selects the etc routine";
       echo -e "  - test                      selects the test routine";
       exit 1;
       ;;
@@ -202,7 +202,7 @@ while true; do
     --routine )
       shift; # The arg is next in position args
       args_routine=$1
-      [[ ! $args_routine =~ config|all|cleanup|download|make|install|config|test ]] && {
+      [[ ! $args_routine =~ config|all|cleanup|download|make|install|etc|test ]] && {
         error 1 "Incorrect routine options provided";
       }
       ;;

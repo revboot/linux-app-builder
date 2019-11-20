@@ -240,7 +240,8 @@ nginx_source_download="yes";
 nginx_source_make="yes";
 nginx_source_uninstall="no";
 nginx_source_install="yes";
-nginx_source_config="package"; #package,source,no
+nginx_source_etc="yes";
+nginx_source_etc_mode="package"; #package,source
 nginx_source_test="yes";
 nginx_source_version="1.16.1";
 nginx_source_arg_arch="linux-x86_64";
@@ -251,7 +252,7 @@ nginx_source_arg_libraries_libatomic="package"; #package,source (set to source w
 nginx_source_arg_options="";
 # - nginx - compiler
 nginx_source_arg_compiler_flag="yes";
-nginx_source_arg_compiler_paths="source"; #source,package
+nginx_source_arg_compiler_paths="source"; #package,source
 nginx_source_arg_compiler_cc="-Wformat -Werror=format-security -fstack-protector -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fexceptions -fasynchronous-unwind-tables -D FD_SETSIZE=8192 -O2"; #-Wdate-time -fPIE -fstack-protector-strong -static -static-libgcc
 nginx_source_arg_compiler_ld="-Wl,--as-needed -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-z,now"; #-fPIE -pie -static
 # - nginx - main config

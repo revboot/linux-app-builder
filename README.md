@@ -68,7 +68,7 @@ Routines:
   - make                      selects the make routine
   - install                   selects the install routine
   - uninstall                 selects the uninstall routine (never runs with all)
-  - config                    selects the config routine
+  - etc                       selects the etc routine
   - test                      selects the test routine
 ```
 
