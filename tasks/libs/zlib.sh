@@ -40,7 +40,7 @@ function task_lib_zlib_package_install() {
 # declare routine package:test
 function task_lib_zlib_package_test() {
   # ldconfig tests
-  zlib_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libz.so";
+  zlib_ldconfig_test_cmd="${global_package_path_usr_lib64}/libz.so";
   if [ -f "$zlib_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";
@@ -76,10 +76,10 @@ function task_lib_zlib_source_download() {
   if [ ! -d "$zlib_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$zlib_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${zlib_source_url}\" -O \"${zlib_source_tar}\" && tar -xzf \"${zlib_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${zlib_source_url}\" -O \"${zlib_source_tar}\" && tar -xzf \"${zlib_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${zlib_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${zlib_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:zlib:source:download";
@@ -98,14 +98,9 @@ function task_lib_zlib_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$zlib_source_arg_usrprefix" ]; then
-      zlib_source_cmd_full="${zlib_source_cmd_full} --prefix=${zlib_source_arg_usrprefix}";
+    if [ -n "$zlib_source_arg_prefix_usr" ]; then
+      zlib_source_cmd_full="${zlib_source_cmd_full} --prefix=${zlib_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$zlib_source_arg_libraries" ]; then
-    #  zlib_source_cmd_full="${zlib_source_cmd_full} --libraries=${zlib_source_arg_libraries}";
-    #fi;
 
     # command - add options
     if [ -n "$zlib_source_arg_options" ]; then
@@ -123,7 +118,7 @@ function task_lib_zlib_source_make() {
 
 # declare routine source:uninstall
 function task_lib_zlib_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libz.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libz.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${zlib_source_path}\" && make uninstall";
   else
@@ -137,7 +132,7 @@ function task_lib_zlib_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${zlib_source_path}\" && make install";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libz.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libz.so";
   else
     notify "errorRoutine" "lib:zlib:source:install";
   fi;
@@ -146,7 +141,7 @@ function task_lib_zlib_source_install() {
 # declare routine source:test
 function task_lib_zlib_source_test() {
   # ldconfig tests
-  zlib_ldconfig_test_cmd="${global_source_usrprefix}/lib/libz.so";
+  zlib_ldconfig_test_cmd="${global_source_path_usr_lib}/libz.so";
   if [ -f "$zlib_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     zlib_ldconfig_test_cmd1="ldconfig -p | grep ${zlib_ldconfig_test_cmd}";

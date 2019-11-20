@@ -40,7 +40,7 @@ function task_app_nginx_package_install() {
 # declare routine package:test
 function task_app_nginx_package_test() {
   # ldd, ld and binary tests
-  nginx_binary_test_cmd="/usr/sbin/nginx";
+  nginx_binary_test_cmd="${global_package_path_usr_sbin}/nginx";
   if [ -f "$nginx_binary_test_cmd" ]; then
     # print shared library dependencies
     nginx_ldd_test_cmd="ldd ${nginx_binary_test_cmd}";
@@ -80,10 +80,10 @@ function task_app_nginx_source_download() {
   if [ ! -d "$nginx_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$nginx_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${nginx_source_url}\" -O \"${nginx_source_tar}\" && tar -xzf \"${nginx_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${nginx_source_url}\" -O \"${nginx_source_tar}\" && tar -xzf \"${nginx_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${nginx_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${nginx_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "app:nginx:source:download";
@@ -100,8 +100,8 @@ function task_app_nginx_source_make() {
     if [ "$nginx_source_arg_compiler_flag" == "yes" ]; then
       # command - add compiler: paths
       if [ "$nginx_source_arg_compiler_paths" == "source" ]; then
-        nginx_source_arg_compiler_cc="${nginx_source_arg_compiler_cc} -I ${global_source_usrprefix}/include";
-        nginx_source_arg_compiler_ld="${nginx_source_arg_compiler_ld} -L ${global_source_usrprefix}/lib";
+        nginx_source_arg_compiler_cc="${nginx_source_arg_compiler_cc} -I ${global_source_path_usr_inc}";
+        nginx_source_arg_compiler_ld="${nginx_source_arg_compiler_ld} -L ${global_source_path_usr_lib}";
       fi;
 
       # command - add compiler: cc
@@ -121,23 +121,23 @@ function task_app_nginx_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$nginx_source_arg_usrprefix" ]; then
-      nginx_source_cmd_full="${nginx_source_cmd_full} --prefix=${nginx_source_arg_usrprefix}/share/nginx";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --sbin-path=${nginx_source_arg_usrprefix}/sbin/nginx";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --modules-path=${nginx_source_arg_usrprefix}/lib/nginx/modules";
+    if [ -n "$nginx_source_arg_prefix_usr" ]; then
+      nginx_source_cmd_full="${nginx_source_cmd_full} --prefix=${global_source_path_usr_share}/nginx";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --sbin-path=${global_source_path_usr_sbin}/nginx";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --modules-path=${global_source_path_usr_lib}/nginx/modules";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --conf-path=${global_source_path_usr_etc}/nginx/nginx.conf";
     fi;
     # command - add prefix (var)
-    if [ -n "$nginx_source_arg_varprefix" ]; then
-      nginx_source_cmd_full="${nginx_source_cmd_full} --http-client-body-temp-path=${nginx_source_arg_varprefix}/lib/nginx/body";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --http-proxy-temp-path=${nginx_source_arg_varprefix}/lib/nginx/proxy";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --http-fastcgi-temp-path=${nginx_source_arg_varprefix}/lib/nginx/fastcgi";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --http-scgi-temp-path=${nginx_source_arg_varprefix}/lib/nginx/scgi";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --http-uwsgi-temp-path=${nginx_source_arg_varprefix}/lib/nginx/uwsgi";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --pid-path=${nginx_source_arg_varprefix}/run/nginx.pid";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --lock-path=${nginx_source_arg_varprefix}/lock/nginx.lock";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --error-log-path=${nginx_source_arg_varprefix}/log/nginx/error.log";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --http-log-path=${nginx_source_arg_varprefix}/log/nginx/access.log";
-      nginx_source_cmd_full="${nginx_source_cmd_full} --conf-path=${nginx_source_arg_varprefix}/etc/nginx/nginx.conf";
+    if [ -n "$nginx_source_arg_prefix_var" ]; then
+      nginx_source_cmd_full="${nginx_source_cmd_full} --http-client-body-temp-path=${global_source_path_var_lib}/nginx/body";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --http-proxy-temp-path=${global_source_path_var_lib}/nginx/proxy";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --http-fastcgi-temp-path=${global_source_path_var_lib}/nginx/fastcgi";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --http-scgi-temp-path=${global_source_path_var_lib}/nginx/scgi";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --http-uwsgi-temp-path=${global_source_path_var_lib}/nginx/uwsgi";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --pid-path=${global_source_path_var_run}/nginx.pid";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --lock-path=${global_source_path_var_lock}/nginx.lock";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --error-log-path=${global_source_path_var_log}/nginx/error.log";
+      nginx_source_cmd_full="${nginx_source_cmd_full} --http-log-path=${global_source_path_var_log}/nginx/access.log";
     fi;
 
     # command - add libraries: zlib
@@ -722,16 +722,16 @@ function task_app_nginx_source_make() {
 
 # declare routine source:uninstall
 function task_app_nginx_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/sbin/nginx" ]; then
+  if [ -f "${global_source_path_usr_sbin}/nginx" ]; then
     # uninstall binaries from source
-    sudo rm -f "${global_source_usrprefix}/sbin/nginx";
-    sudo rm -Rf "${global_source_usrprefix}/share/nginx";
+    sudo rm -f "${global_source_path_usr_sbin}/nginx";
+    sudo rm -Rf "${global_source_path_usr_share}/nginx";
     # remove source etc directory
-    if [ -d "${global_source_varprefix}/etc/nginx" ]; then
-      sudo rm -Rf "${global_source_varprefix}/etc/nginx";
+    if [ -d "${global_source_path_usr_etc}/nginx" ]; then
+      sudo rm -Rf "${global_source_path_usr_etc}/nginx";
     # remove source etc symlink
-    elif [ -L "${global_source_varprefix}/etc/nginx" ]; then
-      sudo rm -f "${global_source_varprefix}/etc/nginx";
+    elif [ -L "${global_source_path_usr_etc}/nginx" ]; then
+      sudo rm -f "${global_source_path_usr_etc}/nginx";
     fi;
   else
     notify "errorRoutine" "app:nginx:source:uninstall";
@@ -744,9 +744,9 @@ function task_app_nginx_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${nginx_source_path}\" && make install";
     # create missing directory
-    sudo mkdir -p "${global_source_varprefix}/lib/nginx";
+    sudo mkdir -p "${global_source_path_var_lib}/nginx";
     # whereis binary
-    echo "whereis source binary: ${global_source_usrprefix}/sbin/nginx";
+    echo "whereis source binary: ${global_source_path_usr_sbin}/nginx";
   else
     notify "errorRoutine" "app:nginx:source:install";
   fi;
@@ -755,21 +755,21 @@ function task_app_nginx_source_install() {
 # declare routine source:config
 function task_app_nginx_source_config() {
   # use configuration from package
-  if [ -f "/etc/nginx" ] && [ "$nginx_source_config" == "package" ]; then
+  if [ -f "${global_package_path_usr_etc}/nginx" ] && [ "$nginx_source_config" == "package" ]; then
     # remove source etc directory
-    if [ -d "${global_source_varprefix}/etc/nginx" ]; then
-      sudo rm -Rf "${global_source_varprefix}/etc/nginx";
+    if [ -d "${global_source_path_usr_etc}/nginx" ]; then
+      sudo rm -Rf "${global_source_path_usr_etc}/nginx";
     # remove source etc symlink
-    elif [ -L "${global_source_varprefix}/etc/nginx" ]; then
-      sudo rm -f "${global_source_varprefix}/etc/nginx";
+    elif [ -L "${global_source_path_usr_etc}/nginx" ]; then
+      sudo rm -f "${global_source_path_usr_etc}/nginx";
     fi;
     # symlink directory and remove backups
-    sudo ln -s "/etc/nginx" "${global_source_varprefix}/etc/nginx";
-    sudo rm -f "${global_source_varprefix}/etc/nginx/*.default";
+    sudo ln -s "${global_package_path_usr_etc}/nginx" "${global_source_path_usr_etc}/nginx";
+    sudo rm -f "${global_source_path_usr_etc}/nginx/*.default";
   # use configuration from source
-  elif [ -f "${global_source_varprefix}/etc/nginx" ] && [ "$nginx_source_config" == "source" ]; then
+  elif [ -f "${global_source_path_usr_etc}/nginx" ] && [ "$nginx_source_config" == "source" ]; then
     # copy configuration from source etc to package etc
-    sudo cp "${global_source_varprefix}/etc/nginx/*" "/etc/nginx";
+    sudo cp "${global_source_path_usr_etc}/nginx/*" "${global_package_path_usr_etc}/nginx";
   else
     notify "errorRoutine" "app:nginx:source:config";
   fi;
@@ -778,7 +778,7 @@ function task_app_nginx_source_config() {
 # declare routine source:test
 function task_app_nginx_source_test() {
   # ldd, ld and binary tests
-  nginx_binary_test_cmd="${global_source_usrprefix}/sbin/nginx";
+  nginx_binary_test_cmd="${global_source_path_usr_sbin}/nginx";
   if [ -f "$nginx_binary_test_cmd" ]; then
     # print shared library dependencies
     nginx_ldd_test_cmd="ldd ${nginx_binary_test_cmd}";

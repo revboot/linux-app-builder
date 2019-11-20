@@ -40,7 +40,7 @@ function task_lib_xml2_package_install() {
 # declare routine package:test
 function task_lib_xml2_package_test() {
   # ldconfig tests
-  xml2_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libxml2.so";
+  xml2_ldconfig_test_cmd="${global_package_path_usr_lib64}/libxml2.so";
   if [ -f "$xml2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xml2_ldconfig_test_cmd1="ldconfig -p | grep ${xml2_ldconfig_test_cmd}";
@@ -54,7 +54,7 @@ function task_lib_xml2_package_test() {
     notify "errorRoutine" "lib:xml2:package:test";
   fi;
   # binary tests
-  xml2_binary_test_cmd="/usr/bin/xml2-config";
+  xml2_binary_test_cmd="${global_package_path_usr_bin}/xml2-config";
   if [ -f "$xml2_binary_test_cmd" ]; then
     # test binary
     xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";
@@ -86,10 +86,10 @@ function task_lib_xml2_source_download() {
   if [ ! -d "$xml2_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$xml2_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${xml2_source_url}\" -O \"${xml2_source_tar}\" && tar -xzf \"${xml2_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${xml2_source_url}\" -O \"${xml2_source_tar}\" && tar -xzf \"${xml2_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${xml2_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${xml2_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:xml2:source:download";
@@ -108,14 +108,9 @@ function task_lib_xml2_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$xml2_source_arg_usrprefix" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --prefix=${xml2_source_arg_usrprefix}";
+    if [ -n "$xml2_source_arg_prefix_usr" ]; then
+      xml2_source_cmd_full="${xml2_source_cmd_full} --prefix=${xml2_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$xml2_source_arg_libraries" ]; then
-    #  xml2_source_cmd_full="${xml2_source_cmd_full} --libraries=${xml2_source_arg_libraries}";
-    #fi;
 
     # command - add libraries: zlib
     if [ "$xml2_source_arg_libraries_zlib" == "package" ]; then
@@ -308,7 +303,7 @@ function task_lib_xml2_source_make() {
 
 # declare routine source:uninstall
 function task_lib_xml2_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libxml2.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libxml2.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${xml2_source_path}\" && make uninstall";
   else
@@ -322,7 +317,7 @@ function task_lib_xml2_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${xml2_source_path}\" && make install";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libxml2.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libxml2.so";
   else
     notify "errorRoutine" "lib:xml2:source:install";
   fi;
@@ -331,7 +326,7 @@ function task_lib_xml2_source_install() {
 # declare routine source:test
 function task_lib_xml2_source_test() {
   # ldconfig tests
-  xml2_ldconfig_test_cmd="${global_source_usrprefix}/lib/libxml2.so";
+  xml2_ldconfig_test_cmd="${global_source_path_usr_lib}/libxml2.so";
   if [ -f "$xml2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xml2_ldconfig_test_cmd1="ldconfig -p | grep ${xml2_ldconfig_test_cmd}";
@@ -345,7 +340,7 @@ function task_lib_xml2_source_test() {
     notify "errorRoutine" "lib:xml2:source:test";
   fi;
   # binary tests
-  xml2_binary_test_cmd="${global_source_usrprefix}/bin/xml2-config";
+  xml2_binary_test_cmd="${global_source_path_usr_bin}/xml2-config";
   if [ -f "$xml2_binary_test_cmd" ]; then
     # test binary
     xml2_binary_test_cmd="${xml2_binary_test_cmd} --libs --cflags --modules --version";

@@ -40,7 +40,7 @@ function task_lib_openssl_package_install() {
 # declare routine package:test
 function task_lib_openssl_package_test() {
   # ldconfig tests
-  openssl_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libssl.so";
+  openssl_ldconfig_test_cmd="${global_package_path_usr_lib64}/libssl.so";
   if [ -f "$openssl_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
@@ -54,7 +54,7 @@ function task_lib_openssl_package_test() {
     notify "errorRoutine" "lib:openssl:package:test";
   fi;
   # binary tests
-  openssl_binary_test_cmd="/usr/bin/openssl";
+  openssl_binary_test_cmd="${global_package_path_usr_bin}/openssl";
   if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
     openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
@@ -86,10 +86,10 @@ function task_lib_openssl_source_download() {
   if [ ! -d "$openssl_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$openssl_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${openssl_source_url}\" -O \"${openssl_source_tar}\" && tar -xzf \"${openssl_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${openssl_source_url}\" -O \"${openssl_source_tar}\" && tar -xzf \"${openssl_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${openssl_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${openssl_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:openssl:source:download";
@@ -108,20 +108,15 @@ function task_lib_openssl_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$openssl_source_arg_usrprefix" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} --prefix=${openssl_source_arg_usrprefix}";
+    if [ -n "$openssl_source_arg_prefix_usr" ]; then
+      openssl_source_cmd_full="${openssl_source_cmd_full} --prefix=${openssl_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$openssl_source_arg_libraries" ]; then
-    #  openssl_source_cmd_full="${openssl_source_cmd_full} --libraries=${openssl_source_arg_libraries}";
-    #fi;
 
     # command - add libraries: zlib
     if [ "$openssl_source_arg_libraries_zlib" == "package" ]; then
       openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib";
     elif [ "$openssl_source_arg_libraries_zlib" == "source" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib-include=${global_source_usrprefix}/include --with-zlib-lib=${global_source_usrprefix}/lib";
+      openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib-include=${global_source_path_usr_inc} --with-zlib-lib=${global_source_path_usr_lib}";
     fi;
 
     # command - add options
@@ -212,7 +207,7 @@ function task_lib_openssl_source_make() {
 
 # declare routine source:uninstall
 function task_lib_openssl_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libssl.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libssl.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${openssl_source_path}\" && make uninstall";
   else
@@ -226,7 +221,7 @@ function task_lib_openssl_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${openssl_source_path}\" && make install";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libssl.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libssl.so";
   else
     notify "errorRoutine" "lib:openssl:source:install";
   fi;
@@ -235,7 +230,7 @@ function task_lib_openssl_source_install() {
 # declare routine source:test
 function task_lib_openssl_source_test() {
   # ldconfig tests
-  openssl_ldconfig_test_cmd="${global_source_usrprefix}/lib/libssl.so";
+  openssl_ldconfig_test_cmd="${global_source_path_usr_lib}/libssl.so";
   if [ -f "$openssl_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
@@ -249,7 +244,7 @@ function task_lib_openssl_source_test() {
     notify "errorRoutine" "lib:openssl:source:test";
   fi;
   # binary tests
-  openssl_binary_test_cmd="${global_source_usrprefix}/bin/openssl";
+  openssl_binary_test_cmd="${global_source_path_usr_bin}/openssl";
   if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
     openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";

@@ -40,7 +40,7 @@ function task_lib_geoip_package_install() {
 # declare routine package:test
 function task_lib_geoip_package_test() {
   # ldconfig tests
-  geoip_ldconfig_test_cmd="/usr/lib/libGeoIP.so";
+  geoip_ldconfig_test_cmd="${global_package_path_usr_lib}/libGeoIP.so";
   if [ -f "$geoip_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     geoip_ldconfig_test_cmd1="ldconfig -p | grep ${geoip_ldconfig_test_cmd}";
@@ -76,10 +76,10 @@ function task_lib_geoip_source_download() {
   if [ ! -d "$geoip_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$geoip_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${geoip_source_url}\" -O \"${geoip_source_tar}\" && tar -xzf \"${geoip_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${geoip_source_url}\" -O \"${geoip_source_tar}\" && tar -xzf \"${geoip_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${geoip_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${geoip_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:geoip:source:download";
@@ -98,14 +98,9 @@ function task_lib_geoip_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$geoip_source_arg_usrprefix" ]; then
-      geoip_source_cmd_full="${geoip_source_cmd_full} --prefix=${geoip_source_arg_usrprefix}";
+    if [ -n "$geoip_source_arg_prefix_usr" ]; then
+      geoip_source_cmd_full="${geoip_source_cmd_full} --prefix=${geoip_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$geoip_source_arg_libraries" ]; then
-    #  geoip_source_cmd_full="${geoip_source_cmd_full} ${geoip_source_arg_libraries}";
-    #fi;
 
     # command - add options
     if [ -n "$geoip_source_arg_options" ]; then
@@ -123,7 +118,7 @@ function task_lib_geoip_source_make() {
 
 # declare routine source:uninstall
 function task_lib_geoip_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libGeoIP.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libGeoIP.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${geoip_source_path}\" && make uninstall";
   else
@@ -137,12 +132,12 @@ function task_lib_geoip_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${geoip_source_path}\" && make install";
     # download databases
-    sudo bash -c "cd \"${global_source_usrprefix}/share/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
-    sudo bash -c "cd \"${global_source_usrprefix}/share/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
-    sudo bash -c "cd \"${global_source_usrprefix}/share/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
-    sudo bash -c "cd \"${global_source_usrprefix}/share/GeoIP\" && rm -f GeoLiteCityv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz\" && rm -f GeoLiteCityv6.dat && gunzip GeoLiteCityv6.dat.gz";
+    sudo bash -c "cd \"${global_source_path_usr_share}/GeoIP\" && rm -f GeoIP.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIP.dat.gz\" && rm -f GeoIP.dat && gunzip GeoIP.dat.gz";
+    sudo bash -c "cd \"${global_source_path_usr_share}/GeoIP\" && rm -f GeoIPv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoIPv6.dat.gz\" && rm -f GeoIPv6.dat && gunzip GeoIPv6.dat.gz";
+    sudo bash -c "cd \"${global_source_path_usr_share}/GeoIP\" && rm -f GeoLiteCity.dat.xz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.xz\" && rm -f GeoLiteCity.dat && unxz GeoLiteCity.dat.xz";
+    sudo bash -c "cd \"${global_source_path_usr_share}/GeoIP\" && rm -f GeoLiteCityv6.dat.gz && wget \"https://mirrors-cdn.liferay.com/geolite.maxmind.com/download/geoip/database/GeoLiteCityv6.dat.gz\" && rm -f GeoLiteCityv6.dat && gunzip GeoLiteCityv6.dat.gz";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libGeoIP.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libGeoIP.so";
   else
     notify "errorRoutine" "lib:geoip:source:install";
   fi;
@@ -151,7 +146,7 @@ function task_lib_geoip_source_install() {
 # declare routine source:test
 function task_lib_geoip_source_test() {
   # ldconfig tests
-  geoip_ldconfig_test_cmd="${global_source_usrprefix}/lib/libGeoIP.so";
+  geoip_ldconfig_test_cmd="${global_source_path_usr_lib}/libGeoIP.so";
   if [ -f "$geoip_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     geoip_ldconfig_test_cmd1="ldconfig -p | grep ${geoip_ldconfig_test_cmd}";

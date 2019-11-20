@@ -40,7 +40,7 @@ function task_lib_pcre_package_install() {
 # declare routine package:test
 function task_lib_pcre_package_test() {
   # ldconfig tests
-  pcre_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libpcre.so";
+  pcre_ldconfig_test_cmd="${global_package_path_usr_lib64}/libpcre.so";
   if [ -f "$pcre_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
@@ -54,7 +54,7 @@ function task_lib_pcre_package_test() {
     notify "errorRoutine" "lib:pcre:package:test";
   fi;
   # binary tests
-  pcre_binary_test_cmd="/usr/bin/pcre-config";
+  pcre_binary_test_cmd="${global_package_path_usr_bin}/pcre-config";
   if [ -f "$pcre_binary_test_cmd" ]; then
     # test binary
     pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
@@ -86,10 +86,10 @@ function task_lib_pcre_source_download() {
   if [ ! -d "$pcre_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$pcre_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${pcre_source_url}\" -O \"${pcre_source_tar}\" && tar -xzf \"${pcre_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${pcre_source_url}\" -O \"${pcre_source_tar}\" && tar -xzf \"${pcre_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${pcre_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${pcre_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:pcre:source:download";
@@ -108,14 +108,9 @@ function task_lib_pcre_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$pcre_source_arg_usrprefix" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --prefix=${pcre_source_arg_usrprefix}";
+    if [ -n "$pcre_source_arg_prefix_usr" ]; then
+      pcre_source_cmd_full="${pcre_source_cmd_full} --prefix=${pcre_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$pcre_source_arg_libraries" ]; then
-    #  pcre_source_cmd_full="${pcre_source_cmd_full} --libraries=${pcre_source_arg_libraries}";
-    #fi;
 
     # command - add options
     if [ -n "$pcre_source_arg_options" ]; then
@@ -179,7 +174,7 @@ function task_lib_pcre_source_make() {
 
 # declare routine source:uninstall
 function task_lib_pcre_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libpcre.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libpcre.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${pcre_source_path}\" && make uninstall";
   else
@@ -193,7 +188,7 @@ function task_lib_pcre_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${pcre_source_path}\" && make install";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libpcre.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libpcre.so";
   else
     notify "errorRoutine" "lib:pcre:source:install";
   fi;
@@ -202,7 +197,7 @@ function task_lib_pcre_source_install() {
 # declare routine source:test
 function task_lib_pcre_source_test() {
   # ldconfig tests
-  pcre_ldconfig_test_cmd="${global_source_usrprefix}/lib/libpcre.so";
+  pcre_ldconfig_test_cmd="${global_source_path_usr_lib}/libpcre.so";
   if [ -f "$pcre_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
@@ -216,7 +211,7 @@ function task_lib_pcre_source_test() {
     notify "errorRoutine" "lib:pcre:source:test";
   fi;
   # binary tests
-  pcre_binary_test_cmd="${global_source_usrprefix}/bin/pcre-config";
+  pcre_binary_test_cmd="${global_source_path_usr_bin}/pcre-config";
   if [ -f "$pcre_binary_test_cmd" ]; then
     # test binary
     pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";

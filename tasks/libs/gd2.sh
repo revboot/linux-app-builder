@@ -40,7 +40,7 @@ function task_lib_gd2_package_install() {
 # declare routine package:test
 function task_lib_gd2_package_test() {
   # ldconfig tests
-  gd2_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libgd.so";
+  gd2_ldconfig_test_cmd="${global_package_path_usr_lib64}/libgd.so";
   if [ -f "$gd2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
@@ -54,7 +54,7 @@ function task_lib_gd2_package_test() {
     notify "errorRoutine" "lib:gd2:package:test";
   fi;
   # binary tests
-  gd2_binary_test_cmd="/usr/bin/gdlib-config";
+  gd2_binary_test_cmd="${global_package_path_usr_bin}/gdlib-config";
   if [ -f "$gd2_binary_test_cmd" ]; then
     # test binary
     gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";
@@ -86,10 +86,10 @@ function task_lib_gd2_source_download() {
   if [ ! -d "$gd2_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$gd2_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${gd2_source_url}\" -O \"${gd2_source_tar}\" && tar -xzf \"${gd2_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${gd2_source_url}\" -O \"${gd2_source_tar}\" && tar -xzf \"${gd2_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${gd2_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${gd2_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:gd2:source:download";
@@ -108,14 +108,9 @@ function task_lib_gd2_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$gd2_source_arg_usrprefix" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --prefix=${gd2_source_arg_usrprefix}";
+    if [ -n "$gd2_source_arg_prefix_usr" ]; then
+      gd2_source_cmd_full="${gd2_source_cmd_full} --prefix=${gd2_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$gd2_source_arg_libraries" ]; then
-    #  gd2_source_cmd_full="${gd2_source_cmd_full} --libraries=${gd2_source_arg_libraries}";
-    #fi;
 
     # command - add libraries: zlib
     if [ "$gd2_source_arg_libraries_zlib" == "package" ]; then
@@ -196,7 +191,7 @@ function task_lib_gd2_source_make() {
 
 # declare routine source:uninstall
 function task_lib_gd2_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libgd.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libgd.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${gd2_source_path}\" && make uninstall";
   else
@@ -210,7 +205,7 @@ function task_lib_gd2_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${gd2_source_path}\" && make install";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libgd.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libgd.so";
   else
     notify "errorRoutine" "lib:gd2:source:install";
   fi;
@@ -219,7 +214,7 @@ function task_lib_gd2_source_install() {
 # declare routine source:test
 function task_lib_gd2_source_test() {
   # ldconfig tests
-  gd2_ldconfig_test_cmd="${global_source_usrprefix}/lib/libgd.so";
+  gd2_ldconfig_test_cmd="${global_source_path_usr_lib}/libgd.so";
   if [ -f "$gd2_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
@@ -233,7 +228,7 @@ function task_lib_gd2_source_test() {
     notify "errorRoutine" "lib:gd2:source:test";
   fi;
   # binary tests
-  gd2_binary_test_cmd="${global_source_usrprefix}/bin/gdlib-config";
+  gd2_binary_test_cmd="${global_source_path_usr_bin}/gdlib-config";
   if [ -f "$gd2_binary_test_cmd" ]; then
     # test binary
     gd2_binary_test_cmd="${gd2_binary_test_cmd} --version --libs --cflags --ldflags --features";

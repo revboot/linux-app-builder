@@ -40,7 +40,7 @@ function task_lib_xslt_package_install() {
 # declare routine package:test
 function task_lib_xslt_package_test() {
   # ldconfig tests
-  xslt_ldconfig_test_cmd="/usr/lib/x86_64-linux-gnu/libxslt.so";
+  xslt_ldconfig_test_cmd="${global_package_path_usr_lib64}/libxslt.so";
   if [ -f "$xslt_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xslt_ldconfig_test_cmd1="ldconfig -p | grep ${xslt_ldconfig_test_cmd}";
@@ -54,7 +54,7 @@ function task_lib_xslt_package_test() {
     notify "errorRoutine" "lib:xslt:package:test";
   fi;
   # binary tests
-  xslt_binary_test_cmd="/usr/bin/xslt-config";
+  xslt_binary_test_cmd="${global_package_path_usr_bin}/xslt-config";
   if [ -f "$xslt_binary_test_cmd" ]; then
     # test binary #1,#2,#3
     xslt_binary_test_cmd1="${xslt_binary_test_cmd} --libs --cflags";
@@ -92,10 +92,10 @@ function task_lib_xslt_source_download() {
   if [ ! -d "$xslt_source_path" ]; then
     # download and extract source files from tar
     if [ ! -f "$xslt_source_tar" ]; then
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && wget \"${xslt_source_url}\" -O \"${xslt_source_tar}\" && tar -xzf \"${xslt_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && wget \"${xslt_source_url}\" -O \"${xslt_source_tar}\" && tar -xzf \"${xslt_source_tar}\"";
     # extract source files from tar
     else
-      sudo bash -c "cd \"${global_source_usrprefix}/src\" && tar -xzf \"${xslt_source_tar}\"";
+      sudo bash -c "cd \"${global_source_path_usr_src}\" && tar -xzf \"${xslt_source_tar}\"";
     fi;
   else
     notify "warnRoutine" "lib:xslt:source:download";
@@ -114,20 +114,15 @@ function task_lib_xslt_source_make() {
     fi;
 
     # command - add prefix (usr)
-    if [ -n "$xslt_source_arg_usrprefix" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --prefix=${xslt_source_arg_usrprefix}";
+    if [ -n "$xslt_source_arg_prefix_usr" ]; then
+      xslt_source_cmd_full="${xslt_source_cmd_full} --prefix=${xslt_source_arg_prefix_usr}";
     fi;
-
-    ## command - add libraries
-    #if [ -n "$xslt_source_arg_libraries" ]; then
-    #  xslt_source_cmd_full="${xslt_source_cmd_full} ${xslt_source_arg_libraries}";
-    #fi;
 
     # command - add libraries: xml2
     if [ "$xslt_source_arg_libraries_xml2" == "package" ]; then
       xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix";
     elif [ "$xslt_source_arg_libraries_xml2" == "source" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix=${global_source_usrprefix}";
+      xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix=${xslt_source_arg_prefix_usr}";
     fi;
 
     # command - add libraries: python
@@ -167,7 +162,7 @@ function task_lib_xslt_source_make() {
 
 # declare routine source:uninstall
 function task_lib_xslt_source_uninstall() {
-  if [ -f "${global_source_usrprefix}/lib/libxslt.so" ]; then
+  if [ -f "${global_source_path_usr_lib}/libxslt.so" ]; then
     # uninstall binaries from source
     sudo bash -c "cd \"${xslt_source_path}\" && make uninstall";
   else
@@ -181,11 +176,11 @@ function task_lib_xslt_source_install() {
     # install binaries from source
     sudo bash -c "cd \"${xslt_source_path}\" && make install";
     # copy missing binaries
-    sudo cp "${xslt_source_path}/xsltproc/.libs/xsltproc" "${global_source_usrprefix}/bin/xsltproc";
-    sudo cp "${xslt_source_path}/xslt-config" "${global_source_usrprefix}/bin/xslt-config";
-    sudo chmod +x "${global_source_usrprefix}/bin/xslt-config";
+    sudo cp "${xslt_source_path}/xsltproc/.libs/xsltproc" "${global_source_path_usr_bin}/xsltproc";
+    sudo cp "${xslt_source_path}/xslt-config" "${global_source_path_usr_bin}/xslt-config";
+    sudo chmod +x "${global_source_path_usr_bin}/xslt-config";
     # whereis library
-    echo "whereis source library: ${global_source_usrprefix}/lib/libxslt.so";
+    echo "whereis source library: ${global_source_path_usr_lib}/libxslt.so";
   else
     notify "errorRoutine" "lib:xslt:source:install";
   fi;
@@ -194,7 +189,7 @@ function task_lib_xslt_source_install() {
 # declare routine source:test
 function task_lib_xslt_source_test() {
   # ldconfig tests
-  xslt_ldconfig_test_cmd="${global_source_usrprefix}/lib/libxslt.so";
+  xslt_ldconfig_test_cmd="${global_source_path_usr_lib}/libxslt.so";
   if [ -f "$xslt_ldconfig_test_cmd" ]; then
     # check ldconfig paths
     xslt_ldconfig_test_cmd1="ldconfig -p | grep ${xslt_ldconfig_test_cmd}";
@@ -208,7 +203,7 @@ function task_lib_xslt_source_test() {
     notify "errorRoutine" "lib:xslt:source:test";
   fi;
   # binary tests
-  xslt_binary_test_cmd="${global_source_usrprefix}/bin/xslt-config";
+  xslt_binary_test_cmd="${global_source_path_usr_bin}/xslt-config";
   if [ -f "$xslt_binary_test_cmd" ]; then
     # test binary #1,#2,#3
     xslt_binary_test_cmd1="${xslt_binary_test_cmd} --libs --cflags";
