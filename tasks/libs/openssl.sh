@@ -57,9 +57,12 @@ function task_lib_openssl_package_test() {
   openssl_binary_test_cmd="${global_package_path_usr_bin}/openssl";
   if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
-    openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
-    echo "test package binary: ${openssl_binary_test_cmd}";
-    $openssl_binary_test_cmd;
+    openssl_binary_test_cmd1="${openssl_binary_test_cmd} version";
+    echo "test package binary: ${openssl_binary_test_cmd1}";
+    $openssl_binary_test_cmd1;
+    openssl_binary_test_cmd2="${openssl_binary_test_cmd} version -f";
+    echo "test package binary: ${openssl_binary_test_cmd2}";
+    $openssl_binary_test_cmd2;
   else
     notify "errorRoutine" "lib:openssl:package:test";
   fi;
@@ -247,9 +250,12 @@ function task_lib_openssl_source_test() {
   openssl_binary_test_cmd="${global_source_path_usr_bin}/openssl";
   if [ -f "$openssl_binary_test_cmd" ]; then
     # test binary
-    openssl_binary_test_cmd="${openssl_binary_test_cmd} version -f";
-    echo "test source binary: ${openssl_binary_test_cmd}";
-    $openssl_binary_test_cmd;
+    openssl_binary_test_cmd1="${openssl_binary_test_cmd} version";
+    echo "test source binary: ${openssl_binary_test_cmd1}";
+    $openssl_binary_test_cmd1;
+    openssl_binary_test_cmd2="${openssl_binary_test_cmd} version -f";
+    echo "test source binary: ${openssl_binary_test_cmd2}";
+    $openssl_binary_test_cmd2;
   else
     notify "errorRoutine" "lib:openssl:source:test";
   fi;
