@@ -712,7 +712,7 @@ function task_app_nginx_source_make() {
     fi;
 
     # make command - add make tool
-    nginx_source_make_cmd="make";
+    nginx_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${nginx_source_path}\" && make clean";

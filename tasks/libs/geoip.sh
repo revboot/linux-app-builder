@@ -108,7 +108,7 @@ function task_lib_geoip_source_make() {
     fi;
 
     # make command - add make tool
-    geoip_source_make_cmd="make";
+    geoip_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${geoip_source_path}\" && make clean";

@@ -293,7 +293,7 @@ function task_lib_xml2_source_make() {
     fi;
 
     # make command - add make tool
-    xml2_source_make_cmd="make";
+    xml2_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${xml2_source_path}\" && make clean";

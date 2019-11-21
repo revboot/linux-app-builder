@@ -181,7 +181,7 @@ function task_lib_gd2_source_make() {
     fi;
 
     # make command - add make tool
-    gd2_source_make_cmd="make";
+    gd2_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${gd2_source_path}\" && make clean";

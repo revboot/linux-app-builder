@@ -164,7 +164,7 @@ function task_lib_pcre_source_make() {
     fi;
 
     # make command - add make tool
-    pcre_source_make_cmd="make";
+    pcre_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${pcre_source_path}\" && make clean";

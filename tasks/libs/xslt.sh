@@ -148,7 +148,7 @@ function task_lib_xslt_source_make() {
     fi;
 
     # make command - add make tool
-    xslt_source_make_cmd="make";
+    xslt_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean
     sudo bash -c "cd \"${xslt_source_path}\" && make clean";

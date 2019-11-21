@@ -23,6 +23,7 @@ global_package_path_usr_etc="/etc";
 global_package_prefix_var="/var";
 global_source_flag="yes";
 global_source_cleanup="no";
+global_source_make_cores="$(nproc)";
 global_source_prefix_usr="/usr/local";
 global_source_path_usr_bin="${global_source_prefix_usr}/bin";
 global_source_path_usr_sbin="${global_source_prefix_usr}/sbin";

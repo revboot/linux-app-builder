@@ -108,7 +108,7 @@ function task_lib_zlib_source_make() {
     fi;
 
     # make command - add make tool
-    zlib_source_make_cmd="make";
+    zlib_source_make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${zlib_source_path}\" && make clean";
