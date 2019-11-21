@@ -481,3 +481,33 @@ nginx_source_arg_modules_mail_imap_flag="yes";
 nginx_source_arg_modules_other_flag="yes";
 nginx_source_arg_modules_other_cpptest_flag="no";
 nginx_source_arg_modules_other_googleperftools_flag="no";
+
+# - haproxy (version 1.5.19, 1.6.15, 1.7.12, 1.8.22, 1.9.12 (stable), 2.0.9 (stable))
+haproxy_task="yes";
+haproxy_package_flag="no";
+haproxy_package_uninstall="no"; #careful!!!
+haproxy_package_install="no";
+haproxy_package_test="no";
+haproxy_package_pkgs="bin"; #bin
+case "$DISTRIB_RELEASE" in
+"12.04"|"14.04"|"16.04"|"18.04")
+  haproxy_package_pkgs_bin="haproxy"; #depends on zlib,pcre,openssl,libcrypt,lua
+  ;;
+esac;
+haproxy_source_flag="yes";
+haproxy_source_cleanup="no";
+haproxy_source_download="yes";
+haproxy_source_make="yes";
+haproxy_source_uninstall="no";
+haproxy_source_install="yes";
+haproxy_source_test="yes";
+haproxy_source_branch="1.9";
+haproxy_source_version="1.9.12";
+haproxy_source_url="https://www.haproxy.org/download/${haproxy_source_branch}/src/haproxy-${haproxy_source_version}.tar.gz";
+haproxy_source_tar="${global_source_path_usr_src}/haproxy-${haproxy_source_version}.tar.gz";
+haproxy_source_path="${global_source_path_usr_src}/haproxy-${haproxy_source_version}";
+haproxy_source_arg_target="linux2628";
+haproxy_source_arg_cpu="generic";
+haproxy_source_arg_arch="x86_64";
+haproxy_source_arg_prefix_usr="${global_source_prefix_usr}";
+haproxy_source_arg_options="";

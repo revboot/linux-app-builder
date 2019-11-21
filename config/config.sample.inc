@@ -367,3 +367,24 @@ nginx_source_arg_modules_mail_imap_flag="yes";
 nginx_source_arg_modules_other_flag="yes";
 nginx_source_arg_modules_other_cpptest_flag="no";
 nginx_source_arg_modules_other_googleperftools_flag="no";
+
+# - haproxy (version 1.5.19, 1.6.15, 1.7.12, 1.8.22, 1.9.12 (stable), 2.0.9 (stable))
+haproxy_task="yes";
+haproxy_package_flag="no";
+haproxy_package_uninstall="no"; #careful!!!
+haproxy_package_install="no";
+haproxy_package_test="no";
+haproxy_package_pkgs="bin"; #bin
+haproxy_source_flag="yes";
+haproxy_source_cleanup="no";
+haproxy_source_download="yes";
+haproxy_source_make="yes";
+haproxy_source_uninstall="no";
+haproxy_source_install="yes";
+haproxy_source_test="yes";
+haproxy_source_version="1.9.12";
+haproxy_source_arg_target="linux2628";
+haproxy_source_arg_cpu="generic";
+haproxy_source_arg_arch="x86_64";
+haproxy_source_arg_prefix_usr="${global_source_prefix_usr}";
+haproxy_source_arg_options="";

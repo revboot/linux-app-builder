@@ -164,6 +164,7 @@ while true; do
       echo -e "   - geoip                    selects the GeoIP/libgeoip library";
       echo -e "  Application";
       echo -e "   - nginx                    selects the Nginx application";
+      echo -e "   - haproxy                  selects the HAProxy application";
       echo -e "";
       echo -e "Subtasks:";
       echo -e "  - config                    selects configured subtasks (default)";
@@ -186,7 +187,7 @@ while true; do
     --task )
       shift; # The arg is next in position args
       args_task=$1
-      [[ ! $args_task =~ config|all|global|zlib|pcre|openssl|gd2|xml2|xslt|geoip|nginx ]] && {
+      [[ ! $args_task =~ config|all|global|zlib|pcre|openssl|gd2|xml2|xslt|geoip|nginx|haproxy ]] && {
         error 1 "Incorrect task options provided";
       }
       ;;
@@ -256,6 +257,8 @@ loadSource "tasks/libs/xslt.sh" true;
 loadSource "tasks/libs/geoip.sh" true;
 # task: application: nginx
 loadSource "tasks/apps/nginx.sh" true;
+# task: application: haproxy
+loadSource "tasks/apps/haproxy.sh" true;
 
 #
 # Main program
@@ -343,6 +346,15 @@ if [ "$global_source_flag" == "yes" ]; then
     notify "stopTask" "app:nginx";
   else
     notify "skipTask" "app:nginx";
+  fi;
+
+  # task: application: haproxy
+  if ([ "$haproxy_task" == "yes" ] && [ "$args_task" == "config" ]) || [ "$args_task" == "all" ] || [ "$args_task" == "haproxy" ]; then
+    notify "startTask" "app:haproxy";
+    task_app_haproxy;
+    notify "stopTask" "app:haproxy";
+  else
+    notify "skipTask" "app:haproxy";
   fi;
 
 fi;

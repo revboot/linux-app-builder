@@ -6,6 +6,7 @@ Installs web applications and libraries from either packages or sources, with fl
 ## Supported Applications and Libraries
 The following applications and libraries can be installed via packages or sources:
 - Applications:
+  - [HAProxy](https://haproxy.org), sources: [www.haproxy.org](https://www.haproxy.org/#down)*, [git.haproxy.org](https://git.haproxy.org), [github.com](https://github.com/haproxy/haproxy)
   - [Nginx](https://nginx.org), sources: [www.nginx.org](https://www.nginx.org/en/download.html)*, [trac.nginx.org](http://trac.nginx.org/nginx/browser), [github.com](https://github.com/nginx/nginx)
 - Libraries:
   - [Zlib/libz](https://www.zlib.net), sources: [www.zlib.net/tarball](https://www.zlib.net/zlib-1.2.11.tar.gz), [github.com](https://github.com/madler/zlib)*
@@ -53,6 +54,7 @@ Tasks:
    - geoip                    selects the GeoIP/libgeoip library
   Application
    - nginx                    selects the Nginx application
+   - haproxy                  selects the HAProxy application
 
 Subtasks:
   - config                    selects configured subtasks (default)
