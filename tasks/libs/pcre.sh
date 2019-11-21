@@ -99,74 +99,78 @@ function task_lib_pcre_source_download() {
 # declare routine source:make
 function task_lib_pcre_source_make() {
   if [ -d "$pcre_source_path" ]; then
-    # command - add configuration tool
-    pcre_source_cmd_full="./configure";
+    # config command - add configuration tool
+    pcre_source_config_cmd="./configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$pcre_source_arg_arch" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --target=${pcre_source_arg_arch}";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --target=${pcre_source_arg_arch}";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$pcre_source_arg_prefix_usr" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --prefix=${pcre_source_arg_prefix_usr}";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --prefix=${pcre_source_arg_prefix_usr}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$pcre_source_arg_options" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} ${pcre_source_arg_options}";
+      pcre_source_config_cmd="${pcre_source_config_cmd} ${pcre_source_arg_options}";
     fi;
 
-    # command - add main: pcre8
+    # config command - add main: pcre8
     if [ "$pcre_source_arg_main_pcre8" == "yes" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcre8";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcre8";
     elif [ "$pcre_source_arg_main_pcre8" == "no" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --disable-pcre8";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --disable-pcre8";
     fi;
 
-    # command - add main: pcre16
+    # config command - add main: pcre16
     if [ "$pcre_source_arg_main_pcre16" == "yes" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcre16";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcre16";
     fi;
 
-    # command - add main: pcre32
+    # config command - add main: pcre32
     if [ "$pcre_source_arg_main_pcre32" == "yes" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcre32";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcre32";
     fi;
 
-    # command - add main: jit
+    # config command - add main: jit
     if [ "$pcre_source_arg_main_jit" == "yes" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-jit=auto";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-jit=auto";
     fi;
 
-    # command - add main: utf8
+    # config command - add main: utf8
     if [ "$pcre_source_arg_main_utf8" == "yes" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-utf8";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-utf8";
     fi;
 
-    # command - add main: unicode
+    # config command - add main: unicode
     if [ "$pcre_source_arg_main_unicode" == "yes" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-unicode-properties";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-unicode-properties";
     fi;
 
-    # command - add tool: pcregreplib
+    # config command - add tool: pcregreplib
     if [ "$pcre_source_arg_tool_pcregreplib" == "libz" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcregrep-libz";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcregrep-libz";
     elif [ "$pcre_source_arg_tool_pcregreplib" == "libbz2" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcregrep-libbz2";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcregrep-libbz2";
     fi;
 
-    # command - add tool: pcretestlib
+    # config command - add tool: pcretestlib
     if [ "$pcre_source_arg_tool_pcretestlib" == "libreadline" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcretest-libreadline";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcretest-libreadline";
     elif [ "$pcre_source_arg_tool_pcretestlib" == "libedit" ]; then
-      pcre_source_cmd_full="${pcre_source_cmd_full} --enable-pcretest-libedit";
+      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcretest-libedit";
     fi;
+
+    # make command - add make tool
+    pcre_source_make_cmd="make";
 
     # clean, configure and make
     sudo bash -c "cd \"${pcre_source_path}\" && make clean";
-    echo "configure arguments: ${pcre_source_cmd_full}";
-    sudo bash -c "cd \"${pcre_source_path}\" && eval ${pcre_source_cmd_full} && make";
+    echo "config arguments: ${pcre_source_config_cmd}";
+    echo "make arguments: ${pcre_source_make_cmd}";
+    sudo bash -c "cd \"${pcre_source_path}\" && eval ${pcre_source_config_cmd} && eval ${pcre_source_make_cmd}";
   else
     notify "errorRoutine" "lib:pcre:source:make";
   fi;

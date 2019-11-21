@@ -105,47 +105,50 @@ function task_lib_xslt_source_download() {
 # declare routine source:make
 function task_lib_xslt_source_make() {
   if [ -d "$xslt_source_path" ]; then
-    # command - add configuration tool
-    xslt_source_cmd_full="./configure";
+    # config command - add configuration tool
+    xslt_source_config_cmd="./configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$xslt_source_arg_arch" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --target=${xslt_source_arg_arch}";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --target=${xslt_source_arg_arch}";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$xslt_source_arg_prefix_usr" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --prefix=${xslt_source_arg_prefix_usr}";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --prefix=${xslt_source_arg_prefix_usr}";
     fi;
 
-    # command - add libraries: xml2
+    # config command - add libraries: xml2
     if [ "$xslt_source_arg_libraries_xml2" == "package" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --with-libxml-prefix";
     elif [ "$xslt_source_arg_libraries_xml2" == "source" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-libxml-prefix=${xslt_source_arg_prefix_usr}";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --with-libxml-prefix=${xslt_source_arg_prefix_usr}";
     fi;
 
-    # command - add libraries: python
+    # config command - add libraries: python
     if [ "$xslt_source_arg_libraries_python" == "package" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-python";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --with-python";
     elif [ "$xslt_source_arg_libraries_python" == "source" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-python=${python_source_path}";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --with-python=${python_source_path}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$xslt_source_arg_options" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} ${xslt_source_arg_options}";
+      xslt_source_config_cmd="${xslt_source_config_cmd} ${xslt_source_arg_options}";
     fi;
 
-    # command - add main: crypto
+    # config command - add main: crypto
     if [ "$xslt_source_arg_main_crypto" == "yes" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-crypto";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --with-crypto";
     fi;
 
-    # command - add main: plugins
+    # config command - add main: plugins
     if [ "$xslt_source_arg_main_plugins" == "yes" ]; then
-      xslt_source_cmd_full="${xslt_source_cmd_full} --with-plugins";
+      xslt_source_config_cmd="${xslt_source_config_cmd} --with-plugins";
     fi;
+
+    # make command - add make tool
+    xslt_source_make_cmd="make";
 
     # clean
     sudo bash -c "cd \"${xslt_source_path}\" && make clean";
@@ -153,8 +156,9 @@ function task_lib_xslt_source_make() {
     sudo wget -P $xslt_source_path/doc "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd";
     sudo wget -P $xslt_source_path/doc "http://docbook.sourceforge.net/release/xsl/current/manpages/docbook.xsl";
     # configure (workaround) and make
-    echo "configure arguments: ${xslt_source_cmd_full}";
-    sudo bash -c "cd \"${xslt_source_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xslt_source_cmd_full} && make";
+    echo "config arguments: ${xslt_source_config_cmd}";
+    echo "make arguments: ${xslt_source_make_cmd}";
+    sudo bash -c "cd \"${xslt_source_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xslt_source_config_cmd} && eval ${xslt_source_make_cmd}";
   else
     notify "errorRoutine" "lib:xslt:source:make";
   fi;

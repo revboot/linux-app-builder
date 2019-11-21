@@ -89,28 +89,32 @@ function task_lib_geoip_source_download() {
 # declare routine source:make
 function task_lib_geoip_source_make() {
   if [ -d "$geoip_source_path" ]; then
-    # command - add configuration tool
-    geoip_source_cmd_full="./configure";
+    # config command - add configuration tool
+    geoip_source_config_cmd="./configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$geoip_source_arg_arch" ]; then
-      geoip_source_cmd_full="${geoip_source_cmd_full} --target=${geoip_source_arg_arch}";
+      geoip_source_config_cmd="${geoip_source_config_cmd} --target=${geoip_source_arg_arch}";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$geoip_source_arg_prefix_usr" ]; then
-      geoip_source_cmd_full="${geoip_source_cmd_full} --prefix=${geoip_source_arg_prefix_usr}";
+      geoip_source_config_cmd="${geoip_source_config_cmd} --prefix=${geoip_source_arg_prefix_usr}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$geoip_source_arg_options" ]; then
-      geoip_source_cmd_full="${geoip_source_cmd_full} ${geoip_source_arg_options}";
+      geoip_source_config_cmd="${geoip_source_config_cmd} ${geoip_source_arg_options}";
     fi;
+
+    # make command - add make tool
+    geoip_source_make_cmd="make";
 
     # clean, configure and make
     sudo bash -c "cd \"${geoip_source_path}\" && make clean";
-    echo "configure arguments: ${geoip_source_cmd_full}";
-    sudo bash -c "cd \"${geoip_source_path}\" && eval ${geoip_source_cmd_full} && make";
+    echo "config arguments: ${geoip_source_config_cmd}";
+    echo "make arguments: ${geoip_source_make_cmd}";
+    sudo bash -c "cd \"${geoip_source_path}\" && eval ${geoip_source_config_cmd} && eval ${geoip_source_make_cmd}";
   else
     notify "errorRoutine" "lib:geoip:source:make";
   fi;

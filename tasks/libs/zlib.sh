@@ -89,28 +89,32 @@ function task_lib_zlib_source_download() {
 # declare routine source:make
 function task_lib_zlib_source_make() {
   if [ -d "$zlib_source_path" ]; then
-    # command - add configuration tool
-    zlib_source_cmd_full="./configure";
+    # config command - add configuration tool
+    zlib_source_config_cmd="./configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$zlib_source_arg_arch" ]; then
-      zlib_source_cmd_full="${zlib_source_cmd_full} --archs=\"${zlib_source_arg_arch}\"";
+      zlib_source_config_cmd="${zlib_source_config_cmd} --archs=\"${zlib_source_arg_arch}\"";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$zlib_source_arg_prefix_usr" ]; then
-      zlib_source_cmd_full="${zlib_source_cmd_full} --prefix=${zlib_source_arg_prefix_usr}";
+      zlib_source_config_cmd="${zlib_source_config_cmd} --prefix=${zlib_source_arg_prefix_usr}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$zlib_source_arg_options" ]; then
-      zlib_source_cmd_full="${zlib_source_cmd_full} ${zlib_source_arg_options}";
+      zlib_source_config_cmd="${zlib_source_config_cmd} ${zlib_source_arg_options}";
     fi;
+
+    # make command - add make tool
+    zlib_source_make_cmd="make";
 
     # clean, configure and make
     sudo bash -c "cd \"${zlib_source_path}\" && make clean";
-    echo "configure arguments: ${zlib_source_cmd_full}";
-    sudo bash -c "cd \"${zlib_source_path}\" && eval ${zlib_source_cmd_full} && make";
+    echo "config arguments: ${zlib_source_config_cmd}";
+    echo "make arguments: ${zlib_source_make_cmd}";
+    sudo bash -c "cd \"${zlib_source_path}\" && eval ${zlib_source_config_cmd} && eval ${zlib_source_make_cmd}";
   else
     notify "errorRoutine" "lib:zlib:source:make";
   fi;

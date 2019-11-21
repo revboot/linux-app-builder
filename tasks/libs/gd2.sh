@@ -99,91 +99,95 @@ function task_lib_gd2_source_download() {
 # declare routine source:make
 function task_lib_gd2_source_make() {
   if [ -d "$gd2_source_path" ]; then
-    # command - add configuration tool
-    gd2_source_cmd_full="./configure";
+    # config command - add configuration tool
+    gd2_source_config_cmd="./configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$gd2_source_arg_arch" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --target=${gd2_source_arg_arch}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --target=${gd2_source_arg_arch}";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$gd2_source_arg_prefix_usr" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --prefix=${gd2_source_arg_prefix_usr}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --prefix=${gd2_source_arg_prefix_usr}";
     fi;
 
-    # command - add libraries: zlib
+    # config command - add libraries: zlib
     if [ "$gd2_source_arg_libraries_zlib" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-zlib";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-zlib";
     elif [ "$gd2_source_arg_libraries_zlib" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-zlib=${zlib_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-zlib=${zlib_source_path}";
     fi;
 
-    # command - add libraries: png
+    # config command - add libraries: png
     if [ "$gd2_source_arg_libraries_png" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-png";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-png";
     elif [ "$gd2_source_arg_libraries_png" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-png=${png_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-png=${png_source_path}";
     fi;
 
-    # command - add libraries: jpeg
+    # config command - add libraries: jpeg
     if [ "$gd2_source_arg_libraries_jpeg" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-jpeg";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-jpeg";
     elif [ "$gd2_source_arg_libraries_jpeg" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-jpeg=${jpeg_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-jpeg=${jpeg_source_path}";
     fi;
 
-    # command - add libraries: webp
+    # config command - add libraries: webp
     if [ "$gd2_source_arg_libraries_webp" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-webp";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-webp";
     elif [ "$gd2_source_arg_libraries_webp" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-webp=${webp_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-webp=${webp_source_path}";
     fi;
 
-    # command - add libraries: tiff
+    # config command - add libraries: tiff
     if [ "$gd2_source_arg_libraries_tiff" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-tiff";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-tiff";
     elif [ "$gd2_source_arg_libraries_tiff" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-tiff=${tiff_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-tiff=${tiff_source_path}";
     fi;
 
-    # command - add libraries: xpm
+    # config command - add libraries: xpm
     if [ "$gd2_source_arg_libraries_xpm" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-xpm";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-xpm";
     elif [ "$gd2_source_arg_libraries_xpm" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-xpm=${xpm_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-xpm=${xpm_source_path}";
     fi;
 
-    # command - add libraries: liq
+    # config command - add libraries: liq
     if [ "$gd2_source_arg_libraries_liq" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-liq";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-liq";
     elif [ "$gd2_source_arg_libraries_liq" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-liq=${liq_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-liq=${liq_source_path}";
     fi;
 
-    # command - add libraries: freetype
+    # config command - add libraries: freetype
     if [ "$gd2_source_arg_libraries_freetype" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-freetype";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-freetype";
     elif [ "$gd2_source_arg_libraries_freetype" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-freetype=${freetype_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-freetype=${freetype_source_path}";
     fi;
 
-    # command - add libraries: fontconfig
+    # config command - add libraries: fontconfig
     if [ "$gd2_source_arg_libraries_fontconfig" == "package" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-fontconfig";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-fontconfig";
     elif [ "$gd2_source_arg_libraries_fontconfig" == "source" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} --with-fontconfig=${fontconfig_source_path}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} --with-fontconfig=${fontconfig_source_path}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$gd2_source_arg_options" ]; then
-      gd2_source_cmd_full="${gd2_source_cmd_full} ${gd2_source_arg_options}";
+      gd2_source_config_cmd="${gd2_source_config_cmd} ${gd2_source_arg_options}";
     fi;
+
+    # make command - add make tool
+    gd2_source_make_cmd="make";
 
     # clean, configure and make
     sudo bash -c "cd \"${gd2_source_path}\" && make clean";
-    echo "configure arguments: ${gd2_source_cmd_full}";
-    sudo bash -c "cd \"${gd2_source_path}\" && eval ${gd2_source_cmd_full} && make";
+    echo "config arguments: ${gd2_source_config_cmd}";
+    echo "make arguments: ${gd2_source_make_cmd}";
+    sudo bash -c "cd \"${gd2_source_path}\" && eval ${gd2_source_config_cmd} && eval ${gd2_source_make_cmd}";
   else
     notify "errorRoutine" "lib:gd2:source:make";
   fi;

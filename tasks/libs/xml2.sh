@@ -99,203 +99,207 @@ function task_lib_xml2_source_download() {
 # declare routine source:make
 function task_lib_xml2_source_make() {
   if [ -d "$xml2_source_path" ]; then
-    # command - add configuration tool
-    xml2_source_cmd_full="./configure";
+    # config command - add configuration tool
+    xml2_source_config_cmd="./configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$xml2_source_arg_arch" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --target=${xml2_source_arg_arch}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --target=${xml2_source_arg_arch}";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$xml2_source_arg_prefix_usr" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --prefix=${xml2_source_arg_prefix_usr}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --prefix=${xml2_source_arg_prefix_usr}";
     fi;
 
-    # command - add libraries: zlib
+    # config command - add libraries: zlib
     if [ "$xml2_source_arg_libraries_zlib" == "package" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-zlib";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-zlib";
     elif [ "$xml2_source_arg_libraries_zlib" == "source" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-zlib=${zlib_source_path}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-zlib=${zlib_source_path}";
     fi;
 
-    # command - add libraries: lzma
+    # config command - add libraries: lzma
     if [ "$xml2_source_arg_libraries_lzma" == "package" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-lzma";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-lzma";
     elif [ "$xml2_source_arg_libraries_lzma" == "source" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-lzma=${lzma_source_path}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-lzma=${lzma_source_path}";
     fi;
 
-    # command - add libraries: readline
+    # config command - add libraries: readline
     if [ "$xml2_source_arg_libraries_readline" == "package" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-readline";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-readline";
     elif [ "$xml2_source_arg_libraries_readline" == "source" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-readline=${readline_source_path}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-readline=${readline_source_path}";
     fi;
 
-    # command - add libraries: iconv
+    # config command - add libraries: iconv
     if [ "$xml2_source_arg_libraries_iconv" == "package" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-iconv";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-iconv";
     elif [ "$xml2_source_arg_libraries_iconv" == "source" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-iconv=${iconv_source_path}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-iconv=${iconv_source_path}";
     fi;
 
-    # command - add libraries: python
+    # config command - add libraries: python
     if [ "$xml2_source_arg_libraries_python" == "package" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-python";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-python";
     elif [ "$xml2_source_arg_libraries_python" == "source" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-python=${python_source_path}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-python=${python_source_path}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$xml2_source_arg_options" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} ${xml2_source_arg_options}";
+      xml2_source_config_cmd="${xml2_source_config_cmd} ${xml2_source_arg_options}";
     fi;
 
-    # command - add main: threads
+    # config command - add main: threads
     if [ "$xml2_source_arg_main_threads" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-threads";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-threads";
     fi;
 
-    # command - add main: thread alloc
+    # config command - add main: thread alloc
     if [ "$xml2_source_arg_main_threadalloc" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-thread-alloc";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-thread-alloc";
     fi;
 
-    # command - add main: ipv6
+    # config command - add main: ipv6
     if [ "$xml2_source_arg_main_ipv6" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --enable-ipv6";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --enable-ipv6";
     fi;
 
-    # command - add main: regular expressions
+    # config command - add main: regular expressions
     if [ "$xml2_source_arg_main_regexps" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-regexps";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-regexps";
     fi;
 
-    # command - add main: dso
+    # config command - add main: dso
     if [ "$xml2_source_arg_main_dso" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-modules";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-modules";
     fi;
 
-    # command - add encoding: iso8859x
+    # config command - add encoding: iso8859x
     if [ "$xml2_source_arg_encoding_iso8859x" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-iso8859x";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-iso8859x";
     fi;
 
-    # command - add encoding: unicode
+    # config command - add encoding: unicode
     if [ "$xml2_source_arg_encoding_unicode" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-icu";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-icu";
     fi;
 
-    # command - add xml: canonicalization
+    # config command - add xml: canonicalization
     if [ "$xml2_source_arg_xml_canonical" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-c14n";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-c14n";
     fi;
 
-    # command - add xml: catalog
+    # config command - add xml: catalog
     if [ "$xml2_source_arg_xml_catalog" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-catalog";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-catalog";
     fi;
 
-    # command - add xml: schemas
+    # config command - add xml: schemas
     if [ "$xml2_source_arg_xml_schemas" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-schemas";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-schemas";
     fi;
 
-    # command - add xml: schematron
+    # config command - add xml: schematron
     if [ "$xml2_source_arg_xml_schematron" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-schematron";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-schematron";
     fi;
 
-    # command - add sgml: docbook
+    # config command - add sgml: docbook
     if [ "$xml2_source_arg_sgml_docbook" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-docbook";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-docbook";
     fi;
 
-    # command - add sgml: html
+    # config command - add sgml: html
     if [ "$xml2_source_arg_sgml_html" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-html";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-html";
     fi;
 
-    # command - add sgml: tree dom
+    # config command - add sgml: tree dom
     if [ "$xml2_source_arg_sgml_treedom" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-tree";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-tree";
     fi;
 
-    # command - add parser: pattern
+    # config command - add parser: pattern
     if [ "$xml2_source_arg_parser_pattern" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-pattern";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-pattern";
     fi;
 
-    # command - add parser: push
+    # config command - add parser: push
     if [ "$xml2_source_arg_parser_push" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-push";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-push";
     fi;
 
-    # command - add parser: reader
+    # config command - add parser: reader
     if [ "$xml2_source_arg_parser_reader" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-reader";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-reader";
     fi;
 
-    # command - add parser: sax 1
+    # config command - add parser: sax 1
     if [ "$xml2_source_arg_parser_sax1" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-sax1";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-sax1";
     fi;
 
-    # command - add api: legacy
+    # config command - add api: legacy
     if [ "$xml2_source_arg_api_legacy" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-legacy";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-legacy";
     fi;
 
-    # command - add api: output serial
+    # config command - add api: output serial
     if [ "$xml2_source_arg_api_outputserial" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-output";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-output";
     fi;
 
-    # command - add api: valid dtd
+    # config command - add api: valid dtd
     if [ "$xml2_source_arg_api_validdtd" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-valid";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-valid";
     fi;
 
-    # command - add api: writer
+    # config command - add api: writer
     if [ "$xml2_source_arg_api_writer" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-writer";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-writer";
     fi;
 
-    # command - add api: xinclude
+    # config command - add api: xinclude
     if [ "$xml2_source_arg_api_xinclude" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-xinclude";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-xinclude";
     fi;
 
-    # command - add api: xpath
+    # config command - add api: xpath
     if [ "$xml2_source_arg_api_xpath" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-xpath";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-xpath";
     fi;
 
-    # command - add api: pointer
+    # config command - add api: pointer
     if [ "$xml2_source_arg_api_xpointer" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-xptr";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-xptr";
     fi;
 
-    # command - add proto: ftp
+    # config command - add proto: ftp
     if [ "$xml2_source_arg_proto_ftp" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-ftp";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-ftp";
     fi;
 
-    # command - add proto: http
+    # config command - add proto: http
     if [ "$xml2_source_arg_proto_http" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-http";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-http";
     fi;
 
-    # command - add tool: history
+    # config command - add tool: history
     if [ "$xml2_source_arg_tool_history" == "yes" ]; then
-      xml2_source_cmd_full="${xml2_source_cmd_full} --with-history";
+      xml2_source_config_cmd="${xml2_source_config_cmd} --with-history";
     fi;
 
-    # clean, configure (workaround) and make
+    # make command - add make tool
+    xml2_source_make_cmd="make";
+
+    # clean, configure and make
     sudo bash -c "cd \"${xml2_source_path}\" && make clean";
-    echo "configure arguments: ${xml2_source_cmd_full}";
-    sudo bash -c "cd \"${xml2_source_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xml2_source_cmd_full} && make";
+    echo "config arguments: ${xml2_source_config_cmd}";
+    echo "make arguments: ${xml2_source_make_cmd}";
+    sudo bash -c "cd \"${xml2_source_path}\" && libtoolize --force && aclocal && autoheader && automake --force-missing --add-missing && autoconf && eval ${xml2_source_config_cmd} && eval ${xml2_source_make_cmd}";
   else
     notify "errorRoutine" "lib:xml2:source:make";
   fi;

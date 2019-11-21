@@ -102,107 +102,111 @@ function task_lib_openssl_source_download() {
 # declare routine source:make
 function task_lib_openssl_source_make() {
   if [ -d "$openssl_source_path" ]; then
-    # command - add configuration tool
-    openssl_source_cmd_full="./Configure";
+    # config command - add configuration tool
+    openssl_source_config_cmd="./Configure";
 
-    # command - add arch
+    # config command - add arch
     if [ -n "$openssl_source_arg_arch" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} ${openssl_source_arg_arch}";
+      openssl_source_config_cmd="${openssl_source_config_cmd} ${openssl_source_arg_arch}";
     fi;
 
-    # command - add prefix (usr)
+    # config command - add prefix (usr)
     if [ -n "$openssl_source_arg_prefix_usr" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} --prefix=${openssl_source_arg_prefix_usr}";
+      openssl_source_config_cmd="${openssl_source_config_cmd} --prefix=${openssl_source_arg_prefix_usr}";
     fi;
 
-    # command - add libraries: zlib
+    # config command - add libraries: zlib
     if [ "$openssl_source_arg_libraries_zlib" == "package" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib";
+      openssl_source_config_cmd="${openssl_source_config_cmd} --with-zlib";
     elif [ "$openssl_source_arg_libraries_zlib" == "source" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} --with-zlib-include=${global_source_path_usr_inc} --with-zlib-lib=${global_source_path_usr_lib}";
+      openssl_source_config_cmd="${openssl_source_config_cmd} --with-zlib-include=${global_source_path_usr_inc} --with-zlib-lib=${global_source_path_usr_lib}";
     fi;
 
-    # command - add options
+    # config command - add options
     if [ -n "$openssl_source_arg_options" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} ${openssl_source_arg_options}";
+      openssl_source_config_cmd="${openssl_source_config_cmd} ${openssl_source_arg_options}";
     fi;
 
-    # command - add main: threads
+    # config command - add main: threads
     if [ "$openssl_source_arg_main_threads" == "yes" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} threads";
+      openssl_source_config_cmd="${openssl_source_config_cmd} threads";
     elif [ "$openssl_source_arg_main_threads" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-threads";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-threads";
     fi;
 
-    # command - add main: zlib
+    # config command - add main: zlib
     if [ "$openssl_source_arg_main_zlib" == "yes" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} zlib";
+      openssl_source_config_cmd="${openssl_source_config_cmd} zlib";
     fi;
 
-    # command - add main: nistp gcc
+    # config command - add main: nistp gcc
     if [ "$openssl_source_arg_main_nistp" == "yes" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} enable-ec_nistp_64_gcc_128";
+      openssl_source_config_cmd="${openssl_source_config_cmd} enable-ec_nistp_64_gcc_128";
     fi;
 
-    # command - add proto: tls 1.3
+    # config command - add proto: tls 1.3
     if [ "$openssl_source_arg_proto_tls1_3" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-tls1_3";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1_3";
     fi;
 
-    # command - add proto: tls 1.2
+    # config command - add proto: tls 1.2
     if [ "$openssl_source_arg_proto_tls1_2" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-tls1_2";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1_2";
     fi;
 
-    # command - add proto: tls 1.1
+    # config command - add proto: tls 1.1
     if [ "$openssl_source_arg_proto_tls1_1" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-tls1_1";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1_1";
     fi;
 
-    # command - add proto: tls 1.0
+    # config command - add proto: tls 1.0
     if [ "$openssl_source_arg_proto_tls1_0" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-tls1";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1";
     fi;
 
-    # command - add proto: ssl 3
+    # config command - add proto: ssl 3
     if [ "$openssl_source_arg_proto_ssl3" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-ssl3";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-ssl3";
     fi;
 
-    # command - add proto: ssl 2
+    # config command - add proto: ssl 2
     if [ "$openssl_source_arg_proto_ssl2" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-ssl2";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-ssl2";
     fi;
 
-    # command - add proto: dtls 1.2
+    # config command - add proto: dtls 1.2
     if [ "$openssl_source_arg_proto_dtls1_2" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-dtls1_2";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-dtls1_2";
     fi;
 
-    # command - add proto: dtls 1.0
+    # config command - add proto: dtls 1.0
     if [ "$openssl_source_arg_proto_dtls1_0" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-dtls1";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-dtls1";
     fi;
 
-    # command - add proto: next proto negotiation
+    # config command - add proto: next proto negotiation
     if [ "$openssl_source_arg_proto_npn" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-nextprotoneg";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-nextprotoneg";
     fi;
 
-    # command - add cypher: idea
+    # config command - add cypher: idea
     if [ "$openssl_source_arg_cypher_idea" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-idea";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-idea";
     fi;
 
-    # command - add cypher: weak ciphers
+    # config command - add cypher: weak ciphers
     if [ "$openssl_source_arg_cypher_weak" == "no" ]; then
-      openssl_source_cmd_full="${openssl_source_cmd_full} no-weak-ssl-ciphers";
+      openssl_source_config_cmd="${openssl_source_config_cmd} no-weak-ssl-ciphers";
     fi;
+
+    # make command - add make tool
+    openssl_source_make_cmd="make";
 
     # clean, configure and make
     sudo bash -c "cd \"${openssl_source_path}\" && make clean";
-    echo "configure arguments: ${openssl_source_cmd_full}";
-    sudo bash -c "cd \"${openssl_source_path}\" && eval ${openssl_source_cmd_full} && make";
+    echo "config arguments: ${openssl_source_config_cmd}";
+    echo "make arguments: ${openssl_source_make_cmd}";
+    sudo bash -c "cd \"${openssl_source_path}\" && eval ${openssl_source_config_cmd} && eval ${openssl_source_make_cmd}";
   else
     notify "errorRoutine" "lib:openssl:source:make";
   fi;
