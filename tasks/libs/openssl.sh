@@ -40,14 +40,14 @@ function task_lib_openssl_package_install() {
 # declare routine package:test
 function task_lib_openssl_package_test() {
   # ldconfig tests
-  openssl_ldconfig_test_cmd="${global_package_path_usr_lib64}/libssl.so";
-  if [ -f "$openssl_ldconfig_test_cmd" ]; then
+  openssl_ldconfig_test_file="libssl.so";
+  if [ -f "${global_package_path_usr_lib}/${openssl_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${openssl_ldconfig_test_file}" ]; then
     # check ldconfig paths
-    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
+    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${openssl_ldconfig_test_file}";
     echo "find package libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd1}";
     # check ldconfig versions
-    openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
+    openssl_ldconfig_test_cmd2="ldconfig -v | grep ${openssl_ldconfig_test_file}";
     echo "find package libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd2}";
   else
@@ -230,14 +230,14 @@ function task_lib_openssl_source_install() {
 # declare routine source:test
 function task_lib_openssl_source_test() {
   # ldconfig tests
-  openssl_ldconfig_test_cmd="${global_source_path_usr_lib}/libssl.so";
-  if [ -f "$openssl_ldconfig_test_cmd" ]; then
+  openssl_ldconfig_test_file="libssl.so";
+  if [ -f "${global_source_path_usr_lib}/${openssl_ldconfig_test_file}" ]; then
     # check ldconfig paths
-    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${openssl_ldconfig_test_cmd}";
+    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${openssl_ldconfig_test_file}";
     echo "find source libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
-    sudo  bash -c "${openssl_ldconfig_test_cmd1}";
+    sudo bash -c "${openssl_ldconfig_test_cmd1}";
     # check ldconfig versions
-    openssl_ldconfig_test_cmd2="ldconfig -v | grep libssl.so";
+    openssl_ldconfig_test_cmd2="ldconfig -v | grep ${openssl_ldconfig_test_file}";
     echo "find source libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
     sudo bash -c "${openssl_ldconfig_test_cmd2}";
   else

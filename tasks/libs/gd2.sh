@@ -40,14 +40,14 @@ function task_lib_gd2_package_install() {
 # declare routine package:test
 function task_lib_gd2_package_test() {
   # ldconfig tests
-  gd2_ldconfig_test_cmd="${global_package_path_usr_lib64}/libgd.so";
-  if [ -f "$gd2_ldconfig_test_cmd" ]; then
+  gd2_ldconfig_test_file="libgd.so";
+  if [ -f "${global_package_path_usr_lib}/${gd2_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${gd2_ldconfig_test_file}" ]; then
     # check ldconfig paths
-    gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
+    gd2_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${gd2_ldconfig_test_file}";
     echo "find package libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd1}";
     # check ldconfig versions
-    gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
+    gd2_ldconfig_test_cmd2="ldconfig -v | grep ${gd2_ldconfig_test_file}";
     echo "find package libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd2}";
   else
@@ -214,14 +214,14 @@ function task_lib_gd2_source_install() {
 # declare routine source:test
 function task_lib_gd2_source_test() {
   # ldconfig tests
-  gd2_ldconfig_test_cmd="${global_source_path_usr_lib}/libgd.so";
-  if [ -f "$gd2_ldconfig_test_cmd" ]; then
+  gd2_ldconfig_test_file="libgd.so";
+  if [ -f "${global_source_path_usr_lib}/${gd2_ldconfig_test_file}" ]; then
     # check ldconfig paths
-    gd2_ldconfig_test_cmd1="ldconfig -p | grep ${gd2_ldconfig_test_cmd}";
+    gd2_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${gd2_ldconfig_test_file}";
     echo "find source libraries #1: sudo bash -c \"${gd2_ldconfig_test_cmd1}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd1}";
     # check ldconfig versions
-    gd2_ldconfig_test_cmd2="ldconfig -v | grep libgd.so";
+    gd2_ldconfig_test_cmd2="ldconfig -v | grep ${gd2_ldconfig_test_file}";
     echo "find source libraries #2: sudo bash -c \"${gd2_ldconfig_test_cmd2}\"";
     sudo bash -c "${gd2_ldconfig_test_cmd2}";
   else

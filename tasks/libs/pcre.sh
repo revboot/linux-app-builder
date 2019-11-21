@@ -40,14 +40,14 @@ function task_lib_pcre_package_install() {
 # declare routine package:test
 function task_lib_pcre_package_test() {
   # ldconfig tests
-  pcre_ldconfig_test_cmd="${global_package_path_usr_lib64}/libpcre.so";
-  if [ -f "$pcre_ldconfig_test_cmd" ]; then
+  pcre_ldconfig_test_file="libpcre.so";
+  if [ -f "${global_package_path_usr_lib}/${pcre_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${pcre_ldconfig_test_file}" ]; then
     # check ldconfig paths
-    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
+    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${pcre_ldconfig_test_file}";
     echo "find package libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd1}";
     # check ldconfig versions
-    pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
+    pcre_ldconfig_test_cmd2="ldconfig -v | grep ${pcre_ldconfig_test_file}";
     echo "find package libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd2}";
   else
@@ -197,14 +197,14 @@ function task_lib_pcre_source_install() {
 # declare routine source:test
 function task_lib_pcre_source_test() {
   # ldconfig tests
-  pcre_ldconfig_test_cmd="${global_source_path_usr_lib}/libpcre.so";
-  if [ -f "$pcre_ldconfig_test_cmd" ]; then
+  pcre_ldconfig_test_file="libpcre.so";
+  if [ -f "${global_source_path_usr_lib}/${pcre_ldconfig_test_file}" ]; then
     # check ldconfig paths
-    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${pcre_ldconfig_test_cmd}";
+    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${pcre_ldconfig_test_file}";
     echo "find source libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd1}";
     # check ldconfig versions
-    pcre_ldconfig_test_cmd2="ldconfig -v | grep libpcre.so";
+    pcre_ldconfig_test_cmd2="ldconfig -v | grep ${pcre_ldconfig_test_file}";
     echo "find source libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
     sudo bash -c "${pcre_ldconfig_test_cmd2}";
   else
