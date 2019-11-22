@@ -40,20 +40,20 @@ function task_app_haproxy_package_install() {
 # declare routine package:test
 function task_app_haproxy_package_test() {
   # ldd, ld and binary tests
-  haproxy_binary_test_cmd="${global_package_path_usr_sbin}/haproxy";
-  if [ -f "$haproxy_binary_test_cmd" ]; then
+  bin_path="${global_package_path_usr_sbin}/haproxy";
+  if [ -f "$bin_path" ]; then
     # print shared library dependencies
-    haproxy_ldd_test_cmd="ldd ${haproxy_binary_test_cmd}";
-    echo "shared library dependencies: ${haproxy_ldd_test_cmd}";
-    $haproxy_ldd_test_cmd;
+    ldd_cmd="ldd ${bin_path}";
+    echo "shared library dependencies: ${ldd_cmd}";
+    $ldd_cmd;
     # print ld debug statistics
-    haproxy_lddebug_test_cmd="env LD_DEBUG=statistics $haproxy_binary_test_cmd -v";
-    echo "ld debug statistics: ${haproxy_lddebug_test_cmd}";
-    $haproxy_lddebug_test_cmd;
-    # test binary
-    haproxy_binary_test_cmd="${haproxy_binary_test_cmd} -vv";
-    echo "test package binary: sudo ${haproxy_binary_test_cmd}";
-    sudo $haproxy_binary_test_cmd;
+    lddebug_cmd="env LD_DEBUG=statistics $bin_path -v";
+    echo "ld debug statistics: ${lddebug_cmd}";
+    $lddebug_cmd;
+    # check binary info
+    bin_cmd="${bin_path} -vv";
+    echo "check binary info: sudo ${bin_cmd}";
+    sudo $bin_cmd;
   else
     notify "errorRoutine" "app:haproxy:package:test";
   fi;
@@ -94,37 +94,37 @@ function task_app_haproxy_source_download() {
 function task_app_haproxy_source_make() {
   if [ -d "$haproxy_source_path" ]; then
     # make command - add make tool
-    haproxy_source_make_cmd="make -j${global_source_make_cores}";
+    make_cmd="make -j${global_source_make_cores}";
 
     # make command - add target
     if [ -n "$haproxy_source_arg_target" ]; then
-      haproxy_source_make_cmd="${haproxy_source_make_cmd} TARGET=${haproxy_source_arg_target}";
+      make_cmd="${make_cmd} TARGET=${haproxy_source_arg_target}";
     fi;
 
     # make command - add cpu
     if [ -n "$haproxy_source_arg_cpu" ]; then
-      haproxy_source_make_cmd="${haproxy_source_make_cmd} CPU=${haproxy_source_arg_cpu}";
+      make_cmd="${make_cmd} CPU=${haproxy_source_arg_cpu}";
     fi;
 
     # make command - add arch
     if [ -n "$haproxy_source_arg_arch" ]; then
-      haproxy_source_make_cmd="${haproxy_source_make_cmd} ARCH=${haproxy_source_arg_arch}";
+      make_cmd="${make_cmd} ARCH=${haproxy_source_arg_arch}";
     fi;
 
     # make command - add prefix
     if [ -n "$haproxy_source_arg_prefix_usr" ]; then
-      haproxy_source_make_cmd="${haproxy_source_make_cmd} PREFIX=${haproxy_source_arg_prefix_usr}";
+      make_cmd="${make_cmd} PREFIX=${haproxy_source_arg_prefix_usr}";
     fi;
 
     # make command - add options
     if [ -n "$haproxy_source_arg_options" ]; then
-      haproxy_source_make_cmd="${haproxy_source_make_cmd} ${haproxy_source_arg_options}";
+      make_cmd="${make_cmd} ${haproxy_source_arg_options}";
     fi;
 
     # clean and make
     sudo bash -c "cd \"${haproxy_source_path}\" && make clean";
-    echo "make arguments: ${haproxy_source_make_cmd}";
-    sudo bash -c "cd \"${haproxy_source_path}\" && eval ${haproxy_source_make_cmd}";
+    echo "make arguments: ${make_cmd}";
+    sudo bash -c "cd \"${haproxy_source_path}\" && eval ${make_cmd}";
   else
     notify "errorRoutine" "app:haproxy:source:make";
   fi;
@@ -155,20 +155,20 @@ function task_app_haproxy_source_install() {
 # declare routine source:test
 function task_app_haproxy_source_test() {
   # ldd, ld and binary tests
-  haproxy_binary_test_cmd="${global_source_path_usr_sbin}/haproxy";
-  if [ -f "$haproxy_binary_test_cmd" ]; then
+  bin_path="${global_source_path_usr_sbin}/haproxy";
+  if [ -f "$bin_path" ]; then
     # print shared library dependencies
-    haproxy_ldd_test_cmd="ldd ${haproxy_binary_test_cmd}";
-    echo "shared library dependencies: ${haproxy_ldd_test_cmd}";
-    $haproxy_ldd_test_cmd;
+    ldd_cmd="ldd ${bin_path}";
+    echo "shared library dependencies: ${ldd_cmd}";
+    $ldd_cmd;
     # print ld debug statistics
-    haproxy_lddebug_test_cmd="env LD_DEBUG=statistics $haproxy_binary_test_cmd -v";
-    echo "ld debug statistics: ${haproxy_lddebug_test_cmd}";
-    $haproxy_lddebug_test_cmd;
-    # test binary
-    haproxy_binary_test_cmd="${haproxy_binary_test_cmd} -vv";
-    echo "test source binary: sudo ${haproxy_binary_test_cmd}";
-    sudo $haproxy_binary_test_cmd;
+    lddebug_cmd="env LD_DEBUG=statistics $bin_path -v";
+    echo "ld debug statistics: ${lddebug_cmd}";
+    $lddebug_cmd;
+    # check binary info
+    bin_cmd="${bin_path} -vv";
+    echo "check binary info: sudo ${bin_cmd}";
+    sudo $bin_cmd;
   else
     notify "errorRoutine" "app:haproxy:source:test";
   fi;

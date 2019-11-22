@@ -40,16 +40,16 @@ function task_lib_geoip_package_install() {
 # declare routine package:test
 function task_lib_geoip_package_test() {
   # ldconfig tests
-  geoip_ldconfig_test_file="libGeoIP.so";
-  if [ -f "${global_package_path_usr_lib}/${geoip_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${geoip_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libGeoIP.so";
+  if [ -f "${global_package_path_usr_lib}/${ldconfig_lookup}" ] || [ -f "${global_package_path_usr_lib64}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    geoip_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${geoip_ldconfig_test_file}";
-    echo "find package libraries #1: sudo bash -c \"${geoip_ldconfig_test_cmd1}\"";
-    sudo bash -c "${geoip_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find package libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    geoip_ldconfig_test_cmd2="ldconfig -v | grep ${geoip_ldconfig_test_file}";
-    echo "find package libraries #2: sudo bash -c \"${geoip_ldconfig_test_cmd2}\"";
-    sudo bash -c "${geoip_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find package libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:geoip:package:test";
   fi;
@@ -90,31 +90,31 @@ function task_lib_geoip_source_download() {
 function task_lib_geoip_source_make() {
   if [ -d "$geoip_source_path" ]; then
     # config command - add configuration tool
-    geoip_source_config_cmd="./configure";
+    config_cmd="./configure";
 
     # config command - add arch
     if [ -n "$geoip_source_arg_arch" ]; then
-      geoip_source_config_cmd="${geoip_source_config_cmd} --target=${geoip_source_arg_arch}";
+      config_cmd="${config_cmd} --target=${geoip_source_arg_arch}";
     fi;
 
     # config command - add prefix (usr)
     if [ -n "$geoip_source_arg_prefix_usr" ]; then
-      geoip_source_config_cmd="${geoip_source_config_cmd} --prefix=${geoip_source_arg_prefix_usr}";
+      config_cmd="${config_cmd} --prefix=${geoip_source_arg_prefix_usr}";
     fi;
 
     # config command - add options
     if [ -n "$geoip_source_arg_options" ]; then
-      geoip_source_config_cmd="${geoip_source_config_cmd} ${geoip_source_arg_options}";
+      config_cmd="${config_cmd} ${geoip_source_arg_options}";
     fi;
 
     # make command - add make tool
-    geoip_source_make_cmd="make -j${global_source_make_cores}";
+    make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${geoip_source_path}\" && make clean";
-    echo "config arguments: ${geoip_source_config_cmd}";
-    echo "make arguments: ${geoip_source_make_cmd}";
-    sudo bash -c "cd \"${geoip_source_path}\" && eval ${geoip_source_config_cmd} && eval ${geoip_source_make_cmd}";
+    echo "config arguments: ${config_cmd}";
+    echo "make arguments: ${make_cmd}";
+    sudo bash -c "cd \"${geoip_source_path}\" && eval ${config_cmd} && eval ${make_cmd}";
   else
     notify "errorRoutine" "lib:geoip:source:make";
   fi;
@@ -150,16 +150,16 @@ function task_lib_geoip_source_install() {
 # declare routine source:test
 function task_lib_geoip_source_test() {
   # ldconfig tests
-  geoip_ldconfig_test_file="libGeoIP.so";
-  if [ -f "${global_source_path_usr_lib}/${geoip_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libGeoIP.so";
+  if [ -f "${global_source_path_usr_lib}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    geoip_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${geoip_ldconfig_test_file}";
-    echo "find source libraries #1: sudo bash -c \"${geoip_ldconfig_test_cmd1}\"";
-    sudo bash -c "${geoip_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find source libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    geoip_ldconfig_test_cmd2="ldconfig -v | grep ${geoip_ldconfig_test_file}";
-    echo "find source libraries #2: sudo bash -c \"${geoip_ldconfig_test_cmd2}\"";
-    sudo bash -c "${geoip_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find source libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:geoip:source:test";
   fi;

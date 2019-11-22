@@ -40,26 +40,26 @@ function task_lib_pcre_package_install() {
 # declare routine package:test
 function task_lib_pcre_package_test() {
   # ldconfig tests
-  pcre_ldconfig_test_file="libpcre.so";
-  if [ -f "${global_package_path_usr_lib}/${pcre_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${pcre_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libpcre.so";
+  if [ -f "${global_package_path_usr_lib}/${ldconfig_lookup}" ] || [ -f "${global_package_path_usr_lib64}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${pcre_ldconfig_test_file}";
-    echo "find package libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
-    sudo bash -c "${pcre_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find package libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    pcre_ldconfig_test_cmd2="ldconfig -v | grep ${pcre_ldconfig_test_file}";
-    echo "find package libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
-    sudo bash -c "${pcre_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find package libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:pcre:package:test";
   fi;
-  # binary tests
-  pcre_binary_test_cmd="${global_package_path_usr_bin}/pcre-config";
-  if [ -f "$pcre_binary_test_cmd" ]; then
-    # test binary
-    pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
-    echo "test package binary: ${pcre_binary_test_cmd}";
-    $pcre_binary_test_cmd;
+  # libconfig tests
+  libconfig_cmd="${global_package_path_usr_bin}/pcre-config";
+  if [ -f "$libconfig_cmd" ]; then
+    # check libconfig info
+    libconfig_cmd="${libconfig_cmd} --version --libs --cflags";
+    echo "check libconfig info: ${libconfig_cmd}";
+    $libconfig_cmd;
   else
     notify "errorRoutine" "lib:pcre:package:test";
   fi;
@@ -100,77 +100,77 @@ function task_lib_pcre_source_download() {
 function task_lib_pcre_source_make() {
   if [ -d "$pcre_source_path" ]; then
     # config command - add configuration tool
-    pcre_source_config_cmd="./configure";
+    config_cmd="./configure";
 
     # config command - add arch
     if [ -n "$pcre_source_arg_arch" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --target=${pcre_source_arg_arch}";
+      config_cmd="${config_cmd} --target=${pcre_source_arg_arch}";
     fi;
 
     # config command - add prefix (usr)
     if [ -n "$pcre_source_arg_prefix_usr" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --prefix=${pcre_source_arg_prefix_usr}";
+      config_cmd="${config_cmd} --prefix=${pcre_source_arg_prefix_usr}";
     fi;
 
     # config command - add options
     if [ -n "$pcre_source_arg_options" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} ${pcre_source_arg_options}";
+      config_cmd="${config_cmd} ${pcre_source_arg_options}";
     fi;
 
     # config command - add main: pcre8
     if [ "$pcre_source_arg_main_pcre8" == "yes" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcre8";
+      config_cmd="${config_cmd} --enable-pcre8";
     elif [ "$pcre_source_arg_main_pcre8" == "no" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --disable-pcre8";
+      config_cmd="${config_cmd} --disable-pcre8";
     fi;
 
     # config command - add main: pcre16
     if [ "$pcre_source_arg_main_pcre16" == "yes" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcre16";
+      config_cmd="${config_cmd} --enable-pcre16";
     fi;
 
     # config command - add main: pcre32
     if [ "$pcre_source_arg_main_pcre32" == "yes" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcre32";
+      config_cmd="${config_cmd} --enable-pcre32";
     fi;
 
     # config command - add main: jit
     if [ "$pcre_source_arg_main_jit" == "yes" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-jit=auto";
+      config_cmd="${config_cmd} --enable-jit=auto";
     fi;
 
     # config command - add main: utf8
     if [ "$pcre_source_arg_main_utf8" == "yes" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-utf8";
+      config_cmd="${config_cmd} --enable-utf8";
     fi;
 
     # config command - add main: unicode
     if [ "$pcre_source_arg_main_unicode" == "yes" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-unicode-properties";
+      config_cmd="${config_cmd} --enable-unicode-properties";
     fi;
 
     # config command - add tool: pcregreplib
     if [ "$pcre_source_arg_tool_pcregreplib" == "libz" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcregrep-libz";
+      config_cmd="${config_cmd} --enable-pcregrep-libz";
     elif [ "$pcre_source_arg_tool_pcregreplib" == "libbz2" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcregrep-libbz2";
+      config_cmd="${config_cmd} --enable-pcregrep-libbz2";
     fi;
 
     # config command - add tool: pcretestlib
     if [ "$pcre_source_arg_tool_pcretestlib" == "libreadline" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcretest-libreadline";
+      config_cmd="${config_cmd} --enable-pcretest-libreadline";
     elif [ "$pcre_source_arg_tool_pcretestlib" == "libedit" ]; then
-      pcre_source_config_cmd="${pcre_source_config_cmd} --enable-pcretest-libedit";
+      config_cmd="${config_cmd} --enable-pcretest-libedit";
     fi;
 
     # make command - add make tool
-    pcre_source_make_cmd="make -j${global_source_make_cores}";
+    make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${pcre_source_path}\" && make clean";
-    echo "config arguments: ${pcre_source_config_cmd}";
-    echo "make arguments: ${pcre_source_make_cmd}";
-    sudo bash -c "cd \"${pcre_source_path}\" && eval ${pcre_source_config_cmd} && eval ${pcre_source_make_cmd}";
+    echo "config arguments: ${config_cmd}";
+    echo "make arguments: ${make_cmd}";
+    sudo bash -c "cd \"${pcre_source_path}\" && eval ${config_cmd} && eval ${make_cmd}";
   else
     notify "errorRoutine" "lib:pcre:source:make";
   fi;
@@ -201,26 +201,26 @@ function task_lib_pcre_source_install() {
 # declare routine source:test
 function task_lib_pcre_source_test() {
   # ldconfig tests
-  pcre_ldconfig_test_file="libpcre.so";
-  if [ -f "${global_source_path_usr_lib}/${pcre_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libpcre.so";
+  if [ -f "${global_source_path_usr_lib}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    pcre_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${pcre_ldconfig_test_file}";
-    echo "find source libraries #1: sudo bash -c \"${pcre_ldconfig_test_cmd1}\"";
-    sudo bash -c "${pcre_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find source libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    pcre_ldconfig_test_cmd2="ldconfig -v | grep ${pcre_ldconfig_test_file}";
-    echo "find source libraries #2: sudo bash -c \"${pcre_ldconfig_test_cmd2}\"";
-    sudo bash -c "${pcre_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find source libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:pcre:source:test";
   fi;
-  # binary tests
-  pcre_binary_test_cmd="${global_source_path_usr_bin}/pcre-config";
-  if [ -f "$pcre_binary_test_cmd" ]; then
-    # test binary
-    pcre_binary_test_cmd="${pcre_binary_test_cmd} --version --libs --cflags";
-    echo "test source binary: ${pcre_binary_test_cmd}";
-    $pcre_binary_test_cmd;
+  # libconfig tests
+  libconfig_cmd="${global_source_path_usr_bin}/pcre-config";
+  if [ -f "$libconfig_cmd" ]; then
+    # check libconfig info
+    libconfig_cmd="${libconfig_cmd} --version --libs --cflags";
+    echo "check libconfig info: ${libconfig_cmd}";
+    $libconfig_cmd;
   else
     notify "errorRoutine" "lib:pcre:source:test";
   fi;

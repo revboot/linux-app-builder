@@ -40,20 +40,20 @@ function task_app_nginx_package_install() {
 # declare routine package:test
 function task_app_nginx_package_test() {
   # ldd, ld and binary tests
-  nginx_binary_test_cmd="${global_package_path_usr_sbin}/nginx";
-  if [ -f "$nginx_binary_test_cmd" ]; then
+  bin_path="${global_package_path_usr_sbin}/nginx";
+  if [ -f "$bin_path" ]; then
     # print shared library dependencies
-    nginx_ldd_test_cmd="ldd ${nginx_binary_test_cmd}";
-    echo "shared library dependencies: ${nginx_ldd_test_cmd}";
-    $nginx_ldd_test_cmd;
+    ldd_cmd="ldd ${bin_path}";
+    echo "shared library dependencies: ${ldd_cmd}";
+    $ldd_cmd;
     # print ld debug statistics
-    nginx_lddebug_test_cmd="env LD_DEBUG=statistics $nginx_binary_test_cmd -v";
-    echo "ld debug statistics: ${nginx_lddebug_test_cmd}";
-    $nginx_lddebug_test_cmd;
-    # test binary
-    nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
-    echo "test package binary: sudo ${nginx_binary_test_cmd}";
-    sudo $nginx_binary_test_cmd;
+    lddebug_cmd="env LD_DEBUG=statistics $bin_path -v";
+    echo "ld debug statistics: ${lddebug_cmd}";
+    $lddebug_cmd;
+    # check binary info
+    bin_cmd="${bin_path} -vVt";
+    echo "check binary info: sudo ${bin_cmd}";
+    sudo $bin_cmd;
   else
     notify "errorRoutine" "app:nginx:package:test";
   fi;
@@ -94,7 +94,7 @@ function task_app_nginx_source_download() {
 function task_app_nginx_source_make() {
   if [ -d "$nginx_source_path" ]; then
     # config command - add configuration tool
-    nginx_source_config_cmd="./configure";
+    config_cmd="./configure";
 
     # config command - add compiler
     if [ "$nginx_source_arg_compiler_flag" == "yes" ]; then
@@ -106,478 +106,478 @@ function task_app_nginx_source_make() {
 
       # config command - add compiler: cc
       if [ -n "$nginx_source_arg_compiler_cc" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-cc-opt=\'${nginx_source_arg_compiler_cc}\'";
+        config_cmd="${config_cmd} --with-cc-opt=\'${nginx_source_arg_compiler_cc}\'";
       fi;
 
       # config command - add compiler: ld
       if [ -n "$nginx_source_arg_compiler_ld" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-ld-opt=\'${nginx_source_arg_compiler_ld}\'";
+        config_cmd="${config_cmd} --with-ld-opt=\'${nginx_source_arg_compiler_ld}\'";
       fi;
     fi;
 
     # config command - add arch
     if [ -n "$nginx_source_arg_arch" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-cpu-opt=${nginx_source_arg_arch}";
+      config_cmd="${config_cmd} --with-cpu-opt=${nginx_source_arg_arch}";
     fi;
 
     # config command - add prefix (usr)
     if [ -n "$nginx_source_arg_prefix_usr" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --prefix=${global_source_path_usr_share}/nginx";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --sbin-path=${global_source_path_usr_sbin}/nginx";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --modules-path=${global_source_path_usr_lib}/nginx/modules";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --conf-path=${global_source_path_usr_etc}/nginx/nginx.conf";
+      config_cmd="${config_cmd} --prefix=${global_source_path_usr_share}/nginx";
+      config_cmd="${config_cmd} --sbin-path=${global_source_path_usr_sbin}/nginx";
+      config_cmd="${config_cmd} --modules-path=${global_source_path_usr_lib}/nginx/modules";
+      config_cmd="${config_cmd} --conf-path=${global_source_path_usr_etc}/nginx/nginx.conf";
     fi;
     # config command - add prefix (var)
     if [ -n "$nginx_source_arg_prefix_var" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --http-client-body-temp-path=${global_source_path_var_lib}/nginx/body";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --http-proxy-temp-path=${global_source_path_var_lib}/nginx/proxy";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --http-fastcgi-temp-path=${global_source_path_var_lib}/nginx/fastcgi";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --http-scgi-temp-path=${global_source_path_var_lib}/nginx/scgi";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --http-uwsgi-temp-path=${global_source_path_var_lib}/nginx/uwsgi";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --pid-path=${global_source_path_var_run}/nginx.pid";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --lock-path=${global_source_path_var_lock}/nginx.lock";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --error-log-path=${global_source_path_var_log}/nginx/error.log";
-      nginx_source_config_cmd="${nginx_source_config_cmd} --http-log-path=${global_source_path_var_log}/nginx/access.log";
+      config_cmd="${config_cmd} --http-client-body-temp-path=${global_source_path_var_lib}/nginx/body";
+      config_cmd="${config_cmd} --http-proxy-temp-path=${global_source_path_var_lib}/nginx/proxy";
+      config_cmd="${config_cmd} --http-fastcgi-temp-path=${global_source_path_var_lib}/nginx/fastcgi";
+      config_cmd="${config_cmd} --http-scgi-temp-path=${global_source_path_var_lib}/nginx/scgi";
+      config_cmd="${config_cmd} --http-uwsgi-temp-path=${global_source_path_var_lib}/nginx/uwsgi";
+      config_cmd="${config_cmd} --pid-path=${global_source_path_var_run}/nginx.pid";
+      config_cmd="${config_cmd} --lock-path=${global_source_path_var_lock}/nginx.lock";
+      config_cmd="${config_cmd} --error-log-path=${global_source_path_var_log}/nginx/error.log";
+      config_cmd="${config_cmd} --http-log-path=${global_source_path_var_log}/nginx/access.log";
     fi;
 
     # config command - add libraries: zlib
     if [ "$nginx_source_arg_libraries_zlib" == "package" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd}";
+      config_cmd="${config_cmd}";
     elif [ "$nginx_source_arg_libraries_zlib" == "source" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-zlib=${zlib_source_path}";
+      config_cmd="${config_cmd} --with-zlib=${zlib_source_path}";
     fi;
 
     # config command - add libraries: pcre
     if [ "$nginx_source_arg_libraries_pcre" == "package" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd}";
+      config_cmd="${config_cmd}";
     elif [ "$nginx_source_arg_libraries_pcre" == "source" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-pcre=${pcre_source_path} --with-pcre-jit";
+      config_cmd="${config_cmd} --with-pcre=${pcre_source_path} --with-pcre-jit";
     elif [ "$nginx_source_arg_libraries_pcre" == "no" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --without-pcre";
+      config_cmd="${config_cmd} --without-pcre";
     fi;
 
     # config command - add libraries: openssl
     if [ "$nginx_source_arg_libraries_openssl" == "package" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd}";
+      config_cmd="${config_cmd}";
     elif [ "$nginx_source_arg_libraries_openssl" == "source" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl=${openssl_source_path}";
+      config_cmd="${config_cmd} --with-openssl=${openssl_source_path}";
     fi;
     if [ "$nginx_source_arg_libraries_openssl" == "package" ] || [ "$nginx_source_arg_libraries_openssl" == "source" ]; then
       # config command - add openssl arch
       if [ -n "$openssl_source_arg_arch" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=${openssl_source_arg_arch}";
+        config_cmd="${config_cmd} --with-openssl-opt=${openssl_source_arg_arch}";
       fi;
 
       # config command - add openssl options
       if [ -n "$openssl_source_arg_options" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=${openssl_source_arg_options}";
+        config_cmd="${config_cmd} --with-openssl-opt=${openssl_source_arg_options}";
       fi;
 
       # config command - add openssl main: threads
       if [ "$openssl_source_arg_main_threads" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=threads";
+        config_cmd="${config_cmd} --with-openssl-opt=threads";
       elif [ "$openssl_source_arg_main_threads" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-threads";
+        config_cmd="${config_cmd} --with-openssl-opt=no-threads";
       fi;
 
       # config command - add openssl main: zlib
       if [ "$openssl_source_arg_main_zlib" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=zlib";
+        config_cmd="${config_cmd} --with-openssl-opt=zlib";
       fi;
 
       # config command - add openssl main: nistp gcc
       if [ "$openssl_source_arg_main_nistp" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=enable-ec_nistp_64_gcc_128";
+        config_cmd="${config_cmd} --with-openssl-opt=enable-ec_nistp_64_gcc_128";
       fi;
 
       # config command - add openssl proto: tls 1.3
       if [ "$openssl_source_arg_proto_tls1_3" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-tls1_3";
+        config_cmd="${config_cmd} --with-openssl-opt=no-tls1_3";
       fi;
 
       # config command - add openssl proto: tls 1.2
       if [ "$openssl_source_arg_proto_tls1_2" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-tls1_2";
+        config_cmd="${config_cmd} --with-openssl-opt=no-tls1_2";
       fi;
 
       # config command - add openssl proto: tls 1.1
       if [ "$openssl_source_arg_proto_tls1_1" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-tls1_1";
+        config_cmd="${config_cmd} --with-openssl-opt=no-tls1_1";
       fi;
 
       # config command - add openssl proto: tls 1.0
       if [ "$openssl_source_arg_proto_tls1_0" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-tls1";
+        config_cmd="${config_cmd} --with-openssl-opt=no-tls1";
       fi;
 
       # config command - add openssl proto: ssl 3
       if [ "$openssl_source_arg_proto_ssl3" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-ssl3";
+        config_cmd="${config_cmd} --with-openssl-opt=no-ssl3";
       fi;
 
       # config command - add openssl proto: ssl 2
       if [ "$openssl_source_arg_proto_ssl2" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-ssl2";
+        config_cmd="${config_cmd} --with-openssl-opt=no-ssl2";
       fi;
 
       # config command - add openssl proto: dtls 1.2
       if [ "$openssl_source_arg_proto_dtls1_2" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-dtls1_2";
+        config_cmd="${config_cmd} --with-openssl-opt=no-dtls1_2";
       fi;
 
       # config command - add openssl proto: dtls 1.0
       if [ "$openssl_source_arg_proto_dtls1_0" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-dtls1";
+        config_cmd="${config_cmd} --with-openssl-opt=no-dtls1";
       fi;
 
       # config command - add openssl proto: next proto negotiation
       if [ "$openssl_source_arg_proto_npn" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-nextprotoneg";
+        config_cmd="${config_cmd} --with-openssl-opt=no-nextprotoneg";
       fi;
 
       # config command - add openssl cypher: idea
       if [ "$openssl_source_arg_cypher_idea" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-idea";
+        config_cmd="${config_cmd} --with-openssl-opt=no-idea";
       fi;
 
       # config command - add openssl cypher: weak ciphers
       if [ "$openssl_source_arg_cypher_weak" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-openssl-opt=no-weak-ssl-ciphers";
+        config_cmd="${config_cmd} --with-openssl-opt=no-weak-ssl-ciphers";
       fi;
     fi;
 
     # config command - add libraries: libatomic
     if [ "$nginx_source_arg_libraries_libatomic" == "package" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd}";
+      config_cmd="${config_cmd}";
     elif [ "$nginx_source_arg_libraries_libatomic" == "source" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-libatomic=${libatomic_source_path}";
+      config_cmd="${config_cmd} --with-libatomic=${libatomic_source_path}";
     fi;
 
     # config command - add options
     if [ -n "$nginx_source_arg_options" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} ${nginx_source_arg_options}";
+      config_cmd="${config_cmd} ${nginx_source_arg_options}";
     fi;
 
     # config command - add main: distro
     if [ -n "$nginx_source_arg_main_distro" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --build=${nginx_source_arg_main_distro}";
+      config_cmd="${config_cmd} --build=${nginx_source_arg_main_distro}";
     fi;
 
     # config command - add main: user
     if [ -n "$nginx_source_arg_main_user" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --user=${nginx_source_arg_main_user}";
+      config_cmd="${config_cmd} --user=${nginx_source_arg_main_user}";
     fi;
 
     # config command - add main: group
     if [ -n "$nginx_source_arg_main_group" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --group=${nginx_source_arg_main_group}";
+      config_cmd="${config_cmd} --group=${nginx_source_arg_main_group}";
     fi;
 
     # config command - add main: debug
     if [ "$nginx_source_arg_main_debug_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-debug";
+      config_cmd="${config_cmd} --with-debug";
     fi;
 
     # config command - add main: threads
     if [ "$nginx_source_arg_main_threads_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-threads";
+      config_cmd="${config_cmd} --with-threads";
     fi;
 
     # config command - add main: asynchronous io
     if [ "$nginx_source_arg_main_fileaio_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-file-aio";
+      config_cmd="${config_cmd} --with-file-aio";
     fi;
 
     # config command - add main: ipv6
     if [ "$nginx_source_arg_main_ipv6_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-ipv6";
+      config_cmd="${config_cmd} --with-ipv6";
     fi;
 
     # config command - add main: (dynamic module) compat(ibility)
     if [ "$nginx_source_arg_main_compat_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-compat";
+      config_cmd="${config_cmd} --with-compat";
     fi;
 
     # config command - add connection modules: poll
     if [ "$nginx_source_arg_module_poll_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-poll_module";
+      config_cmd="${config_cmd} --with-poll_module";
     elif [ "$nginx_source_arg_module_poll_flag" == "no" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --without-poll_module";
+      config_cmd="${config_cmd} --without-poll_module";
     fi;
 
     # config command - add connection modules: select
     if [ "$nginx_source_arg_module_select_flag" == "yes" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --with-select_module";
+      config_cmd="${config_cmd} --with-select_module";
     elif [ "$nginx_source_arg_module_select_flag" == "no" ]; then
-      nginx_source_config_cmd="${nginx_source_config_cmd} --without-select_module";
+      config_cmd="${config_cmd} --without-select_module";
     fi;
 
     if [ "$nginx_source_arg_modules_http_flag" == "yes" ]; then
       # config command - add http modules: protocol: (http)v2
       if [ "$nginx_source_arg_modules_http_http2_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_v2_module";
+        config_cmd="${config_cmd} --with-http_v2_module";
       fi;
 
       # config command - add http modules: protocol: spdy
       if [ "$nginx_source_arg_modules_http_spdy_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_spdy_module";
+        config_cmd="${config_cmd} --with-http_spdy_module";
       fi;
 
       # config command - add http modules: protocol: ssl
       if [ "$nginx_source_arg_modules_http_ssl_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_ssl_module";
+        config_cmd="${config_cmd} --with-http_ssl_module";
       fi;
 
      # config command - add http modules: protocol: dav
       if [ "$nginx_source_arg_modules_http_webdav_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_dav_module";
+        config_cmd="${config_cmd} --with-http_dav_module";
       fi;
 
       # config command - add http modules: core: rewrite
       if [ "$nginx_source_arg_modules_http_rewrite_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_rewrite_module";
+        config_cmd="${config_cmd} --without-http_rewrite_module";
       fi;
 
       # config command - add http modules: core: map
       if [ "$nginx_source_arg_modules_http_map_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_map_module";
+        config_cmd="${config_cmd} --without-http_map_module";
       fi;
 
       # config command - add http modules: core: browser
       if [ "$nginx_source_arg_modules_http_browser_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_browser_module";
+        config_cmd="${config_cmd} --without-http_browser_module";
       fi;
 
       # config command - add http modules: core: userid
       if [ "$nginx_source_arg_modules_http_userid_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_userid_module";
+        config_cmd="${config_cmd} --without-http_userid_module";
       fi;
 
       # config command - add http modules: index: auto_index
       if [ "$nginx_source_arg_modules_http_autoindex_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_autoindex_module";
+        config_cmd="${config_cmd} --without-http_autoindex_module";
       fi;
 
       # config command - add http modules: index: random_index
       if [ "$nginx_source_arg_modules_http_randomindex_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_random_index_module";
+        config_cmd="${config_cmd} --with-http_random_index_module";
       fi;
 
       # config command - add http modules: access/limit: access
       if [ "$nginx_source_arg_modules_http_access_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_access_module";
+        config_cmd="${config_cmd} --without-http_access_module";
       fi;
 
       # config command - add http modules: access/limit: limit_conn
       if [ "$nginx_source_arg_modules_http_limitconn_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_limit_conn_module";
+        config_cmd="${config_cmd} --without-http_limit_conn_module";
       fi;
 
       # config command - add http modules: access/limit: limit_req
       if [ "$nginx_source_arg_modules_http_limitreq_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_limit_req_module";
+        config_cmd="${config_cmd} --without-http_limit_req_module";
       fi;
 
       # config command - add http modules: auth: auth_basic
       if [ "$nginx_source_arg_modules_http_authbasic_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_auth_basic_module";
+        config_cmd="${config_cmd} --without-http_auth_basic_module";
       fi;
 
       # config command - add http modules: auth: auth_(sub)request
       if [ "$nginx_source_arg_modules_http_authrequest_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_auth_request_module";
+        config_cmd="${config_cmd} --with-http_auth_request_module";
       fi;
 
       # config command - add http modules: security: referer
       if [ "$nginx_source_arg_modules_http_referer_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_referer_module";
+        config_cmd="${config_cmd} --without-http_referer_module";
       fi;
 
       # config command - add http modules: security: secure_link
       if [ "$nginx_source_arg_modules_http_securelink_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_secure_link_module";
+        config_cmd="${config_cmd} --with-http_secure_link_module";
       fi;
 
       # config command - add http modules: location: realip
       if [ "$nginx_source_arg_modules_http_realip_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_realip_module";
+        config_cmd="${config_cmd} --with-http_realip_module";
       fi;
 
       # config command - add http modules: location: geo
       if [ "$nginx_source_arg_modules_http_geo_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_geo_module";
+        config_cmd="${config_cmd} --without-http_geo_module";
       fi;
 
       # config command - add http modules: location: geoip --static
       if [ "$nginx_source_arg_modules_http_geoip_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_geoip_module";
+        config_cmd="${config_cmd} --with-http_geoip_module";
       fi;
 
       # config command - add http modules: location: geoip --dso
       if [ "$nginx_source_arg_modules_http_geoip_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_geoip_module=dynamic";
+        config_cmd="${config_cmd} --with-http_geoip_module=dynamic";
       fi;
 
       # config command - add http modules: encoding: gzip_static/gzip
       if [ "$nginx_source_arg_modules_http_gzip_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_gzip_static_module";
+        config_cmd="${config_cmd} --with-http_gzip_static_module";
       elif [ "$nginx_source_arg_modules_http_gzip_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_gzip_module";
+        config_cmd="${config_cmd} --without-http_gzip_module";
       fi;
 
       # config command - add http modules: encoding: gunzip
       if [ "$nginx_source_arg_modules_http_gunzip_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_gunzip_module";
+        config_cmd="${config_cmd} --with-http_gunzip_module";
       fi;
 
       # config command - add http modules: encoding: charset
       if [ "$nginx_source_arg_modules_http_charset_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_charset_module";
+        config_cmd="${config_cmd} --without-http_charset_module";
       fi;
 
       # config command - add http modules: filter: empty_gif
       if [ "$nginx_source_arg_modules_http_emptygif_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_empty_gif_module";
+        config_cmd="${config_cmd} --without-http_empty_gif_module";
       fi;
 
       # config command - add http modules: filter: image_filter --static
       if [ "$nginx_source_arg_modules_http_imagefilter_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_image_filter_module";
+        config_cmd="${config_cmd} --with-http_image_filter_module";
       fi;
 
       # config command - add http modules: filter: image_filter --dso
       if [ "$nginx_source_arg_modules_http_imagefilter_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_image_filter_module=dynamic";
+        config_cmd="${config_cmd} --with-http_image_filter_module=dynamic";
       fi;
 
       # config command - add http modules: filter: xslt --static
       if [ "$nginx_source_arg_modules_http_xslt_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_xslt_module";
+        config_cmd="${config_cmd} --with-http_xslt_module";
       fi;
 
       # config command - add http modules: filter: xslt --dso
       if [ "$nginx_source_arg_modules_http_xslt_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_xslt_module=dynamic";
+        config_cmd="${config_cmd} --with-http_xslt_module=dynamic";
       fi;
 
       # config command - add http modules: filter: sub(stitute)
       if [ "$nginx_source_arg_modules_http_sub_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_sub_module";
+        config_cmd="${config_cmd} --with-http_sub_module";
       fi;
 
       # config command - add http modules: filter: addition
       if [ "$nginx_source_arg_modules_http_addition_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_addition_module";
+        config_cmd="${config_cmd} --with-http_addition_module";
       fi;
 
       # config command - add http modules: filter: slice
       if [ "$nginx_source_arg_modules_http_slice_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_slice_module";
+        config_cmd="${config_cmd} --with-http_slice_module";
       fi;
 
       # config command - add http modules: pseudo-stream: mp4
       if [ "$nginx_source_arg_modules_http_mp4_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_mp4_module";
+        config_cmd="${config_cmd} --with-http_mp4_module";
       fi;
 
       # config command - add http modules: pseudo-stream: flv
       if [ "$nginx_source_arg_modules_http_flv_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_flv_module";
+        config_cmd="${config_cmd} --with-http_flv_module";
       fi;
 
       # config command - add http modules: upstream: upstream_keepalive
       if [ "$nginx_source_arg_modules_http_upstream_keepalive_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_upstream_keepalive_module";
+        config_cmd="${config_cmd} --without-http_upstream_keepalive_module";
       fi;
 
       # config command - add http modules: upstream: upstream_least_conn
       if [ "$nginx_source_arg_modules_http_upstream_leastconn_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_upstream_least_conn_module";
+        config_cmd="${config_cmd} --without-http_upstream_least_conn_module";
       fi;
 
       # config command - add http modules: upstream: upstream_random
       if [ "$nginx_source_arg_modules_http_upstream_random_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_upstream_random_module";
+        config_cmd="${config_cmd} --without-http_upstream_random_module";
       fi;
 
       # config command - add http modules: upstream: upstream_hash
       if [ "$nginx_source_arg_modules_http_upstream_hash_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_upstream_hash_module";
+        config_cmd="${config_cmd} --without-http_upstream_hash_module";
       fi;
 
       # config command - add http modules: upstream: upstream_ip_hash
       if [ "$nginx_source_arg_modules_http_upstream_iphash_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_upstream_ip_hash_module";
+        config_cmd="${config_cmd} --without-http_upstream_ip_hash_module";
       fi;
 
       # config command - add http modules: upstream: upstream_zone
       if [ "$nginx_source_arg_modules_http_upstream_zone_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_upstream_zone_module";
+        config_cmd="${config_cmd} --without-http_upstream_zone_module";
       fi;
 
       # config command - add http modules: proxy/cgi: proxy
       if [ "$nginx_source_arg_modules_http_proxy_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_proxy_module";
+        config_cmd="${config_cmd} --without-http_proxy_module";
       fi;
 
       # config command - add http modules: proxy/cgi: fastcgi
       if [ "$nginx_source_arg_modules_http_fastcgi_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_fastcgi_module";
+        config_cmd="${config_cmd} --without-http_fastcgi_module";
       fi;
 
       # config command - add http modules: proxy/cgi: scgi
       if [ "$nginx_source_arg_modules_http_scgi_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_scgi_module";
+        config_cmd="${config_cmd} --without-http_scgi_module";
       fi;
 
       # config command - add http modules: proxy/cgi: uwsgi
       if [ "$nginx_source_arg_modules_http_uwsgi_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_uwsgi_module";
+        config_cmd="${config_cmd} --without-http_uwsgi_module";
       fi;
 
       # config command - add http modules: proxy/cgi: grpc
       if [ "$nginx_source_arg_modules_http_grpc_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_grpc_module";
+        config_cmd="${config_cmd} --without-http_grpc_module";
       fi;
 
       # config command - add http modules: script: ssi
       if [ "$nginx_source_arg_modules_http_ssi_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_ssi_module";
+        config_cmd="${config_cmd} --without-http_ssi_module";
       fi;
 
       # config command - add http modules: script: perl --static
       if [ "$nginx_source_arg_modules_http_perl_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_perl_module";
+        config_cmd="${config_cmd} --with-http_perl_module";
       fi;
 
       # config command - add http modules: script: perl --dso
       if [ "$nginx_source_arg_modules_http_perl_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_perl_module=dynamic";
+        config_cmd="${config_cmd} --with-http_perl_module=dynamic";
       fi;
 
       # config command - add http modules: cache
       if [ "$nginx_source_arg_modules_http_cache_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http-cache";
+        config_cmd="${config_cmd} --without-http-cache";
       fi;
 
       # config command - add http modules: cache: memcached
       if [ "$nginx_source_arg_modules_http_memcached_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_memcached_module";
+        config_cmd="${config_cmd} --without-http_memcached_module";
       fi;
 
       # config command - add http modules: other: mirror
       if [ "$nginx_source_arg_modules_http_mirror_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_mirror_module";
+        config_cmd="${config_cmd} --without-http_mirror_module";
       fi;
 
       # config command - add http modules: other: split_clients
       if [ "$nginx_source_arg_modules_http_splitclients_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-http_split_clients_module";
+        config_cmd="${config_cmd} --without-http_split_clients_module";
       fi;
 
       # config command - add http modules: other: stub_status:
       if [ "$nginx_source_arg_modules_http_stub_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-http_stub_status_module";
+        config_cmd="${config_cmd} --with-http_stub_status_module";
       fi;
     fi;
 
@@ -585,85 +585,85 @@ function task_app_nginx_source_make() {
     if [ "$nginx_source_arg_modules_stream_flag" == "yes" ] || [ "$nginx_source_arg_modules_stream_flag" == "dso" ]; then
       # config command - add stream modules: --static
       if [ "$nginx_source_arg_modules_stream_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream";
+        config_cmd="${config_cmd} --with-stream";
       fi;
 
       # config command - add stream modules: --dso
       if [ "$nginx_source_arg_modules_stream_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream=dynamic";
+        config_cmd="${config_cmd} --with-stream=dynamic";
       fi;
 
       # config command - add stream modules: protocol: ssl
       if [ "$nginx_source_arg_modules_stream_ssl_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream_ssl_module";
+        config_cmd="${config_cmd} --with-stream_ssl_module";
       fi;
 
       # config command - add stream modules: protocol: ssl_preread
       if [ "$nginx_source_arg_modules_stream_ssl_preread_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream_ssl_preread_module";
+        config_cmd="${config_cmd} --with-stream_ssl_preread_module";
       fi;
 
       # config command - add stream modules: core: map
       if [ "$nginx_source_arg_modules_stream_map_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_map_module";
+        config_cmd="${config_cmd} --without-stream_map_module";
       fi;
 
       # config command - add stream modules: access/limit: limit_conn
       if [ "$nginx_source_arg_modules_stream_limitconn_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_limit_conn_module";
+        config_cmd="${config_cmd} --without-stream_limit_conn_module";
       fi;
 
       # config command - add stream modules: access/limit: access
       if [ "$nginx_source_arg_modules_stream_access_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_access_module";
+        config_cmd="${config_cmd} --without-stream_access_module";
       fi;
 
       # config command - add stream modules: location: realip
       if [ "$nginx_source_arg_modules_stream_realip_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream_realip_module";
+        config_cmd="${config_cmd} --with-stream_realip_module";
       fi;
 
       # config command - add stream modules: location: geo
       if [ "$nginx_source_arg_modules_stream_geo_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_geo_module";
+        config_cmd="${config_cmd} --without-stream_geo_module";
       fi;
 
       # config command - add stream modules: location: geoip: --static
       if [ "$nginx_source_arg_modules_stream_geoip_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream_geoip_module";
+        config_cmd="${config_cmd} --with-stream_geoip_module";
       # config command - add stream modules: location: geoip: --dso
       elif [ "$nginx_source_arg_modules_stream_geoip_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-stream_geoip_module=dynamic";
+        config_cmd="${config_cmd} --with-stream_geoip_module=dynamic";
       fi;
 
       # config command - add stream modules: upstream: upstream_least_conn
       if [ "$nginx_source_arg_modules_stream_upstream_leastconn_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_upstream_least_conn_module";
+        config_cmd="${config_cmd} --without-stream_upstream_least_conn_module";
       fi;
 
       # config command - add stream modules: upstream: upstream_random
       if [ "$nginx_source_arg_modules_stream_upstream_random_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_upstream_random_module";
+        config_cmd="${config_cmd} --without-stream_upstream_random_module";
       fi;
 
       # config command - add stream modules: upstream: upstream_hash
       if [ "$nginx_source_arg_modules_stream_upstream_hash_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_upstream_hash_module";
+        config_cmd="${config_cmd} --without-stream_upstream_hash_module";
       fi;
 
       # config command - add stream modules: upstream: upstream_zone
       if [ "$nginx_source_arg_modules_stream_upstream_zone_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_upstream_zone_module";
+        config_cmd="${config_cmd} --without-stream_upstream_zone_module";
       fi;
 
       # config command - add stream modules: other: return
       if [ "$nginx_source_arg_modules_stream_return_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_return_module";
+        config_cmd="${config_cmd} --without-stream_return_module";
       fi;
 
       # config command - add stream modules: other: split_clients
       if [ "$nginx_source_arg_modules_stream_splitclients_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-stream_split_clients_module";
+        config_cmd="${config_cmd} --without-stream_split_clients_module";
       fi;
     fi;
 
@@ -671,30 +671,30 @@ function task_app_nginx_source_make() {
     if [ "$nginx_source_arg_modules_mail_flag" == "yes" ] || [ "$nginx_source_arg_modules_mail_flag" == "dso" ]; then
       # config command - add mail modules: --static
       if [ "$nginx_source_arg_modules_mail_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-mail";
+        config_cmd="${config_cmd} --with-mail";
       # config command - add mail modules: --dso
       elif [ "$nginx_source_arg_modules_mail_flag" == "dso" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-mail=dynamic";
+        config_cmd="${config_cmd} --with-mail=dynamic";
       fi;
 
       # config command - add mail modules: protocol: ssl
       if [ "$nginx_source_arg_modules_mail_ssl_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-mail_ssl_module";
+        config_cmd="${config_cmd} --with-mail_ssl_module";
       fi;
 
       # config command - add mail modules: protocol: smtp
       if [ "$nginx_source_arg_modules_mail_smtp_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-mail_smtp_module";
+        config_cmd="${config_cmd} --without-mail_smtp_module";
       fi;
 
       # config command - add mail modules: protocol: pop3
       if [ "$nginx_source_arg_modules_mail_pop3_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-mail_pop3_module";
+        config_cmd="${config_cmd} --without-mail_pop3_module";
       fi;
 
       # config command - add mail modules: protocol: imap
       if [ "$nginx_source_arg_modules_mail_imap_flag" == "no" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --without-mail_imap_module";
+        config_cmd="${config_cmd} --without-mail_imap_module";
       fi;
     fi;
 
@@ -702,23 +702,23 @@ function task_app_nginx_source_make() {
     if [ "$nginx_source_arg_modules_other_flag" == "yes" ]; then
       # config command - add other modules: cpp_test
       if [ "$nginx_source_arg_modules_other_cpptest_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-cpp_test_module";
+        config_cmd="${config_cmd} --with-cpp_test_module";
       fi;
 
       # config command - add other modules: google_perftools
       if [ "$nginx_source_arg_modules_other_googleperftools_flag" == "yes" ]; then
-        nginx_source_config_cmd="${nginx_source_config_cmd} --with-google_perftools_module";
+        config_cmd="${config_cmd} --with-google_perftools_module";
       fi;
     fi;
 
     # make command - add make tool
-    nginx_source_make_cmd="make -j${global_source_make_cores}";
+    make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${nginx_source_path}\" && make clean";
-    echo "config arguments: ${nginx_source_config_cmd}";
-    echo "make arguments: ${nginx_source_make_cmd}";
-    sudo bash -c "cd \"${nginx_source_path}\" && eval ${nginx_source_config_cmd} && eval ${nginx_source_make_cmd}";
+    echo "config arguments: ${config_cmd}";
+    echo "make arguments: ${make_cmd}";
+    sudo bash -c "cd \"${nginx_source_path}\" && eval ${config_cmd} && eval ${make_cmd}";
   else
     notify "errorRoutine" "app:nginx:source:make";
   fi;
@@ -782,20 +782,20 @@ function task_app_nginx_source_etc() {
 # declare routine source:test
 function task_app_nginx_source_test() {
   # ldd, ld and binary tests
-  nginx_binary_test_cmd="${global_source_path_usr_sbin}/nginx";
-  if [ -f "$nginx_binary_test_cmd" ]; then
+  bin_path="${global_source_path_usr_sbin}/nginx";
+  if [ -f "$bin_path" ]; then
     # print shared library dependencies
-    nginx_ldd_test_cmd="ldd ${nginx_binary_test_cmd}";
-    echo "shared library dependencies: ${nginx_ldd_test_cmd}";
-    $nginx_ldd_test_cmd;
+    ldd_cmd="ldd ${bin_path}";
+    echo "shared library dependencies: ${ldd_cmd}";
+    $ldd_cmd;
     # print ld debug statistics
-    nginx_lddebug_test_cmd="env LD_DEBUG=statistics $nginx_binary_test_cmd -v";
-    echo "ld debug statistics: ${nginx_lddebug_test_cmd}";
-    $nginx_lddebug_test_cmd;
-    # test binary
-    nginx_binary_test_cmd="${nginx_binary_test_cmd} -v -V -t";
-    echo "test source binary: sudo ${nginx_binary_test_cmd}";
-    sudo $nginx_binary_test_cmd;
+    lddebug_cmd="env LD_DEBUG=statistics $bin_path -v";
+    echo "ld debug statistics: ${lddebug_cmd}";
+    $lddebug_cmd;
+    # check binary info
+    bin_cmd="${bin_path} -vVt";
+    echo "check binary info: sudo ${bin_cmd}";
+    sudo $bin_cmd;
   else
     notify "errorRoutine" "app:nginx:source:test";
   fi;

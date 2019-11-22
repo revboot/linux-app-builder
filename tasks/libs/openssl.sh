@@ -40,29 +40,30 @@ function task_lib_openssl_package_install() {
 # declare routine package:test
 function task_lib_openssl_package_test() {
   # ldconfig tests
-  openssl_ldconfig_test_file="libssl.so";
-  if [ -f "${global_package_path_usr_lib}/${openssl_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${openssl_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libssl.so";
+  if [ -f "${global_package_path_usr_lib}/${ldconfig_lookup}" ] || [ -f "${global_package_path_usr_lib64}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${openssl_ldconfig_test_file}";
-    echo "find package libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
-    sudo bash -c "${openssl_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find package libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    openssl_ldconfig_test_cmd2="ldconfig -v | grep ${openssl_ldconfig_test_file}";
-    echo "find package libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
-    sudo bash -c "${openssl_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find package libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:openssl:package:test";
   fi;
-  # binary tests
-  openssl_binary_test_cmd="${global_package_path_usr_bin}/openssl";
-  if [ -f "$openssl_binary_test_cmd" ]; then
-    # test binary
-    openssl_binary_test_cmd1="${openssl_binary_test_cmd} version";
-    echo "test package binary: ${openssl_binary_test_cmd1}";
-    $openssl_binary_test_cmd1;
-    openssl_binary_test_cmd2="${openssl_binary_test_cmd} version -f";
-    echo "test package binary: ${openssl_binary_test_cmd2}";
-    $openssl_binary_test_cmd2;
+  # libconfig tests
+  libconfig_cmd="${global_package_path_usr_bin}/openssl";
+  if [ -f "$libconfig_cmd" ]; then
+    # check libconfig version info
+    libconfig_cmd1="${libconfig_cmd} version";
+    echo "check libconfig version info: ${libconfig_cmd1}";
+    $libconfig_cmd1;
+    # check libconfig build info
+    libconfig_cmd2="${libconfig_cmd} version -f";
+    echo "check libconfig build info: ${libconfig_cmd2}";
+    $libconfig_cmd2;
   else
     notify "errorRoutine" "lib:openssl:package:test";
   fi;
@@ -103,110 +104,110 @@ function task_lib_openssl_source_download() {
 function task_lib_openssl_source_make() {
   if [ -d "$openssl_source_path" ]; then
     # config command - add configuration tool
-    openssl_source_config_cmd="./Configure";
+    config_cmd="./Configure";
 
     # config command - add arch
     if [ -n "$openssl_source_arg_arch" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} ${openssl_source_arg_arch}";
+      config_cmd="${config_cmd} ${openssl_source_arg_arch}";
     fi;
 
     # config command - add prefix (usr)
     if [ -n "$openssl_source_arg_prefix_usr" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} --prefix=${openssl_source_arg_prefix_usr}";
+      config_cmd="${config_cmd} --prefix=${openssl_source_arg_prefix_usr}";
     fi;
 
     # config command - add libraries: zlib
     if [ "$openssl_source_arg_libraries_zlib" == "package" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} --with-zlib";
+      config_cmd="${config_cmd} --with-zlib";
     elif [ "$openssl_source_arg_libraries_zlib" == "source" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} --with-zlib-include=${global_source_path_usr_inc} --with-zlib-lib=${global_source_path_usr_lib}";
+      config_cmd="${config_cmd} --with-zlib-include=${global_source_path_usr_inc} --with-zlib-lib=${global_source_path_usr_lib}";
     fi;
 
     # config command - add options
     if [ -n "$openssl_source_arg_options" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} ${openssl_source_arg_options}";
+      config_cmd="${config_cmd} ${openssl_source_arg_options}";
     fi;
 
     # config command - add main: threads
     if [ "$openssl_source_arg_main_threads" == "yes" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} threads";
+      config_cmd="${config_cmd} threads";
     elif [ "$openssl_source_arg_main_threads" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-threads";
+      config_cmd="${config_cmd} no-threads";
     fi;
 
     # config command - add main: zlib
     if [ "$openssl_source_arg_main_zlib" == "yes" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} zlib";
+      config_cmd="${config_cmd} zlib";
     fi;
 
     # config command - add main: nistp gcc
     if [ "$openssl_source_arg_main_nistp" == "yes" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} enable-ec_nistp_64_gcc_128";
+      config_cmd="${config_cmd} enable-ec_nistp_64_gcc_128";
     fi;
 
     # config command - add proto: tls 1.3
     if [ "$openssl_source_arg_proto_tls1_3" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1_3";
+      config_cmd="${config_cmd} no-tls1_3";
     fi;
 
     # config command - add proto: tls 1.2
     if [ "$openssl_source_arg_proto_tls1_2" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1_2";
+      config_cmd="${config_cmd} no-tls1_2";
     fi;
 
     # config command - add proto: tls 1.1
     if [ "$openssl_source_arg_proto_tls1_1" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1_1";
+      config_cmd="${config_cmd} no-tls1_1";
     fi;
 
     # config command - add proto: tls 1.0
     if [ "$openssl_source_arg_proto_tls1_0" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-tls1";
+      config_cmd="${config_cmd} no-tls1";
     fi;
 
     # config command - add proto: ssl 3
     if [ "$openssl_source_arg_proto_ssl3" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-ssl3";
+      config_cmd="${config_cmd} no-ssl3";
     fi;
 
     # config command - add proto: ssl 2
     if [ "$openssl_source_arg_proto_ssl2" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-ssl2";
+      config_cmd="${config_cmd} no-ssl2";
     fi;
 
     # config command - add proto: dtls 1.2
     if [ "$openssl_source_arg_proto_dtls1_2" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-dtls1_2";
+      config_cmd="${config_cmd} no-dtls1_2";
     fi;
 
     # config command - add proto: dtls 1.0
     if [ "$openssl_source_arg_proto_dtls1_0" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-dtls1";
+      config_cmd="${config_cmd} no-dtls1";
     fi;
 
     # config command - add proto: next proto negotiation
     if [ "$openssl_source_arg_proto_npn" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-nextprotoneg";
+      config_cmd="${config_cmd} no-nextprotoneg";
     fi;
 
     # config command - add cypher: idea
     if [ "$openssl_source_arg_cypher_idea" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-idea";
+      config_cmd="${config_cmd} no-idea";
     fi;
 
     # config command - add cypher: weak ciphers
     if [ "$openssl_source_arg_cypher_weak" == "no" ]; then
-      openssl_source_config_cmd="${openssl_source_config_cmd} no-weak-ssl-ciphers";
+      config_cmd="${config_cmd} no-weak-ssl-ciphers";
     fi;
 
     # make command - add make tool
-    openssl_source_make_cmd="make -j${global_source_make_cores}";
+    make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${openssl_source_path}\" && make clean";
-    echo "config arguments: ${openssl_source_config_cmd}";
-    echo "make arguments: ${openssl_source_make_cmd}";
-    sudo bash -c "cd \"${openssl_source_path}\" && eval ${openssl_source_config_cmd} && eval ${openssl_source_make_cmd}";
+    echo "config arguments: ${config_cmd}";
+    echo "make arguments: ${make_cmd}";
+    sudo bash -c "cd \"${openssl_source_path}\" && eval ${config_cmd} && eval ${make_cmd}";
   else
     notify "errorRoutine" "lib:openssl:source:make";
   fi;
@@ -237,29 +238,30 @@ function task_lib_openssl_source_install() {
 # declare routine source:test
 function task_lib_openssl_source_test() {
   # ldconfig tests
-  openssl_ldconfig_test_file="libssl.so";
-  if [ -f "${global_source_path_usr_lib}/${openssl_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libssl.so";
+  if [ -f "${global_source_path_usr_lib}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    openssl_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${openssl_ldconfig_test_file}";
-    echo "find source libraries #1: sudo bash -c \"${openssl_ldconfig_test_cmd1}\"";
-    sudo bash -c "${openssl_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find source libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    openssl_ldconfig_test_cmd2="ldconfig -v | grep ${openssl_ldconfig_test_file}";
-    echo "find source libraries #2: sudo bash -c \"${openssl_ldconfig_test_cmd2}\"";
-    sudo bash -c "${openssl_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find source libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:openssl:source:test";
   fi;
-  # binary tests
-  openssl_binary_test_cmd="${global_source_path_usr_bin}/openssl";
-  if [ -f "$openssl_binary_test_cmd" ]; then
-    # test binary
-    openssl_binary_test_cmd1="${openssl_binary_test_cmd} version";
-    echo "test source binary: ${openssl_binary_test_cmd1}";
-    $openssl_binary_test_cmd1;
-    openssl_binary_test_cmd2="${openssl_binary_test_cmd} version -f";
-    echo "test source binary: ${openssl_binary_test_cmd2}";
-    $openssl_binary_test_cmd2;
+  # libconfig tests
+  libconfig_cmd="${global_source_path_usr_bin}/openssl";
+  if [ -f "$libconfig_cmd" ]; then
+    # check libconfig version info
+    libconfig_cmd1="${libconfig_cmd} version";
+    echo "check libconfig version info: ${libconfig_cmd1}";
+    $libconfig_cmd1;
+    # check libconfig build info
+    libconfig_cmd2="${libconfig_cmd} version -f";
+    echo "check libconfig build info: ${libconfig_cmd2}";
+    $libconfig_cmd2;
   else
     notify "errorRoutine" "lib:openssl:source:test";
   fi;

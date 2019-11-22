@@ -40,16 +40,16 @@ function task_lib_zlib_package_install() {
 # declare routine package:test
 function task_lib_zlib_package_test() {
   # ldconfig tests
-  zlib_ldconfig_test_file="libz.so";
-  if [ -f "${global_package_path_usr_lib}/${zlib_ldconfig_test_file}" ] || [ -f "${global_package_path_usr_lib64}/${zlib_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libz.so";
+  if [ -f "${global_package_path_usr_lib}/${ldconfig_lookup}" ] || [ -f "${global_package_path_usr_lib64}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    zlib_ldconfig_test_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${zlib_ldconfig_test_file}";
-    echo "find package libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
-    sudo bash -c "${zlib_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_package_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find package libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    zlib_ldconfig_test_cmd2="ldconfig -v | grep ${zlib_ldconfig_test_file}";
-    echo "find package libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
-    sudo bash -c "${zlib_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find package libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:zlib:package:test";
   fi;
@@ -90,31 +90,31 @@ function task_lib_zlib_source_download() {
 function task_lib_zlib_source_make() {
   if [ -d "$zlib_source_path" ]; then
     # config command - add configuration tool
-    zlib_source_config_cmd="./configure";
+    config_cmd="./configure";
 
     # config command - add arch
     if [ -n "$zlib_source_arg_arch" ]; then
-      zlib_source_config_cmd="${zlib_source_config_cmd} --archs=\"${zlib_source_arg_arch}\"";
+      config_cmd="${config_cmd} --archs=\"${zlib_source_arg_arch}\"";
     fi;
 
     # config command - add prefix (usr)
     if [ -n "$zlib_source_arg_prefix_usr" ]; then
-      zlib_source_config_cmd="${zlib_source_config_cmd} --prefix=${zlib_source_arg_prefix_usr}";
+      config_cmd="${config_cmd} --prefix=${zlib_source_arg_prefix_usr}";
     fi;
 
     # config command - add options
     if [ -n "$zlib_source_arg_options" ]; then
-      zlib_source_config_cmd="${zlib_source_config_cmd} ${zlib_source_arg_options}";
+      config_cmd="${config_cmd} ${zlib_source_arg_options}";
     fi;
 
     # make command - add make tool
-    zlib_source_make_cmd="make -j${global_source_make_cores}";
+    make_cmd="make -j${global_source_make_cores}";
 
     # clean, configure and make
     sudo bash -c "cd \"${zlib_source_path}\" && make clean";
-    echo "config arguments: ${zlib_source_config_cmd}";
-    echo "make arguments: ${zlib_source_make_cmd}";
-    sudo bash -c "cd \"${zlib_source_path}\" && eval ${zlib_source_config_cmd} && eval ${zlib_source_make_cmd}";
+    echo "config arguments: ${config_cmd}";
+    echo "make arguments: ${make_cmd}";
+    sudo bash -c "cd \"${zlib_source_path}\" && eval ${config_cmd} && eval ${make_cmd}";
   else
     notify "errorRoutine" "lib:zlib:source:make";
   fi;
@@ -145,16 +145,16 @@ function task_lib_zlib_source_install() {
 # declare routine source:test
 function task_lib_zlib_source_test() {
   # ldconfig tests
-  zlib_ldconfig_test_file="libz.so";
-  if [ -f "${global_source_path_usr_lib}/${zlib_ldconfig_test_file}" ]; then
+  ldconfig_lookup="libz.so";
+  if [ -f "${global_source_path_usr_lib}/${ldconfig_lookup}" ]; then
     # check ldconfig paths
-    zlib_ldconfig_test_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${zlib_ldconfig_test_file}";
-    echo "find source libraries #1: sudo bash -c \"${zlib_ldconfig_test_cmd1}\"";
-    sudo bash -c "${zlib_ldconfig_test_cmd1}";
+    ldconfig_cmd1="ldconfig -p | grep ${global_source_path_usr_lib} | grep ${ldconfig_lookup}";
+    echo "find source libraries #1: sudo bash -c \"${ldconfig_cmd1}\"";
+    sudo bash -c "${ldconfig_cmd1}";
     # check ldconfig versions
-    zlib_ldconfig_test_cmd2="ldconfig -v | grep ${zlib_ldconfig_test_file}";
-    echo "find source libraries #2: sudo bash -c \"${zlib_ldconfig_test_cmd2}\"";
-    sudo bash -c "${zlib_ldconfig_test_cmd2}";
+    ldconfig_cmd2="ldconfig -v | grep ${ldconfig_lookup}";
+    echo "find source libraries #2: sudo bash -c \"${ldconfig_cmd2}\"";
+    sudo bash -c "${ldconfig_cmd2}";
   else
     notify "errorRoutine" "lib:zlib:source:test";
   fi;
