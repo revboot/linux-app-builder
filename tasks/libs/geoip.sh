@@ -59,13 +59,13 @@ function task_lib_geoip_package_test() {
 function task_lib_geoip_source_cleanup() {
   # remove source files
   if [ -d "$geoip_source_path" ]; then
-    sudo rm -Rf "${geoip_source_path}"*;
+    sudo rm -Rf "${geoip_source_path}";
   else
     notify "warnRoutine" "lib:geoip:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$geoip_source_tar" ]; then
-    sudo rm -f "${geoip_source_tar}"*;
+    sudo rm -f "${geoip_source_tar}";
   else
     notify "warnRoutine" "lib:geoip:source:cleanup";
   fi;

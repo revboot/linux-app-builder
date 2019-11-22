@@ -69,13 +69,13 @@ function task_lib_pcre_package_test() {
 function task_lib_pcre_source_cleanup() {
   # remove source files
   if [ -d "$pcre_source_path" ]; then
-    sudo rm -Rf "${pcre_source_path}"*;
+    sudo rm -Rf "${pcre_source_path}";
   else
     notify "warnRoutine" "lib:pcre:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$pcre_source_tar" ]; then
-    sudo rm -f "${pcre_source_tar}"*;
+    sudo rm -f "${pcre_source_tar}";
   else
     notify "warnRoutine" "lib:pcre:source:cleanup";
   fi;

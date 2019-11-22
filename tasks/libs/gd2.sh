@@ -69,13 +69,13 @@ function task_lib_gd2_package_test() {
 function task_lib_gd2_source_cleanup() {
   # remove source files
   if [ -d "$gd2_source_path" ]; then
-    sudo rm -Rf "${gd2_source_path}"*;
+    sudo rm -Rf "${gd2_source_path}";
   else
     notify "warnRoutine" "lib:gd2:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$gd2_source_tar" ]; then
-    sudo rm -f "${gd2_source_tar}"*;
+    sudo rm -f "${gd2_source_tar}";
   else
     notify "warnRoutine" "lib:gd2:source:cleanup";
   fi;

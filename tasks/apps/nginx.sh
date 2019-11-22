@@ -63,13 +63,13 @@ function task_app_nginx_package_test() {
 function task_app_nginx_source_cleanup() {
   # remove source files
   if [ -d "$nginx_source_path" ]; then
-    sudo rm -Rf "${nginx_source_path}"*;
+    sudo rm -Rf "${nginx_source_path}";
   else
     notify "warnRoutine" "app:nginx:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$nginx_source_tar" ]; then
-    sudo rm -f "${nginx_source_tar}"*;
+    sudo rm -f "${nginx_source_tar}";
   else
     notify "warnRoutine" "app:nginx:source:cleanup";
   fi;

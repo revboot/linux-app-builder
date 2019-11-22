@@ -63,13 +63,13 @@ function task_app_haproxy_package_test() {
 function task_app_haproxy_source_cleanup() {
   # remove source files
   if [ -d "$haproxy_source_path" ]; then
-    sudo rm -Rf "${haproxy_source_path}"*;
+    sudo rm -Rf "${haproxy_source_path}";
   else
     notify "warnRoutine" "app:haproxy:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$haproxy_source_tar" ]; then
-    sudo rm -f "${haproxy_source_tar}"*;
+    sudo rm -f "${haproxy_source_tar}";
   else
     notify "warnRoutine" "app:haproxy:source:cleanup";
   fi;

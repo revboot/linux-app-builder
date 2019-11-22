@@ -59,13 +59,13 @@ function task_lib_zlib_package_test() {
 function task_lib_zlib_source_cleanup() {
   # remove source files
   if [ -d "$zlib_source_path" ]; then
-    sudo rm -Rf "${zlib_source_path}"*;
+    sudo rm -Rf "${zlib_source_path}";
   else
     notify "warnRoutine" "lib:zlib:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$zlib_source_tar" ]; then
-    sudo rm -f "${zlib_source_tar}"*;
+    sudo rm -f "${zlib_source_tar}";
   else
     notify "warnRoutine" "lib:zlib:source:cleanup";
   fi;

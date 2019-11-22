@@ -75,13 +75,13 @@ function task_lib_xslt_package_test() {
 function task_lib_xslt_source_cleanup() {
   # remove source files
   if [ -d "$xslt_source_path" ]; then
-    sudo rm -Rf "${xslt_source_path}"*;
+    sudo rm -Rf "${xslt_source_path}";
   else
     notify "warnRoutine" "lib:xslt:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$xslt_source_tar" ]; then
-    sudo rm -f "${xslt_source_tar}"*;
+    sudo rm -f "${xslt_source_tar}";
   else
     notify "warnRoutine" "lib:xslt:source:cleanup";
   fi;

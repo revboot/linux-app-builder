@@ -72,13 +72,13 @@ function task_lib_openssl_package_test() {
 function task_lib_openssl_source_cleanup() {
   # remove source files
   if [ -d "$openssl_source_path" ]; then
-    sudo rm -Rf "${openssl_source_path}"*;
+    sudo rm -Rf "${openssl_source_path}";
   else
     notify "warnRoutine" "lib:openssl:source:cleanup";
   fi;
   # remove source tar
   if [ -f "$openssl_source_tar" ]; then
-    sudo rm -f "${openssl_source_tar}"*;
+    sudo rm -f "${openssl_source_tar}";
   else
     notify "warnRoutine" "lib:openssl:source:cleanup";
   fi;
