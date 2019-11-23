@@ -122,7 +122,7 @@ esac;
 
 # Get CLI arguments
 declare -g opts='';
-opts=`getopt --options "u,h" --longoptions "usage,help,task:,subtask:,routine:" -- "$@"`;
+opts=`getopt --options "u,h" --longoptions "usage,help,addconf:,task:,subtask:,routine:" -- "$@"`;
 
 # Validate CLI arguments
 [ $? -eq 0 ] || {
@@ -145,6 +145,7 @@ while true; do
       echo -e "Options:";
       echo -e "  -u, --usage                 show the quick usage message";
       echo -e "  -h, --help                  show this long help message";
+      echo -e "  --addconf={conffile.inc}    loads an additional configuration file from config directory";
       echo -e "  --task={task}               selects the task for operations (defaults to config)";
       echo -e "  --subtask={subtask}         selects the subtask for operations (defaults to config)";
       echo -e "  --routine={routine}         selects the routine for operations (defaults to config)";
@@ -182,6 +183,14 @@ while true; do
       echo -e "  - etc                       selects the etc routine";
       echo -e "  - test                      selects the test routine";
       exit 1;
+      ;;
+    # Option `addconf`
+    --addconf )
+      shift; # The arg is next in position args
+      args_addconf=$1
+      [[ ! $args_addconf ]] && {
+        error 1 "Incorrect addconf option provided";
+      }
       ;;
     # Option `task`
     --task )
@@ -234,6 +243,10 @@ fi;
 loadSource "config/config.default.inc" true;
 # Load local config
 loadSource "config/config.local.inc" false;
+# Load additional config
+if [ ! -z "$args_addconf" ]; then
+  loadSource "config/${args_addconf}" true;
+fi;
 
 #
 # Load tasks
